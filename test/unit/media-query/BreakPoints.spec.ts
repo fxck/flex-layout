@@ -1,6 +1,6 @@
 /// <reference path="../../../typings/browser.d.ts" />
 
-import { BreakPointsService } from './break-points';
+import { BreakPointsService } from '../../../src/media-query/BreakPoints';
 
 describe('BreakPointsService', () => {
   describe('#findBreakpointBy', () => {
@@ -13,7 +13,7 @@ describe('BreakPointsService', () => {
       expect(bp.mediaQuery).toEqual('screen and (max-width: 599px)');
     });
 
-    it('returns null for an unknow breakpoint', () => {
+    it('returns null for an unknown breakpoint', () => {
       let bp = service.findBreakpointBy('unknown');
       expect(bp).toBeFalsy();
     });

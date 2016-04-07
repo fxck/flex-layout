@@ -1,9 +1,9 @@
 /// <reference path="../../typings/browser.d.ts" />
 
 import { MediaQueryWatcherService, BrowserMediaQueryRegistrar } from './services/media-query-watcher';
-import { BreakPointsService }  from './services/break-points';
+import { BreakPoints }  from './services/BreakPoints';
 
 angular.module('material.mediaQuery', [])
-  .service('$mdBreakpoints', BreakPointsService )
-  .service('$mdBrowserMediaQueryRegistrar', BrowserMediaQueryRegistrar )
+  .service('$mdBreakpoints', BreakPoints )
+  .service('$mdMediaQueryRegistrar', BrowserMediaQueryRegistrar )
   .service('$mdMediaWatcher', MediaQueryWatcherService );

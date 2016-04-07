@@ -1,4 +1,4 @@
-import AbstractInjector from 'flexbox/injectors/AbstractInjector.es6'
+import AbstractInjector from 'src/flexbox/injectors/AbstractInjector.es6.js'
 
 
 describe("AbstractInjector tests", ()=> {

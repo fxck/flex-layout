@@ -2,9 +2,7 @@
 
 import { BreakPoint } from './break-points';
 
-export type MediaQuery = string;
-
-type MediaQueryChangeHandler = (watcher: MediaQueryListenerAPI) => void;
+type MediaQueryChangeHandler = (watcher: MediaQueryDispatcher) => void;
 
 export class MediaQueryWatcherService {
   private _subscriptions: SubscriberGroups = new SubscriberGroups(new BrowserMediaQueryRegistrar());
@@ -39,10 +37,10 @@ export class MediaQueryWatcherService {
    * known subscriptions registry...
    */
   private _connect(subscriber: Subscriber) {
-    let watchers = this._watchers;
+    let dispatcher = this._watchers;
     let query    = subscriber.query;
-    let onChange: MediaQueryChangeHandler = (watcher: MediaQueryListenerAPI) => {
-      let isEntering = watcher.matches;
+    let onChange: MediaQueryChangeHandler = (dispatcher: MediaQueryDispatcher) => {
+      let isEntering = dispatcher.matches;
       this._notifySubscribers(query, isEntering);
 
       if ( !isEntering ) {
@@ -54,7 +52,7 @@ export class MediaQueryWatcherService {
 
     this._subscriptions.add(subscriber);
     if ( !watchers.has(query) ) {
-      watchers.add(query, onChange);
+      dispatcher.add(query, onChange);
     }
   }
 
@@ -118,12 +116,9 @@ export class MediaQueryWatcherService {
 // Helper Classes
 // **************************
 
-/**
- * QueryWatchers manages 1..n mediaQuery listeners.
- * A mediaQuery listener is shared for all subscribers of a query.
- * Each query has its own shared listener...
- */
-const ALL_WATCHERS: { [query: string]: MediaQueryListenerAPI } = { };
+
+
+
 
 export class QueryWatchers {
   constructor(private _subscriptions: SubscriberGroups) {
@@ -140,7 +135,7 @@ export class QueryWatchers {
   /**
    * Lookup the registered watcher for the specified query
    */
-  find(query: MediaQuery): MediaQueryListenerAPI {
+  find(query: MediaQuery): MediaQueryObservable {
     return ALL_WATCHERS[query];
   }
 
@@ -182,202 +177,5 @@ export class QueryWatchers {
     }
   }
 
-  private _build(query: MediaQuery): MediaQueryListenerAPI {
-    if (window.matchMedia) {
-      let canListen = angular.isDefined(window.matchMedia('all').addListener);
-      let hasQuery = canListen && angular.isDefined(ALL_WATCHERS[query]);
 
-      if (!hasQuery) {
-        ALL_WATCHERS[query] = window.matchMedia(query);
-        hasQuery = true;
-      }
-      return ALL_WATCHERS[query];
-    } else {
-      return this._mockMQL();
-    }
-  }
-
-  private _mockMQL(): MediaQueryListenerAPI {
-    return {
-      matches: false,
-      addListener: angular.noop,
-      removeListener: angular.noop,
-      sharedListener: null
-    };
-  }
-}
-
-interface MediaQueryListenerAPI {
-  matches: boolean;
-  addListener: Function;
-  removeListener: Function;
-  sharedListener?: Function;
-}
-
-
-/**
- * SubscriberGroups manages 1..n Subscribers
- * Subscribers are external observers requesting notifications of
- * mediaQuery changes; and are grouped by their associated mediaQueries.
- */
-export class SubscriberGroups {
-  private _groups: { [query: string]: Subscriber[] } = {};
-
-  constructor(private _browserRegistrar: BrowserMediaQueryRegistrar) {
-  }
-
-  add(subscriber: Subscriber): SubscriberGroups {
-    this._browserRegistrar.registerMediaQuery(subscriber.query);
-    let group = this.findGroup(subscriber.query);
-    group.push(subscriber);
-    return this;
-  }
-
-  remove(subscriber: Subscriber): SubscriberGroups {
-    let group = this.findGroup(subscriber.query);
-
-    let index = group.indexOf(subscriber);
-    if (index != -1) {
-      group.splice(index, 1);
-    }
-
-    return this;
-  }
-
-  findGroup(query: MediaQuery): Subscriber[] {
-    this._groups[query] = this._groups[query] || [];
-    return this._groups[query];
-  }
-
-  /**
-   * MediaQuery listeners are NOT triggered with 'enter' events if breakpoints
-   * overlap.
-   *
-   * Nodes with multiple `-gt-<xxxx>` breakpoints, may not work as expected.
-   * Leave events will fire but 'enter' events will not fire for overlapped.
-   * Consider:
-   *
-   *    <div flex-gt-sm="50" flex-gt-md="25" />
-   *
-   * When the viewport shrinks and flex-gt-md injector 'leaves', then
-   * the flex-gt-sm injector should also activate/enter.
-   *
-   * For overlapping breakpoints, multiple groups may be
-   * active. When leaving a mediaQuery, find (if any)
-   * other active groups (except the default/global).
-   *
-   */
-
-  subscribersToActivate(leaveQuery: MediaQuery): Subscriber[] {
-    let allGroups = this._groupsByPrecedence();
-
-    for (let group of allGroups) {
-      let isGlobal = group[0].query == 'screen';
-      let isActive = group[0].isActive;
-
-      if ( isActive && !isGlobal && group[0].query != leaveQuery ) {
-        return group;
-      }
-    }
-  }
-
-  private _groupsByPrecedence(): Subscriber[][] {
-    return Object.keys(this._groups)
-      .map(groupName => this._groups[groupName])
-      .sort((a, b) => a[0].queryOrder - b[0].queryOrder); // numeric, ascending sort
-  }
-}
-
-/**
- * Subscriber is a delegate class used to forward notifications
- * of mediaQuery changes to external observers. Observers register
- * a subscription for a query with MediaQueryWatcher::attach()
- */
-export class Subscriber {
-  public isActive: boolean = false;
-  private _initialized: boolean = false;
-
-  constructor(private _breakpoint: BreakPoint, private _hooks: SubscriberHooks) {
-  }
-
-  get active(): boolean {
-    return this.isActive;
-  }
-
-  get query(): MediaQuery {
-    return this._breakpoint.mediaQuery;
-  }
-
-  get queryOrder(): number {
-    return this._breakpoint.order;
-  }
-
-  /**
-   * Issue the enter or leave announcements for the current
-   * subscriber
-   */
-  activate(newActive: boolean): void {
-    if (newActive != this.isActive) {
-      if ( newActive ) this.enter();
-      else            this.leave();
-    }
-  }
-
-  /**
-   * Notify listeners to initialize (1st time only)
-   * then announce that we are 'entering' a mediaQuery state
-   * and activate.
-   */
-  enter(): void {
-    this.isActive = true;
-    if (!this._initialized) {
-      this._initialized = true;
-      if (this._hooks.initialize) {
-        this._hooks.initialize(this._breakpoint.mediaQuery);
-      }
-    }
-  }
-
-  /**
-   * Notify listeners that we are leaving the current
-   * mediaQuery state... and then deactivate.
-   */
-  leave(): void {
-    this.isActive = false;
-    if (this._hooks.leave) {
-      this._hooks.leave(this._breakpoint.mediaQuery);
-    }
-  }
-}
-
-/**
- * Interface representing the required lifecycle events that a subscriber must respond to
- */
-export interface SubscriberHooks {
-  initialize?: (query: MediaQuery) => void;
-  enter?: (query: MediaQuery) => void;
-  leave?: (query: MediaQuery) => void;
-}
-
-/**
- * BrowserMediaQueryRegistrar inserts CSS selectors into the DOM
- * For Webkit engines that only trigger the MediaQueryListListener
- * when there is at least one CSS selector for the respective media query.
- */
-export class BrowserMediaQueryRegistrar {
-  private _registeredStyles: { [query: string]: HTMLElement };
-
-  registerMediaQuery(query: MediaQuery) {
-    if (this._registeredStyles[query]) return;
-    let style = document.createElement('style');
-    style.setAttribute('type', 'text/css');
-    document.querySelector('head').appendChild(style);
-
-    let textNode = document.createTextNode(
-      `@media ${query} {.md-query-test{}}`
-    );
-    style.appendChild(textNode);
-
-    this._registeredStyles[query] = style;
-  }
 }

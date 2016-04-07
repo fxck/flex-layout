@@ -1,5 +1,5 @@
 import MockAttrs from 'test/utils/MockAttrs.es6'
-import LayoutWrap from 'flexbox/injectors/LayoutWrap.es6'
+import LayoutWrap from 'src/flexbox/injectors/LayoutWrap.es6.js'
 
 
 describe("LayoutWrap uncompiled, raw injector tests", ()=> {
