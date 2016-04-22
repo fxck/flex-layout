@@ -1,5 +1,5 @@
 {
-  "version" : "2.0.0",
+  "version": "2.0.0",
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
@@ -9,22 +9,20 @@
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "sourceMap": true,
-    "removeComments": true
-    "outDir": "dist/js/cjs"
+    "removeComments": false,
+    "outDir": "./dist"
   },
-  "exclude": [
-    "node_modules",
-    "typings/main",
+  "files": [
+    "src/index.ts",
+    "test/unit/media-query/mediaQuery.spec.ts",
     "typings/main.d.ts"
   ],
-  "fileGlobs": [
-      "./modules/**/*.ts",
-      "./tools/**/*.ts",
-      "!./jspm_packages/**",
-      "!./node_modules/**",
-      "!./packages/**",
-      "!./dist/**",
-      "!./temp/**"
+  "exclude": [
+    "node_modules",
+    "dist",
+    "bak",
+    "typings/browser",
+    "typings/browser.d.ts"
   ]
 
 }

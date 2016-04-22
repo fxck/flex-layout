@@ -5,6 +5,8 @@
  */
 const ALL_WATCHERS:{ [query:string]:MediaQueryDispatcher } = {};
 
+let isDefined : Function = (value:any):boolean => (typeof value !== 'undefined');
+let noop : Function = ():void => undefined;
 /**
  *
  */
@@ -33,7 +35,7 @@ export class MediaQueryRegistry {
   constructor(private _matchMedia:Function) {
     if (!this._matchMedia) {
       this._matchMedia = window.matchMedia;
-      this._canListen = angular.isDefined(this._matchMedia('all').addListener);
+      this._canListen = isDefined(this._matchMedia('all').addListener);
     }
   }
 
@@ -52,7 +54,7 @@ export class MediaQueryRegistry {
    *
    */
   private buildDispatcher(query:MediaQuery):MediaQueryDispatcher {
-    let dispatcher;
+    let dispatcher : MediaQueryDispatcher;
     if (this._canListen) {
       dispatcher = ALL_WATCHERS[query] = this._matchMedia(query);
       this.registerQuery(query);
@@ -84,8 +86,8 @@ export class MediaQueryRegistry {
   private buildMockDispatch():MediaQueryDispatcher {
     return {
       matches: false,
-      addListener: angular.noop,
-      removeListener: angular.noop,
+      addListener: noop,
+      removeListener: noop,
       sharedListener: null
     };
   }
