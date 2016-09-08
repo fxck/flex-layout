@@ -13,6 +13,7 @@ import { Subscription } from "rxjs/Subscription";
  * 'layout' flexbox styling directive
  * Defines the positioning flow direction for the child elements: row or column
  * Optional values: column or row (default)
+ * @see https://css-tricks.com/almanac/properties/f/flex-direction/
  */
 @Directive({
   selector: '[layout]'
@@ -77,7 +78,8 @@ export class LayoutDirective extends BaseStyleDirective implements OnChanges {
 /**
  * 'layout-wrap' flexbox styling directive
  * Defines wrapping of child elements in layout container
- * Optional values: reverse, wrap-reverse, none, nowrap, wrap (default)
+ * Optional values: reverse, wrap-reverse, none, nowrap, wrap (default)]
+ * @see https://css-tricks.com/almanac/properties/f/flex-wrap/
  */
 @Directive({
   selector: '[layout-wrap]'
@@ -142,6 +144,10 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnChanges
  * 'layout-align' flexbox styling directive
  *  Defines positioning of child elements along main and cross axis in a layout container
  *  Optional values: {main-axis} values or {main-axis cross-axis} value pairs
+ *
+ *  @see https://css-tricks.com/almanac/properties/j/justify-content/
+ *  @see https://css-tricks.com/almanac/properties/a/align-items/
+ *  @see https://css-tricks.com/almanac/properties/a/align-content/
  */
 @Directive({
   selector:'[layout-align]',
@@ -181,10 +187,10 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
    * Cache the parent container 'flex-direction' and update the 'flex' styles
    */
   _onLayoutChange(direction) {
-    this._layout = direction.toLowerCase();
-    if ( this._layout === 'column-reverse') this._layout = "column";
+    this._layout = (direction || "").toLowerCase().replace('-reverse',"");
+    if ( this._layout !== 'column') this._layout = "row";
 
-    this._stretchChildren(this.align, this._layout);
+    this._allowStretching(this.align, this._layout);
   }
 
   _buildCSS(align) {
@@ -197,35 +203,33 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
     // Main axis
     switch( main_axis ){
       case "center"        : css['justify-content'] = "center";        break;
-      case "end"           : css['justify-content'] = "flex-end";      break;
       case "space-around"  : css['justify-content'] = "space-around";  break;
       case "space-between" : css['justify-content'] = "space-between"; break;
+      case "end"           : css['justify-content'] = "flex-end";      break;
     }
     // Cross-axis
     switch( cross_axis ){
        case "start"   : css['align-items'] = css['align-content'] = "flex-start";   break;
+       case "baseline": css['align-items'] = "baseline";                            break;
        case "center"  : css['align-items'] = css['align-content'] = "center";       break;
        case "end"     : css['align-items'] = css['align-content'] = "flex-end";     break;
-       case "baseline": css['align-items'] = "baseline";                            break;
     }
 
     return this._modernizer(css);
   }
 
    /**
-    * Update element and immediate children to 'stretch' as needed...
+    * Update container element to 'stretch' as needed...
     */
-   _stretchChildren(align, layout) {
-     const ELEMENT_NODE = 1;
+   _allowStretching(align, layout) {
      let [, cross_axis] = align.split(" ");
 
      if ( cross_axis == "stretch") {
-       let css = { 'box-sizing': "border-box" };
-       let key = (layout === 'column') ? 'max-width' : 'max-height';
-
-           css[key] = '100%';
-
-       this._updateStyle(this._modernizer(css));
+       this._updateStyle(this._modernizer({
+         'box-sizing' : "border-box",
+         'max-width'  : (layout === 'column') ? '100%' : null,
+         'max-height' : (layout === 'row') ? '100%' : null
+       }));
      }
    }
 }

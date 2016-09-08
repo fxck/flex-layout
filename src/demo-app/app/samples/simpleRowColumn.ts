@@ -2,8 +2,13 @@ import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
   selector: 'simple-row-column',
+  styles : [
+    ".hint { margin:5px; font-size:0.9em;color: #a3a3a3; margin-bottom:0;}"
+  ],
   template: `
-    <div class="colorNested" layout="row">
+  <div>
+    <div class="title">Simple row with nested layout containers.</div> 
+    <div class="colorNested box" layout="row">
       <div [layout]="firstCol" flex (click)="toggleLayoutFor(1)">
         <div flex>First item in row</div>
         <div flex>Second item in row</div>
@@ -13,6 +18,12 @@ import {Component, ViewEncapsulation} from '@angular/core';
         <div flex>Second item in column</div>
       </div>
     </div>
+    <div layout="row" class="hint" layout-align="space-around"> 
+      <div>layout="{{ firstCol }}"</div>
+      <div flex></div>
+      <div>layout="{{ secondCol }}"</div>
+    </div>
+  </div>
   `,
   encapsulation: ViewEncapsulation.None,
 })

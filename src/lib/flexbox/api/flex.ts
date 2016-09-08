@@ -12,6 +12,7 @@ import { Subscription } from "rxjs/Subscription";
 /**
  * FlexBox styling directive for 'flex'
  * Configures the width/height sizing of the element within a layout container
+ * @see https://css-tricks.com/snippets/css/a-guide-to-flexbox/
  */
 @Directive({
   selector:'[flex]',
@@ -27,9 +28,8 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
   constructor(@Optional() public container:LayoutDirective, public elRef: ElementRef, public renderer: Renderer) {
     super(elRef, renderer);
     if (container) {
-      // Subscribe to layout parent direction changes
-      // @TODO - the element with the Layout directive must be an immediate parent.
-      this._layoutWatcher = container.onLayoutChange.subscribe(this._onLayoutChange.bind(this));
+      this._layoutWatcher = container.onLayoutChange    // Subscribe to layout immediate parent direction changes
+          .subscribe(this._onLayoutChange.bind(this));
     }
   }
 
@@ -106,6 +106,7 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
 /**
  * 'flex-order' flexbox styling directive
  * Configures the positional ordering of the element in a sorted layout container
+ * @see https://css-tricks.com/almanac/properties/o/order/
  */
 @Directive({
   selector:'[flex-order]',
@@ -131,7 +132,7 @@ export class FlexOrderDirective extends BaseStyleDirective implements OnChanges 
 
 /**
  * 'flex-offset' flexbox styling directive
- * Configures the margin-left of the element in a layout container
+ * Configures the 'margin-left' of the element in a layout container
  */
 @Directive({
   selector:'[flex-offset]',
@@ -183,6 +184,41 @@ export class FlexFillDirective extends BaseStyleDirective {
   }
 }
 
+
+/**
+ * 'flex-align' flexbox styling directive
+ * Allows element-specific overrides for cross-axis alignments in a layout container
+ * @see https://css-tricks.com/almanac/properties/a/align-self/
+ */
+@Directive({
+  selector: '[flex-align]'
+})
+export class FlexAlignDirective extends BaseStyleDirective implements OnChanges {
+  @Input('flex-align') align : string = "stretch";    // default
+
+  constructor(public elRef: ElementRef, public renderer: Renderer) {
+    super(elRef, renderer);
+  }
+
+  ngOnChanges( changes?:SimpleChanges ) {
+    this._updateStyle(this._buildCSS( this.align ));
+  }
+
+  _buildCSS(align) {
+    let css = { };
+
+    // Cross-axis
+    switch( align ){
+       case "start"   : css['align-self'] = "flex-start";   break;
+       case "baseline": css['align-self'] = "baseline";     break;
+       case "center"  : css['align-self'] = "center";       break;
+       case "end"     : css['align-self'] = "flex-end";     break;
+       default        : css['align-self'] = "stretch";      break;  // default
+    }
+
+    return this._modernizer(css);
+  }
+}
 /**
  * *****************************************************************
  * Define module for all Layout API - Flex directives
@@ -194,13 +230,15 @@ export class FlexFillDirective extends BaseStyleDirective {
     FlexDirective,
     FlexOrderDirective,
     FlexOffsetDirective,
-    FlexFillDirective
+    FlexFillDirective,
+    FlexAlignDirective
   ],
   declarations: [
     FlexDirective,
     FlexOrderDirective,
     FlexOffsetDirective,
-    FlexFillDirective
+    FlexFillDirective,
+    FlexAlignDirective
   ],
 })
 export class NgFlexModule { }

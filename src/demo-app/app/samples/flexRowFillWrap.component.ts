@@ -2,14 +2,10 @@ import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
   selector: 'flex-row-fill-wrap',
-  styles : [
-    `.wrapped {
-        line-height: 22px;
-    }`
-  ],
   template: `
-    <p>Using layout-wrap to row items with layout="row"</p>        
-    <div [layout]="direction" layout-wrap class="colored wrapped" (click)="toggleDirection()">
+    <div>
+    <div class="title">Using "layout-wrap" to wrap positioned items within a layout container</div>        
+    <div [layout]="direction" layout-wrap class="colored wrapped box" (click)="toggleDirection()">
     
       <div flex="30"> [flex="30"] </div>
       <div flex="45"> [flex="45"] </div>
@@ -20,16 +16,18 @@ import {Component, ViewEncapsulation} from '@angular/core';
       <div flex>      [flex]      </div>
       
     </div>    
+    <div class="hint">layout = "{{ direction }}"</div>
+    </div>
+    
   `,
   encapsulation: ViewEncapsulation.None,
 })
 export class flexRowFillWrapComponent  {
   direction = "row";
 
-  /**
-   *
-   */
-  toggleDirection() {
-    this.direction = (this.direction === "row") ? "column" : "row";
-  }
+    toggleDirection() {
+      let next = (DIRECTIONS.indexOf(this.direction) +1 ) % DIRECTIONS.length;
+      this.direction = DIRECTIONS[next];
+    }
 }
+const DIRECTIONS = ['row', 'row-reverse', 'column', 'column-reverse'];
