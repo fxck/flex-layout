@@ -77,6 +77,19 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
   _validateValue(grow, shrink, basis) {
     let css, direction = (this._layout === 'column') || (this._layout == "column-reverse") ? 'column': 'row';
 
+    /*
+     * flex-basis allows you to specify the initial/starting main-axis size of the element,
+     * before anything else is computed. It can either be a percentage or an absolute value.
+     * It is, however, not the breaking point for flex-grow/shrink properties
+     *
+     * flex-grow can be seen as this:
+     *   0: Do not stretch. Either size to element's content width, or obey 'flex-basis'.
+     *   1: (Default value). Stretch; will be the same size to all other flex items on
+     *       the same row since they have a default value of 1.
+     *   ≥2 (integer n): Stretch. Will be n times the size of other elements
+     *      with 'flex-grow: 1' on the same row.
+     *
+     */
     switch(basis || "") {
        case ""      : css = { 'flex'  : '1'        }; break;
        case GROW    : css = { 'flex'  : "1 1 100%" }; break;
@@ -93,7 +106,7 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
          if ( basis === "0px" )                     basis = "0%";
 
          css = {
-           'flex' : `${grow} ${shrink} ${isPx ? basis : '100%'}`,     // Breaking change from ngM1 CSS
+           'flex' : `${grow} ${shrink} ${ isPx ? basis : '100%' }`,     // fix issue #5345
            'max-width'  : null,
            'max-height' : null
          };

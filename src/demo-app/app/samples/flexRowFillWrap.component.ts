@@ -1,7 +1,7 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'flex-row-fill-wrap',
+  selector: 'sample-flex-row-fill-wrap',
   template: `
     <div>
     <div class="title">Using "layout-wrap" to wrap positioned items within a layout container</div>        
@@ -22,7 +22,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class flexRowFillWrapComponent  {
+export class FlexRowFillWrapComponent  {
   direction = "row";
 
     toggleDirection() {

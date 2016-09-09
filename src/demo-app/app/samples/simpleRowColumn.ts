@@ -1,7 +1,7 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'simple-row-column',
+  selector: 'sample-simple-row-column',
   styles : [
     ".hint { margin:5px; font-size:0.9em;color: #a3a3a3; margin-bottom:0;}"
   ],

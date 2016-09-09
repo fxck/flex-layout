@@ -42,6 +42,10 @@ export class LayoutDirective extends BaseStyleDirective implements OnChanges {
 
     // Announce to subscribers a layout direction change
     this._layout.next(direction);
+
+    // @todo - update all child containers to have "box-sizing: border-box"
+    // This way any padding or border specified on the child elements are laid out and drawn inside
+    // that element's specified width and height
   }
 
   // *********************************************

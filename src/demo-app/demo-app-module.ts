@@ -7,7 +7,8 @@ import { DemoAppComponent } from './app/demo-app.component';
 
 import { SimpleRowColumnComponent } from './app/samples/simpleRowColumn';
 import { FlexRowFillComponent } from './app/samples/flexRowFill.component';
-import { flexRowFillWrapComponent } from './app/samples/flexRowFillWrap.component';
+import { FlexRowFillWrapComponent } from './app/samples/flexRowFillWrap.component';
+import { ComplexColumnOrderComponent } from './app/samples/columnOrder.component'
 
 import { Issue5345Component } from './app/issues/issue.5345.component';
 
@@ -15,9 +16,12 @@ import { Issue5345Component } from './app/issues/issue.5345.component';
 
   declarations    : [
     DemoAppComponent,
+
     SimpleRowColumnComponent,
     FlexRowFillComponent,
-    flexRowFillWrapComponent,
+    FlexRowFillWrapComponent,
+    ComplexColumnOrderComponent,
+
     Issue5345Component
   ],
   imports         : [ LayoutsModule, BrowserModule ],

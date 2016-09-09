@@ -10,11 +10,13 @@ import {Component, ViewEncapsulation} from '@angular/core';
         </span>
       </h2>
       
-      <simple-row-column class="small-demo"></simple-row-column>
+      <sample-simple-row-column class="small-demo"></sample-simple-row-column>
       
-      <flex-row-fill class="small-demo" ></flex-row-fill>
+      <sample-flex-row-fill class="small-demo" ></sample-flex-row-fill>
       
-      <flex-row-fill-wrap class="small-demo" ></flex-row-fill-wrap>
+      <sample-flex-row-fill-wrap class="small-demo" ></sample-flex-row-fill-wrap>
+      
+      <sample-complex-column-ordering class="small-demo" ></sample-complex-column-ordering>
       
       <issue-5345></issue-5345>
       

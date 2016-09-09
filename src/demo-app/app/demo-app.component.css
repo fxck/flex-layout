@@ -55,33 +55,33 @@ div.colored > div {
   text-align: center;
 }
 
-div.colored > div:nth-child(1) {
+div.colored > div:nth-child(1), .one {
   background-color: #009688;
 }
 
-div.colored > div:nth-child(2) {
+div.colored > div:nth-child(2), .two {
   background-color: #3949ab;
 }
 
-div.colored > div:nth-child(3) {
+div.colored > div:nth-child(3), .three {
   background-color: #9c27b0;
 }
 
 
-div.colored > div:nth-child(4) {
+div.colored > div:nth-child(4), .four {
   background-color: #8bc34a;
 }
 
-div.colored > div:nth-child(5) {
-  background-color: #deb867;
-}
-
-div.colored > div:nth-child(6) {
-  background-color: #FF5722;
-}
-
-div.colored > div:nth-child(7) {
+div.colored > div:nth-child(5), .five {
   background-color: #03A9F4;
+}
+
+div.colored > div:nth-child(6), .six {
+  background-color: #c9954e;
+}
+
+div.colored > div:nth-child(7), .seven {
+  background-color: #FF5722;
 }
 
 .hint {
