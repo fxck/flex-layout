@@ -93,10 +93,14 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
          if ( basis === "0px" )                     basis = "0%";
 
          css = {
-           'flex' : `${grow} ${shrink} ${basis}`,
-           'max-width'  : (direction == "row") ? basis : '100%',
-           'max-height' : (direction == "row") ? '100%' : basis
+           'flex' : `${grow} ${shrink} ${isPx ? basis : '100%'}`,     // Breaking change from ngM1 CSS
+           'max-width'  : null,
+           'max-height' : null
          };
+
+         let key = ( direction === 'row' ) ? 'max-width' : 'max-height';
+         css[ key ] = basis;
+
          break;
      }
      return Object.assign(css, { 'box-sizing' : 'border-box' });

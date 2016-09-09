@@ -225,6 +225,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
      let [, cross_axis] = align.split(" ");
 
      if ( cross_axis == "stretch") {
+       // Use `null` values to remove style
        this._updateStyle(this._modernizer({
          'box-sizing' : "border-box",
          'max-width'  : (layout === 'column') ? '100%' : null,
