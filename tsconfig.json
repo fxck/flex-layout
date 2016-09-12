@@ -10,16 +10,16 @@
     "pretty": true,
     "removeComments": true,
     "strictNullChecks": false,
-    "baseUrl": "./src",
     "noImplicitAny": false,
     "noImplicitReturns": false,
-    "suppressImplicitAnyIndexErrors": false,
+    "suppressImplicitAnyIndexErrors": true,
     "noEmitHelpers": true
   },
   "exclude": [
     "node_modules",
     "dist",
-    "deprecated"
+    "deprecated",
+    "demos"
   ],
   "awesomeTypescriptLoaderOptions": {
     "forkChecker": true,

@@ -3,6 +3,7 @@ import {
   Directive, Input, ElementRef, Renderer,
   SimpleChanges, Optional, OnChanges, OnDestroy
 } from '@angular/core';
+import {CommonModule} from "@angular/common";
 
 import { BaseStyleDirective } from "./_styleDirective";
 import { LayoutDirective } from "./layout";
@@ -107,12 +108,17 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
 
          css = {
            'flex' : `${grow} ${shrink} ${ isPx ? basis : '100%' }`,     // fix issue #5345
-           'max-width'  : null,
-           'max-height' : null
+           'max-width'  : null,                                         // use `null` to remove styles
+           'max-height' : null,
+           'min-width'  : null,
+           'min-height' : null
          };
 
-         let key = ( direction === 'row' ) ? 'max-width' : 'max-height';
-         css[ key ] = basis;
+         let max = ( direction === 'row' ) ? 'max-width' : 'max-height';
+         let min = ( direction === 'row' ) ? 'min-width' : 'min-height';
+
+         css[ min ] = (basis == '0%') ? basis : null;
+         css[ max ] = basis;
 
          break;
      }
@@ -186,7 +192,6 @@ export class FlexOffsetDirective extends BaseStyleDirective implements OnChanges
 export class FlexFillDirective extends BaseStyleDirective {
   constructor(public elRef: ElementRef, public renderer: Renderer) {
     super(elRef, renderer);
-
     this._updateStyle( this._buildCSS() );
   }
 
@@ -194,9 +199,9 @@ export class FlexFillDirective extends BaseStyleDirective {
     return this._modernizer({
       'margin'    : 0,
       'width'     : '100%',
-      'min-width' : '100%',  // @TODO confirm
-      'min-height': '100%',
-      'height'    : '100%'
+      'height'    : '100%',
+      'min-width' : '100%',
+      'min-height': '100%'
     });
   }
 }
@@ -243,6 +248,7 @@ export class FlexAlignDirective extends BaseStyleDirective implements OnChanges 
  */
 
 @NgModule({
+  imports: [CommonModule],
   exports: [
     FlexDirective,
     FlexOrderDirective,
@@ -258,7 +264,7 @@ export class FlexAlignDirective extends BaseStyleDirective implements OnChanges 
     FlexAlignDirective
   ],
 })
-export class NgFlexModule { }
+export class FlexDirectiveModule { }
 
 
 

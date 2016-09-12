@@ -1,13 +1,13 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
 
-import { NgLayoutModule } from './api/layout';
-import { NgFlexModule } from './api/flex';
+import { LayoutDirectivesModule } from './api/layout';
+import { FlexDirectiveModule } from './api/flex';
 
 
 
 const LAYOUTS_MODULES = [
-  NgLayoutModule,
-  NgFlexModule
+  LayoutDirectivesModule,
+  FlexDirectiveModule
 ];
 
 @NgModule({
@@ -24,7 +24,8 @@ export class LayoutsRootModule { }
 export class LayoutsModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: LayoutsRootModule
+      ngModule: LayoutsRootModule,
+      providers : [ ]
     };
   }
 }

@@ -3,6 +3,7 @@ import {
   Directive, Renderer, ElementRef, Input,
   SimpleChanges, Optional, OnChanges, OnDestroy,
 } from '@angular/core';
+import {CommonModule} from '@angular/common';
 
 import { BaseStyleDirective } from "./_styleDirective";
 import { Observable } from "rxjs/Observable";
@@ -247,6 +248,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
  */
 
 @NgModule({
+  imports: [CommonModule],
   exports: [
     LayoutDirective,
     LayoutWrapDirective,
@@ -258,7 +260,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
     LayoutAlignDirective
   ],
 })
-export class NgLayoutModule { }
+export class LayoutDirectivesModule { }
 
 // ************************************************************
 // Private static variables

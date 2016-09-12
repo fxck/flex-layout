@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
 const LiveReloadPlugin = require('webpack-livereload-plugin');
-
+// const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
 
 module.exports = {
 
@@ -90,6 +90,10 @@ module.exports = {
       * See: https://github.com/s-panferov/awesome-typescript-loader#forkchecker-boolean-defaultfalse
       */
      new ForkCheckerPlugin(),
+
+     // new TsConfigPathsPlugin({
+     //   tsconfig : 'src/demo-app/tsconfig.json'
+     // }),
 
      /**
        * Plugin: CommonsChunkPlugin
