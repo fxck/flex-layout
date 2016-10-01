@@ -1,8 +1,8 @@
 # Angular 2 Layouts
 
-This is a TypeScript implementation for Angular 2 flex-box Layouts. This module provides Angular 2 developers with component layout features using a custom Layout API & internal flexbox-2016 css stylings. 
+This is a TypeScript implementation for Angular 2 *flexbox* Layouts. This module provides Angular 2 developers with component layout features using a custom Layout API & internal flexbox-2016 css stylings. 
 
-> This Angular 2 version is independent of Angular Material (v1 or v2).
+> This Angular 2 version is independent of Angular Material (v1 or v2); but is currently only available for Angular 2 applications
 
 
 ### Fast Start
