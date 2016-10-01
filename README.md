@@ -1,12 +1,10 @@
 # Angular Layout Engine
 
-This is a TypeScript implementation of Angular 2 Layouts.
-
-This module provides Angular 2 developers with component layout features using a Layout API & FlexBox-2016 CSS. 
-
-Based Angular Material's v1.x implementation, this delivers **flexbox 2016** with **Angular 2**-superpowers!
+This is a TypeScript implementation of Angular 2 Layouts. This module provides Angular 2 developers with component layout features using a Layout API & FlexBox-2016 CSS. 
 
 > This Angular 2 version is independent of Angular Material (v1 or v2).
+
+Based Angular Material's v1.x implementation, this delivers **flexbox 2016** with **Angular 2**-superpowers!
 
 
 ![demos3](https://cloud.githubusercontent.com/assets/210413/11566167/e074446c-99a6-11e5-8b69-4e84ed0a1dde.jpg)
