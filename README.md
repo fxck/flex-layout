@@ -4,13 +4,11 @@ This is a TypeScript implementation of Angular 2 Layouts. This module provides A
 
 > This Angular 2 version is independent of Angular Material (v1 or v2).
 
-![demos3](https://cloud.githubusercontent.com/assets/210413/11566167/e074446c-99a6-11e5-8b69-4e84ed0a1dde.jpg)
-
-
 Developers can easily install this `@angular/layouts` library using **npm**.
-In the application module, simply developers import the global Layout API directives as shown below: 
 
-```
+In their application module, simply developers import the global Layout API directives (as shown below): 
+
+```ts
 import { AngularLayouts } from '@angular/layouts';
 
 @NgModule({
@@ -31,6 +29,8 @@ export class DemoAppModule { }
 
 The Angular Layout features provide smart, syntactic sugar to allow developers to easily and intuitively create 
 responsive and adaptive layouts. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
+
+![demos3](https://cloud.githubusercontent.com/assets/210413/11566167/e074446c-99a6-11e5-8b69-4e84ed0a1dde.jpg)
 
 <br/>
 
