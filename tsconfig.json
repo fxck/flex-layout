@@ -16,6 +16,10 @@
     "noEmitHelpers": true
   },
   "exclude": [
+    "../node_modules",
+    "../demos",
+    "../deprecated",
+    "../dist",
     "node_modules",
     "dist",
     "deprecated",

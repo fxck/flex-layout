@@ -2,8 +2,17 @@ const webpack = require('webpack');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+const ContextReplacementPlugin = require('webpack/lib/ContextReplacementPlugin');
 const LiveReloadPlugin = require('webpack-livereload-plugin');
-// const TsConfigPathsPlugin = require('awesome-typescript-loader').TsConfigPathsPlugin;
+
+var path = require('path');
+var ROOT = path.resolve(__dirname, '..');
+
+function root(args) {
+  args = Array.prototype.slice.call(arguments, 0);
+  return path.join.apply(path, [ROOT].concat(args));
+}
+
 
 module.exports = {
 
@@ -56,12 +65,12 @@ module.exports = {
       {
         test: /\.ts$/,
         loaders: [
+          '@angularclass/hmr-loader',
           'awesome-typescript-loader',
-          'angular2-template-loader',
-          '@angularclass/hmr-loader'
+          'angular2-template-loader'
         ],
         exclude: [/\.(spec|e2e)\.ts$/,  /node_modules/, /demos/, /deprecated/],
-        noParse : [ /angular/ ]
+        noParse : [ /angular/, /\@angular/ ]
       },
       { test: /\.html$/, loader: 'html-loader' },
       { test: /\.css$/, loader: "raw" },
@@ -91,10 +100,6 @@ module.exports = {
       */
      new ForkCheckerPlugin(),
 
-     // new TsConfigPathsPlugin({
-     //   tsconfig : 'src/demo-app/tsconfig.json'
-     // }),
-
      /**
        * Plugin: CommonsChunkPlugin
        * Description: Shares common code between the pages.
@@ -107,6 +112,18 @@ module.exports = {
         name: ['polyfills', 'vendor', 'main'].reverse()
       }),
 
+      /**
+       * Plugin: ContextReplacementPlugin
+       * Description: Provides context to Angular's use of System.import
+       *
+       * See: https://webpack.github.io/docs/list-of-plugins.html#contextreplacementplugin
+       * See: https://github.com/angular/angular/issues/11580
+       */
+      new ContextReplacementPlugin(
+        // The (\\|\/) piece accounts for path separators in *nix and Windows
+        /angular(\\|\/)core(\\|\/)(esm(\\|\/)src|src)(\\|\/)linker/,
+        root('./src') // location of your src
+      ),
 
      /**
        * Plugin: HtmlWebpackPlugin
@@ -123,3 +140,5 @@ module.exports = {
 
     ]
 };
+
+

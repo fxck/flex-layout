@@ -4,22 +4,21 @@ import { LayoutDirectivesModule } from './api/layout';
 import { FlexDirectiveModule } from './api/flex';
 
 
-
-const LAYOUTS_MODULES = [
+const ALL_MODULES = [
   LayoutDirectivesModule,
   FlexDirectiveModule
 ];
 
 @NgModule({
-  imports: LAYOUTS_MODULES,
-  exports: LAYOUTS_MODULES
+  imports: ALL_MODULES,
+  exports: ALL_MODULES
 })
 export class LayoutsRootModule { }
 
 
 @NgModule({
-  imports: LAYOUTS_MODULES,
-  exports: LAYOUTS_MODULES,
+  imports: ALL_MODULES,
+  exports: ALL_MODULES,
 })
 export class LayoutsModule {
   static forRoot(): ModuleWithProviders {

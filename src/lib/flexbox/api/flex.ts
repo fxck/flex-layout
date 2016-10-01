@@ -1,7 +1,7 @@
 import {
   NgModule,
   Directive, Input, ElementRef, Renderer,
-  SimpleChanges, Optional, OnChanges, OnDestroy
+  SimpleChanges, Optional, OnChanges, OnDestroy, SkipSelf
 } from '@angular/core';
 import {CommonModule} from "@angular/common";
 
@@ -26,12 +26,18 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
   @Input() grow:number = 1;
   @Input() flex:string;
 
-  constructor(@Optional() public container:LayoutDirective, public elRef: ElementRef, public renderer: Renderer) {
-    super(elRef, renderer);
-    if (container) {
-      this._layoutWatcher = container.onLayoutChange    // Subscribe to layout immediate parent direction changes
-          .subscribe(this._onLayoutChange.bind(this));
-    }
+  /**
+   * Note: the optional `layout="column|row"` directive must be PARENT container.
+   */
+  constructor(
+    @Optional() @SkipSelf() private container:LayoutDirective,
+    private elRef: ElementRef, private renderer: Renderer) {
+      super(elRef, renderer);
+
+      if (container) {
+        this._layoutWatcher = container.onLayoutChange    // Subscribe to layout immediate parent direction changes
+            .subscribe(this._onLayoutChange.bind(this));
+      }
   }
 
   // *********************************************
