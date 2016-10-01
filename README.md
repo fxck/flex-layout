@@ -46,7 +46,7 @@ In their component templates, developers easily use the Layout API:
 ``` 
 
 
-#### Overview
+### Overview
 
 The Angular Layout features provide smart, syntactic sugar to allow developers to easily and intuitively create 
 responsive and adaptive layouts. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
