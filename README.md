@@ -13,7 +13,7 @@ Developers can easily install this `@angular/layouts` library using **npm**:
 npm install @angular/layouts -save
 ```
 
-In their application module, simply developers import the global Layout API directives (as shown below): 
+In their application module, developers import the global Layout API directives (as shown below): 
 
 ```ts
 // demo-app-module.ts
@@ -30,6 +30,20 @@ import { AngularLayouts } from '@angular/layouts';
 export class DemoAppModule { }
 ```
 
+In their component templates, developers easily use the Layout API:
+
+```html
+<div layout="row">
+  <div [layout]="firstCol" flex="25%" (click)="toggleLayoutFor(1)">
+    <div flex>First item in row</div>
+    <div flex>Second item in row</div>
+  </div>
+  <div [layout]="secondCol" flex (click)="toggleLayoutFor(2)">
+    <div flex>First item in column</div>
+    <div flex>Second item in column</div>
+  </div>
+</div>
+``` 
 
 
 #### Overview
