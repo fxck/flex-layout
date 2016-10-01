@@ -1,34 +1,49 @@
 # Angular Layout Engine
 
-This is a TypeScript implementation of Angular 2 Layouts. This module provides Angular 2 developers with component layout features using a Layout API & FlexBox-2016 CSS. 
+This is a TypeScript implementation of Angular 2 Layouts. This module provides Angular 2 developers with component layout features using a custom Layout API & internal flexbox-2016 css stylings. 
 
 > This Angular 2 version is independent of Angular Material (v1 or v2).
-
-Based Angular Material's v1.x implementation, this delivers **flexbox 2016** with **Angular 2**-superpowers!
-
 
 ![demos3](https://cloud.githubusercontent.com/assets/210413/11566167/e074446c-99a6-11e5-8b69-4e84ed0a1dde.jpg)
 
 
-#### Summary
+Developers can easily install this `@angular/layouts` library using **npm**.
+In the application module, simply developers import the global Layout API directives as shown below: 
 
-Angular Material's Layout features were originally purposed as syntactic CSS sugar to allow developers to easily and intuitively create responsive and adaptive layouts. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
+```
+import { AngularLayouts } from '@angular/layouts';
+
+@NgModule({
+  imports: [
+    BrowserModule,
+    FormsModule,
+    HttpModule,
+    RouterModule.forRoot(APP_ROUTES),
+    LayoutsModule.forRoot(),
+  ], 
+)}
+export class DemoAppModule { }
+```
+
+
+
+#### Overview
+
+The Angular Layout features provide smart, syntactic sugar to allow developers to easily and intuitively create 
+responsive and adaptive layouts. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
 
 <br/>
 
 | HTML Markup API | Allowed values (raw or interpolated) |
 |-----------------|----------------------------------------------------------------------------|
-|  layout         | `row | column`                                                          |                  
-|  flex           | "" , px , %                                                              |              
-|  flex-order     | int                                                                        |                       
-|  flex-offset    | px                                                                         |     
-|  layout-fill    |                                                                            |
+|  layout         | `row | column | row-reverse | column-reverse`                                                          |                  
 |  layout-wrap    | `"" | wrap | none | nowrap | reverse`                                     |                   
-|  layout-margin  | px , %                                                                    |                           
-|  layout-padding | px , %                                                                    |        
 |  layout-align   | `start|center|end|space-around|space-between` `start|center|end|stretch`|                   
-|  show           | `""  | true  | 1`                                                        | 
-|  hide           | `""  | true  | 1`                                                        | 
+|  flex           | "" , px , %                                                              |              
+|  flex-fill      |                                                                            |
+|  flex-order     | int                                                                        |                       
+|  flex-offset    | %, px                                                                         |     
+|  flex-align     | `start|baseline|center|end` |                   
 
 <br/>
 
