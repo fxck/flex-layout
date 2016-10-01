@@ -30,7 +30,8 @@ import { AngularLayouts } from '@angular/layouts';
 export class DemoAppModule { }
 ```
 
-In their component templates, developers easily use the Layout API:
+In their component templates, developers easily use the Layout API to build
+complex, dynamic layouts:
 
 ```html
 <div layout="row">
