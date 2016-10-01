@@ -17,10 +17,8 @@ import { AngularLayouts } from '@angular/layouts';
 @NgModule({
   imports: [
     BrowserModule,
-    FormsModule,
-    HttpModule,
-    RouterModule.forRoot(APP_ROUTES),
-    LayoutsModule.forRoot(),
+    FormsModule, HttpModule, 
+    AngularLayouts.forRoot(),           // import dependency on ng2 Layouts
   ], 
 )}
 export class DemoAppModule { }
