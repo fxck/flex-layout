@@ -1,7 +1,7 @@
 {
-  "name": "material.layouts",
+  "name": "@angular/layouts",
   "version": "2.0.0-alpha.1",
-  "description": "Angular Layouts",
+  "description": "Angular 2 Layouts",
   "main": "index.js",
   "repository": {
     "type": "git",
