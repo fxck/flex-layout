@@ -7,11 +7,17 @@ This is a TypeScript implementation for Angular 2 flex-box Layouts. This module 
 
 ### Fast Start
 
-Developers can easily install this `@angular/layouts` library using **npm**.
+Developers can easily install this `@angular/layouts` library using **npm**:
+
+```console
+npm install @angular/layouts -save
+```
 
 In their application module, simply developers import the global Layout API directives (as shown below): 
 
 ```ts
+// demo-app-module.ts
+
 import { AngularLayouts } from '@angular/layouts';
 
 @NgModule({
