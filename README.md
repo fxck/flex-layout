@@ -34,13 +34,13 @@ In their component templates, developers easily use the Layout API:
 
 ```html
 <div layout="row">
-  <div [layout]="firstCol" [flex]="'25%'" >
-    <div flex>First item in row</div>
+  <div [layout]="firstCol" [flex]="firstColWidth" >
+    <div flex="27%">First item in row</div>
     <div flex>Second item in row</div>
   </div>
   <div [layout]="secondCol" flex >
     <div flex>First item in column</div>
-    <div flex>Second item in column</div>
+    <div flex="33px">Second item in column</div>
   </div>
 </div>
 ``` 
