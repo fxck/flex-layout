@@ -1,35 +1,62 @@
 import {
   NgModule,
   Directive, Renderer, ElementRef, Input,
-  SimpleChanges, Optional, OnChanges, OnDestroy,
+  SimpleChanges, Optional, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 
 import { BaseStyleDirective } from "./_styleDirective";
-import { Observable } from "rxjs/Observable";
-import { BehaviorSubject } from "rxjs/BehaviorSubject";
+import { MediaQueryAdapter, MediaQueryChanges, OnMediaQueryChanges } from "../media-query/media-query-adapter";
+
 import { Subscription } from "rxjs/Subscription";
+import { Observable }from "rxjs/Observable";
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 /**
  * 'layout' flexbox styling directive
  * Defines the positioning flow direction for the child elements: row or column
  * Optional values: column or row (default)
  * @see https://css-tricks.com/almanac/properties/f/flex-direction/
+ *
  */
 @Directive({
   selector: '[layout]'
 })
-export class LayoutDirective extends BaseStyleDirective implements OnChanges {
+export class LayoutDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges {
   /**
    * Create Observable for nested/child 'flex' directives. This allows
    * child flex directives to subscribe/listen for flexbox direction changes.
    */
   private _layout: BehaviorSubject<string> = new BehaviorSubject<string>(this.layout);
+
+  /**
+   * Publish observer for nested directives to listen to parent "layout" direction changes
+   */
   public onLayoutChange: Observable<string> = this._layout.asObservable();
 
+  /**
+   * Default layout property with default direction value
+   */
   @Input() layout = 'row';
 
-  constructor(public elRef: ElementRef, public renderer: Renderer) {
+  // *******************************************************
+  // Optional input variations to support mediaQuery triggers
+  // *******************************************************
+
+  @Input('layout.xs')     layoutXs;
+  @Input('layout.gt-xs')  layoutGtXs;
+  @Input('layout.sm')     layoutSm;
+  @Input('layout.gt-sm')  layoutGtSm;
+  @Input('layout.md')     layoutMd;
+  @Input('layout.gt-md')  layoutGtMd;
+  @Input('layout.lg')     layoutLg;
+  @Input('layout.gt-lg')  layoutGtLg;
+  @Input('layout.xl')     layoutXl;
+
+  /**
+   *
+   */
+  constructor(public elRef: ElementRef, public renderer: Renderer, public mqAdaptor: MediaQueryAdapter) {
     super(elRef, renderer);
   }
 
@@ -38,7 +65,51 @@ export class LayoutDirective extends BaseStyleDirective implements OnChanges {
   // *********************************************
 
   ngOnChanges( changes:SimpleChanges ) {
-    let direction = this._validateValue(this.layout);
+    this._updateWithDirection( changes['layout'].currentValue || 'row' );
+  }
+
+  ngOnInit() {
+    this.mqAdaptor.attach(this, "layout");
+  }
+
+  /**
+   *  Special mql callback used my MediaQueryAdapter when a mql event occurs
+   */
+  ngOnMediaQueryChanges(changes: MediaQueryChanges) {
+    let current = changes.current, previous = changes.previous;
+    let direction = this.layout;
+
+    if ( previous ) {
+      if ( previous.mqAlias == "" ) previous.mqAlias = "all";
+
+      console.log(`mqChange[previous]: ${previous.mqAlias} = ${previous.matches}`);
+
+      let previousKey = previous ? "layout" + previous.suffix : null;
+      direction = this[previousKey] || direction;
+    }
+
+    if ( current && current.mqAlias == "" )  current.mqAlias = "all";
+    console.log(`mqChange[current]: ${current.mqAlias} = ${current.matches};`);
+
+    if ( changes.current.matches ) {
+      let input = "layout" + current.suffix;
+      direction = this[ input ] || direction;
+    }
+
+    this._updateWithDirection(direction);
+  }
+
+
+
+  // *********************************************
+  // Protected methods
+  // *********************************************
+
+  /**
+   * Validate the direction value and then update the host's inline flexbox styles
+   */
+  _updateWithDirection(direction) {
+    direction = this._validateValue(direction);
     this._updateStyle(this._buildCSS(direction));
 
     // Announce to subscribers a layout direction change
@@ -49,9 +120,6 @@ export class LayoutDirective extends BaseStyleDirective implements OnChanges {
     // that element's specified width and height
   }
 
-  // *********************************************
-  // Protected methods
-  // *********************************************
 
   /**
    * Build the CSS that should be assigned to the element instance
@@ -103,6 +171,9 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnChanges
 
   ngOnChanges( changes:SimpleChanges ) {
     this._updateStyle( this._buildCSS(this.wrap || 'wrap') );
+  }
+
+  ngOnDestroy(){
   }
 
   // *********************************************
@@ -258,7 +329,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
     LayoutDirective,
     LayoutWrapDirective,
     LayoutAlignDirective
-  ],
+  ]
 })
 export class LayoutDirectivesModule { }
 
