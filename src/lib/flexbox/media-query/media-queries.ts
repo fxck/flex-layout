@@ -1,4 +1,3 @@
-import { NgModule } from '@angular/core';
 import {Injectable} from "@angular/core";
 
 import { Observable } from "rxjs/Observable";
@@ -88,29 +87,3 @@ export class MediaQueries {
 }
 
 
-/**
- * *****************************************************************
- * Define module for all Layout API - Layout directives
- * *****************************************************************
- */
-
-@NgModule({
-  exports : [
-    BreakPoints,
-    MediaQueries,
-    MediaQueryAdapter
-  ],
-  providers : [ ]
-})
-export class MediaQueriesModule {
-  static forRoot() {
-    return {
-      ngModule : MediaQueriesModule,
-      providers : [
-        BreakPoints,
-        MediaQueries,
-        MediaQueryAdapter
-      ]
-    };
-  }
- }

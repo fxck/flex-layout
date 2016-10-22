@@ -9,7 +9,12 @@ import {Component, ViewEncapsulation} from '@angular/core';
   <div>
     <div class="title">Simple row with nested layout containers.</div> 
     <div class="colorNested box" layout="row">
-      <div [layout]="firstCol" [layout.xs]="'column'" layout.md="column" layout.lg="invalid"  [layout.gt-lg]="firstCol" flex="25%" (click)="toggleLayoutFor(1)">
+      <div  [layout]="firstCol" 
+            [layout.xs]="'column'" 
+            layout.md="column" 
+            layout.lg="invalid"  
+            [layout.gt-lg]="firstCol" 
+            flex="25%" (click)="toggleLayoutFor(1)">
         <div flex>First item in row</div>
         <div flex>Second item in row</div>
       </div>

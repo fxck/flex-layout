@@ -1,13 +1,12 @@
 import {Renderer, ElementRef, OnDestroy} from "@angular/core";
-import { MediaQueries } from "../media-query/media-queries";
 import modernizer from '../../utils/modernizer';
 
 export type StyleUpdateFn = (key:string|Object, value?:string) => void;
 
 /**
- * Abstract base class for the Layout flexbox styling directives
+ * Abstract base class for the Layout API styling directives
  */
-export class BaseStyleDirective implements OnDestroy {
+export abstract class BaseStyleDirective implements OnDestroy {
 
   // Initialize to no-op
   protected _updateStyle : StyleUpdateFn = (key:string|Object, value?:string) => { };
@@ -21,7 +20,6 @@ export class BaseStyleDirective implements OnDestroy {
   // *********************************************
 
   ngOnDestroy(){    }
-
 
   // *********************************************
   // Protected methods

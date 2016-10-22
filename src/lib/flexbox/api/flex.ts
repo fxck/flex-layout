@@ -1,11 +1,9 @@
 import {
-  NgModule,
   Directive, Input, ElementRef, Renderer,
   SimpleChanges, Optional, OnChanges, OnDestroy, SkipSelf
 } from '@angular/core';
-import {CommonModule} from "@angular/common";
 
-import { BaseStyleDirective } from "./_styleDirective";
+import { BaseStyleDirective } from "./_abstract";
 import { LayoutDirective } from "./layout";
 import { Subscription } from "rxjs/Subscription";
 
@@ -28,6 +26,12 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
 
   /**
    * Note: the optional `layout="column|row"` directive must be PARENT container.
+   *
+   * <div layout="row">
+   *    <div flex="25%" layout="column">
+   *      ...
+   *    </div>
+   * </div>
    */
   constructor(
     @Optional() @SkipSelf() private container:LayoutDirective,
@@ -247,30 +251,7 @@ export class FlexAlignDirective extends BaseStyleDirective implements OnChanges 
     return this._modernizer(css);
   }
 }
-/**
- * *****************************************************************
- * Define module for all Layout API - Flex directives
- * *****************************************************************
- */
 
-@NgModule({
-  imports: [CommonModule],
-  exports: [
-    FlexDirective,
-    FlexOrderDirective,
-    FlexOffsetDirective,
-    FlexFillDirective,
-    FlexAlignDirective
-  ],
-  declarations: [
-    FlexDirective,
-    FlexOrderDirective,
-    FlexOffsetDirective,
-    FlexFillDirective,
-    FlexAlignDirective
-  ],
-})
-export class FlexDirectiveModule { }
 
 
 

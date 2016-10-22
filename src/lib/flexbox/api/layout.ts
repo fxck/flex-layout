@@ -1,11 +1,9 @@
 import {
-  NgModule,
   Directive, Renderer, ElementRef, Input,
   SimpleChanges, Optional, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
-import {CommonModule} from '@angular/common';
 
-import { BaseStyleDirective } from "./_styleDirective";
+import { BaseStyleDirective } from "./_abstract";
 import { MediaQueryAdapter, MediaQueryChanges, OnMediaQueryChanges } from "../media-query/media-query-adapter";
 
 import { Subscription } from "rxjs/Subscription";
@@ -56,7 +54,7 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
   /**
    *
    */
-  constructor(public elRef: ElementRef, public renderer: Renderer, public mqAdaptor: MediaQueryAdapter) {
+  constructor(private _$mq: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
   }
 
@@ -69,7 +67,7 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
   }
 
   ngOnInit() {
-    this.mqAdaptor.attach(this, "layout");
+    this._$mq.attach(this, "layout");
   }
 
   /**
@@ -298,27 +296,6 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
    }
 }
 
-
-/**
- * *****************************************************************
- * Define module for all Layout API - Layout directives
- * *****************************************************************
- */
-
-@NgModule({
-  imports: [CommonModule],
-  exports: [
-    LayoutDirective,
-    LayoutWrapDirective,
-    LayoutAlignDirective
-  ],
-  declarations: [
-    LayoutDirective,
-    LayoutWrapDirective,
-    LayoutAlignDirective
-  ]
-})
-export class LayoutDirectivesModule { }
 
 // ************************************************************
 // Private static variables

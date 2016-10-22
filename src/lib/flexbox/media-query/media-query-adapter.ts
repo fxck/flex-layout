@@ -3,6 +3,7 @@ import { MediaQueries, MediaQueryChange } from "./media-queries";
 import { Subscription } from "rxjs/Subscription";
 import 'rxjs/add/operator/map';
 
+import {BreakPoints} from "./break-points";
 import { isDefined } from '../../utils/global';
 
 const ON_MEDIA_CHANGES = 'ngOnMediaQueryChanges';
@@ -81,14 +82,25 @@ export class MediaQueryChanges {
   }
 }
 
-
+/**
+ *  Adapter between Layout API directives and the MediaQueries mdl service
+ *
+ *  Using this adapter encapsulates most of the complexity of mql subscriptions
+ *  and insures lean integration-code in the Layout directives
+ */
 @Injectable()
 export class MediaQueryAdapter {
+
+  private _breakpoints : BreakPoints;
+  private _$mq : MediaQueries;
 
   /**
    *
    */
-  constructor(public $mq : MediaQueries) { }
+  constructor(breakpoints : BreakPoints) {
+    this._breakpoints = breakpoints;
+    this._$mq = new MediaQueries( breakpoints );
+  }
 
   /**
    *
@@ -132,12 +144,12 @@ export class MediaQueryAdapter {
       if ( isDefined(directive[it.key]) ) {
 
           let lastEvent : MediaQueryChange,
-              mergeWithLastEvent = function (e:MediaQueryChange) : MediaQueryChanges {
+              mergeWithLastEvent = function (current:MediaQueryChange) : MediaQueryChanges {
                 let previous = lastEvent;
-                    lastEvent = e;
-                return {  previous : previous, current : e };
+                    lastEvent = current;
+                return new MediaQueryChanges(previous, current);
               },
-              subscription = this.$mq.observe( it.alias )
+              subscription = this._$mq.observe( it.alias )
                   .map( mergeWithLastEvent )
                   .subscribe( subscriber );
 
@@ -152,7 +164,7 @@ export class MediaQueryAdapter {
    * Build mediaQuery key-hashmap; only for the directive properties that are actually defined
    */
   private _buildRegistryMap(directive : Directive, key:string) {
-    return this.$mq.breakpoints
+    return this._breakpoints.registry
       .map(it => {
         return {
           key   : key + it.suffix,

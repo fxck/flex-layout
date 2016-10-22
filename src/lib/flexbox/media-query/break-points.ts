@@ -6,10 +6,18 @@ export interface BreakPoint {
   alias: string;
 }
 
+/**
+ * Registry of 1..n MediaQuery breakpoint ranges
+ * This is published as a provider and may be overriden from custom, application-specific ranges
+ *
+ */
 @Injectable()
 export class BreakPoints {
   public registry: Array<BreakPoint>;
 
+  /**
+   *
+   */
   constructor() {
     this.registry = [
       { alias: ''     , suffix: ''     , mediaQuery: 'screen'                                                 },
@@ -25,6 +33,9 @@ export class BreakPoints {
     ];
   }
 
+  /**
+   *
+   */
   findBreakpointBy(alias: string): BreakPoint {
     for (let bp of this.registry) {
       if (bp.alias == alias) {
@@ -42,6 +53,9 @@ export class BreakPoints {
       .map(it => it.alias );
   }
 
+  /**
+   *
+   */
   get suffixes() : Array<string> {
     return this.registry
       .map(it => it.suffix );

@@ -1,13 +1,11 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
 
-import { LayoutDirectivesModule } from './api/layout';
-import { FlexDirectiveModule } from './api/flex';
-import { MediaQueriesModule } from './media-query/media-queries';
+import { LayoutDirectivesModule } from './api/_modules';
+import { MediaQueriesModule } from './media-query/_modules';
 
 
 const ALL_MODULES = [
   LayoutDirectivesModule,
-  FlexDirectiveModule,
   MediaQueriesModule
 ];
 
