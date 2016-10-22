@@ -92,6 +92,11 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
 
   /**
    * Validate the direction value and then update the host's inline flexbox styles
+   *
+   * @todo - update all child containers to have "box-sizing: border-box"
+   *         This way any padding or border specified on the child elements are
+   *         laid out and drawn inside that element's specified width and height.
+   *
    */
   _updateWithDirection(direction) {
     direction = this._validateValue(direction);
@@ -99,21 +104,17 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
 
     // Announce to subscribers a layout direction change
     this._layout.next(direction);
-
-    // @todo - update all child containers to have "box-sizing: border-box"
-    // This way any padding or border specified on the child elements are laid out and drawn inside
-    // that element's specified width and height
   }
 
 
   /**
    * Build the CSS that should be assigned to the element instance
+   * BUG:
+   *
+   *   1) min-height on a column flex container won’t apply to its flex item children in IE 10-11.
+   *      Use height instead if possible; height : <xxx>vh;
    */
   _buildCSS(value) {
-    /**
-     *  BUG - min-height on a column flex container won’t apply to its flex item children in IE 10-11.
-     *  Use height instead if possible.
-     */
     return this._modernizer({
       'display'         : 'flex',
       'box-sizing'      : 'border-box',
