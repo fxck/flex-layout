@@ -12,12 +12,13 @@ const ON_DESTROY = 'ngOnDestroy';
 // Exported Types and Interfaces
 // ****************************************************************
 
-export interface MediaQueryChanges {
-  previous : MediaQueryChange;
-  current : MediaQueryChange;
+export interface InputKeys {
+  previous : string;
+  current : string;
 }
 
 export type MediaQuerySubscriber = (e:MediaQueryChanges) => { };
+
 
 /**
  * @whatItDoes Lifecycle hook that is called when any mediaQuery breakpoint changes.
@@ -35,6 +36,52 @@ export declare type SubscriptionList = Array<Subscription>;
 // ****************************************************************
 // ****************************************************************
 
+
+/**
+ * MQ Notification data emitted to external observers
+ *
+ * Contains usefule 'extractInputKeysFor()' method to easily map mq changes to input
+ * property value lookups.
+ *
+ */
+export class MediaQueryChanges {
+
+  constructor(public previous : MediaQueryChange, public current : MediaQueryChange) { }
+
+  /**
+   * For the specified @Input property, build input property names for the associated
+   * mq changes. These names are used to easily lookup the associated property values.
+   */
+  public extractInputKeysFor( baseKey:string ): InputKeys {
+    let current = this.current, previous = this.previous;
+    let previousKey = previous ? baseKey + previous.suffix : undefined;
+    let currentKey = baseKey + current.suffix;
+
+    this._logMediaQueryChanges( baseKey );
+
+    return {
+      previous : previousKey,
+      current : currentKey
+    };
+  }
+
+  /**
+   * Internal Logging mechanism
+   */
+  private _logMediaQueryChanges( baseKey : string = "" ) {
+    let current = this.current, previous = this.previous;
+
+    if ( current && current.mqAlias == "" )  current.mqAlias = "all";
+    if ( previous && previous.mqAlias == "" ) previous.mqAlias = "all";
+
+    if ( previous ) {
+      console.log(`mqChange[previous]: ${baseKey}.${previous.mqAlias} = ${previous.matches}`);
+    }
+    console.log(`mqChange[current]: ${baseKey}.${current.mqAlias} = ${current.matches};`);
+  }
+}
+
+
 @Injectable()
 export class MediaQueryAdapter {
 
@@ -50,9 +97,9 @@ export class MediaQueryAdapter {
     let handler = directive[ ON_MEDIA_CHANGES ];
 
     if ( handler ) {
-      let keys = this._buildMediaQueryKeysFor(directive, property);
+      let keys = this._buildRegistryMap(directive, property);
 
-      this._listenOnDestroy( directive, this._listenMediaChanges(directive, keys, handler.bind(directive)) );
+      this._listenOnDestroy( directive, this._configureChangeObservers(directive, keys, handler.bind(directive)) );
     }
   }
 
@@ -77,7 +124,7 @@ export class MediaQueryAdapter {
    * For each API property, register a callback to ngOnMediaQueryChanges(e:MediaQueryEvent)
    * Cache 1..n subscriptions for internal auto-unsubscribes during the directive ngOnDestory() notification
    */
-  private _listenMediaChanges( directive : Directive, keys : any, subscriber : MediaQuerySubscriber ) : SubscriptionList {
+  private _configureChangeObservers(directive : Directive, keys : any, subscriber : MediaQuerySubscriber ) : SubscriptionList {
     let subscriptions = [ ];
 
     keys.forEach(it => {
@@ -104,7 +151,7 @@ export class MediaQueryAdapter {
   /**
    * Build mediaQuery key-hashmap; only for the directive properties that are actually defined
    */
-  private _buildMediaQueryKeysFor(directive : Directive, key:string) {
+  private _buildRegistryMap(directive : Directive, key:string) {
     return this.$mq.breakpoints
       .map(it => {
         return {

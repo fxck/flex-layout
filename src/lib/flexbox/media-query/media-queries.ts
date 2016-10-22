@@ -64,13 +64,18 @@ export class MediaQueries {
    */
   private prepareWatchers(ranges:Array<BreakPoint>) {
     ranges.forEach((it:BreakPoint)=> {
-      let mql = MediaQueryListFactory.instanceOf((it.mediaQuery));
+      let mql = this._mqls[ it.mediaQuery ];
+      if ( !mql) {
 
-      // Each listener uses a shared eventHandler: which emits specific data to observers
-      mql.addListener(this.onMQLEvent.bind(this,it));
+        mql = MediaQueryListFactory.instanceOf((it.mediaQuery));
 
-      // Cache this permanent listener
-      this._mqls[ it.mediaQuery ] = mql;
+        // Each listener uses a shared eventHandler: which emits specific data to observers
+        mql.addListener( this.onMQLEvent.bind(this,it) );
+
+        // Cache this permanent listener
+        this._mqls[ it.mediaQuery ] = mql;
+
+      }
     });
   }
 

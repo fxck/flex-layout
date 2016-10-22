@@ -76,24 +76,11 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
    *  Special mql callback used my MediaQueryAdapter when a mql event occurs
    */
   ngOnMediaQueryChanges(changes: MediaQueryChanges) {
-    let current = changes.current, previous = changes.previous;
-    let direction = this.layout;
-
-    if ( previous ) {
-      if ( previous.mqAlias == "" ) previous.mqAlias = "all";
-
-      console.log(`mqChange[previous]: ${previous.mqAlias} = ${previous.matches}`);
-
-      let previousKey = previous ? "layout" + previous.suffix : null;
-      direction = this[previousKey] || direction;
-    }
-
-    if ( current && current.mqAlias == "" )  current.mqAlias = "all";
-    console.log(`mqChange[current]: ${current.mqAlias} = ${current.matches};`);
+    let input = changes.extractInputKeysFor( "layout" );
+    let direction = input.previous ? this[ input.previous ] : this.layout;
 
     if ( changes.current.matches ) {
-      let input = "layout" + current.suffix;
-      direction = this[ input ] || direction;
+      direction = this[ input.current ] || direction;
     }
 
     this._updateWithDirection(direction);
