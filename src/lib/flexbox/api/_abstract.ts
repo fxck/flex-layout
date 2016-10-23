@@ -1,4 +1,4 @@
-import {Renderer, ElementRef, OnDestroy} from "@angular/core";
+import {Renderer, ElementRef, OnDestroy, OnInit} from "@angular/core";
 import modernizer from '../../utils/modernizer';
 
 export type StyleUpdateFn = (key:string|Object, value?:string) => void;
@@ -6,7 +6,7 @@ export type StyleUpdateFn = (key:string|Object, value?:string) => void;
 /**
  * Abstract base class for the Layout API styling directives
  */
-export abstract class BaseStyleDirective implements OnDestroy {
+export abstract class BaseStyleDirective implements OnDestroy, OnInit {
 
   // Initialize to no-op
   protected _updateStyle : StyleUpdateFn = (key:string|Object, value?:string) => { };
@@ -19,7 +19,8 @@ export abstract class BaseStyleDirective implements OnDestroy {
   // Lifecycle Methods
   // *********************************************
 
-  ngOnDestroy(){    }
+  ngOnDestroy(){  }
+  ngOnInit(){ }
 
   // *********************************************
   // Protected methods

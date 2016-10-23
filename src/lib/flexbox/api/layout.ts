@@ -4,11 +4,16 @@ import {
 } from '@angular/core';
 
 import { BaseStyleDirective } from "./_abstract";
-import { MediaQueryAdapter, MediaQueryChanges, OnMediaQueryChanges } from "../media-query/media-query-adapter";
+import {
+  MediaQueryAdapter, MediaQueryChanges, OnMediaQueryChanges,
+  MediaQueryActivation
+} from "../media-query/media-query-adapter";
 
 import { Subscription } from "rxjs/Subscription";
 import { Observable }from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
+
+import { isDefined } from '../../utils/global';
 
 /**
  * 'layout' flexbox styling directive
@@ -26,6 +31,11 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
    * child flex directives to subscribe/listen for flexbox direction changes.
    */
   private _layout: BehaviorSubject<string> = new BehaviorSubject<string>(this.layout);
+
+  /**
+   * MediaQuery Activation Tracker
+   */
+  private _mqActivation : MediaQueryActivation;
 
   /**
    * Publish observer for nested directives to listen to parent "layout" direction changes
@@ -62,30 +72,29 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
   // Lifecycle Methods
   // *********************************************
 
+  /**
+   * On changes to any @Input properties...
+   * Default to use the non-responsive Input value ('layout')
+   * Then conditionally override with the mq-activated Input's current value
+   */
   ngOnChanges( changes:SimpleChanges ) {
-    this._updateWithDirection( changes['layout'].currentValue || 'row' );
+    let direction = this.layout || "row";
+    if (isDefined( this._mqActivation )) {
+      direction = this._mqActivation.activatedInput;
+    }
+
+    this._updateWithDirection( direction );
   }
 
   ngOnInit() {
-    this._$mq.attach(this, "layout");
+    this._mqActivation = this._$mq.attach(this, "layout", "row");
   }
 
   /**
    *  Special mql callback used my MediaQueryAdapter when a mql event occurs
    */
   ngOnMediaQueryChanges(changes: MediaQueryChanges) {
-    let input = changes.extractInputKeysFor( "layout" );
-    let direction = input.previous ? this[ input.previous ] : this.layout;    // fallback direction
-    if ( changes.current.matches ) direction = this[ input.current ] || direction;  // new activation direction
-
-    direction = this._updateWithDirection(direction);
-
-    if ( changes.current.matches ) {
-      console.log(`ngOnMediaQueryChanges( update ${input.current} direction = ${direction} ) `)
-    } else {
-      console.log(`%c ngOnMediaQueryChanges( fallback restore direction = ${direction} )`, 'background: #ceffff; color: #3749A4')
-    }
-
+    this._updateWithDirection( changes.current.value );
   }
 
 

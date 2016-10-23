@@ -1,4 +1,4 @@
-import { Directive, Injectable } from "@angular/core";
+import {Directive, Injectable, OnDestroy } from "@angular/core";
 import { Subscription } from "rxjs/Subscription";
 
 import { isDefined } from '../../utils/global';
@@ -12,11 +12,6 @@ const ON_DESTROY = 'ngOnDestroy';
 // ****************************************************************
 // Exported Types and Interfaces
 // ****************************************************************
-
-export interface InputKeys {
-  previous : string;
-  current : string;
-}
 
 export type MediaQuerySubscriber = (e:MediaQueryChanges) => { };
 
@@ -38,50 +33,6 @@ export declare type SubscriptionList = Array<Subscription>;
 // ****************************************************************
 
 
-/**
- * MQ Notification data emitted to external observers
- *
- * Contains usefule 'extractInputKeysFor()' method to easily map mq changes to input
- * property value lookups.
- *
- */
-export class MediaQueryChanges {
-
-  constructor(public previous : MediaQueryChange, public current : MediaQueryChange) { }
-
-  /**
-   * For the specified @Input property, build input property names for the associated
-   * mq changes. These names are used to easily lookup the associated property values.
-   */
-  public extractInputKeysFor( baseKey:string ): InputKeys {
-    let current = this.current, previous = this.previous;
-    let previousKey = previous ? baseKey + previous.suffix : undefined;
-    let currentKey = baseKey + current.suffix;
-
-    this._logMediaQueryChanges( baseKey );
-
-    return {
-      previous : previousKey,
-      current : currentKey
-    };
-  }
-
-  /**
-   * Internal Logging mechanism
-   */
-  private _logMediaQueryChanges( baseKey : string = "" ) {
-    let current = this.current, previous = this.previous;
-
-    if ( current && current.mqAlias == "" )  current.mqAlias = "all";
-    if ( previous && previous.mqAlias == "" ) previous.mqAlias = "all";
-
-    if ( previous ) {
-      let pMessage = `%c mqChange[previous]: ${baseKey}.${previous.mqAlias} = ${previous.matches}`;
-      console.log(pMessage, 'background: #cecece; color: #3749A4');
-    }
-    console.log( `mqChange[current]: ${baseKey}.${current.mqAlias} = ${current.matches};` );
-  }
-}
 
 /**
  *  Adapter between Layout API directives and the MediaQueries mdl service
@@ -104,17 +55,32 @@ export class MediaQueryAdapter {
   }
 
   /**
+   * Create a custom MQ Activation instance for each directive instance; the activation object
+   * tracks the current mq-activated input and manages the calls to the directive's ngOnMediaQueryChanges
+   */
+  attach(directive : Directive,  property :string, defaultVal:string ) : MediaQueryActivation {
+    let activation : MediaQueryActivation = new MediaQueryActivation(directive, property, defaultVal );
+    let list : SubscriptionList = this._linkOnMediaChanges( directive, property );
+
+    this._listenOnDestroy( directive, list );
+
+    return activation;
+  }
+
+  /**
    *
    */
-  attach(directive : Directive,  property :string ) {
-    let handler = directive[ ON_MEDIA_CHANGES ];
+  private _linkOnMediaChanges(directive : Directive,  property :string) {
+    let list : SubscriptionList,
+        handler : MediaQuerySubscriber = directive[ ON_MEDIA_CHANGES ];
 
-    if ( handler ) {
+    if ( handler  ) {
       let keys = this._buildRegistryMap(directive, property);
-
-      this._listenOnDestroy( directive, this._configureChangeObservers(directive, keys, handler.bind(directive)) );
+      list = this._configureChangeObservers(directive, keys, handler );
     }
+    return list;
   }
+
 
   /**
    *
@@ -122,8 +88,6 @@ export class MediaQueryAdapter {
   private _listenOnDestroy ( directive : Directive, subscribers:SubscriptionList ) {
     let onDestroyFn = directive[ ON_DESTROY ];
     if ( onDestroyFn ){
-      onDestroyFn = onDestroyFn.bind(directive);
-
       directive[ ON_DESTROY ] = function () {
         subscribers.forEach( (s:Subscription) => {
           s.unsubscribe();
@@ -132,8 +96,12 @@ export class MediaQueryAdapter {
 
         // release array
         subscribers.length = 0;
+        directive[ ON_DESTROY ] = onDestroyFn
       };
     }
+
+    // Return detach...
+    return directive[ ON_DESTROY ];
   }
 
   /**
@@ -145,8 +113,7 @@ export class MediaQueryAdapter {
 
     keys.forEach(it => {
       // Only subscribe if the directive API is defined (in use)
-      if ( isDefined(directive[it.key]) ) {
-
+      if (isDefined( directive[it.key] )) {
           let lastEvent : MediaQueryChange,
               mergeWithLastEvent = (current:MediaQueryChange) : MediaQueryChanges => {
                 let previous = lastEvent;
@@ -172,8 +139,8 @@ export class MediaQueryAdapter {
     return this._breakpoints.registry
       .map(it => {
         return {
-          key   : key + it.suffix,
-          alias : it.alias
+          alias : it.alias,           // e.g.  gt-sm, md, gt-lg
+          key   : key + it.suffix     // e.g.  layoutGtSm, layoutMd, layoutGtLg
         }
       }).filter( it => isDefined(directive[ it.key ]) );
   }
@@ -182,6 +149,107 @@ export class MediaQueryAdapter {
    * Is the current activation event different from the last activation event ?
    */
   private _isDifferentChange(previous:MediaQueryChange, current:MediaQueryChange):boolean {
-    return current && current.matches && (current.mqAlias != (previous ? previous.mqAlias : ""));
+    return current.matches || (!current.matches && current.mqAlias != (previous ? previous.mqAlias : ""));
   }
 }
+
+
+
+/**
+ *
+ */
+export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
+
+  private _onDestroy           : Function;
+  private _onMediaQueryChanges : Function;
+  private _activatedInputKey   : string;
+
+  /**
+   * Get the currently activated @Input value or the fallback default @Input value
+   */
+  get activatedInput():any {
+    let key = this._activatedInputKey || this._baseKey;
+    return this._directive[ key ] || this._defaultValue;
+  }
+
+  /**
+   *
+   */
+  constructor(private _directive:Directive, private _baseKey:string, private _defaultValue:string ){
+      this._interceptLifeCyclEvents();
+  }
+
+  /**
+   * MediaQueryChanges interceptor that tracks the current mq-activated @Input and calculates the
+   * mq-activated input value or the default value
+   */
+  ngOnMediaQueryChanges( changes:MediaQueryChanges ) {
+    debugger;
+
+    this._activatedInputKey = changes.current.matches ? (this._baseKey + changes.current.suffix) : undefined;
+
+    let current = changes.current;
+
+    current.value = this.activatedInput;
+    changes = new MediaQueryChanges( changes.previous, current );
+
+    this._logMediaQueryChanges( changes );
+    this._onMediaQueryChanges( changes );
+
+  }
+
+  /**
+   * Remove interceptors, restore original functions, and forward the onDestroy() call
+   */
+  ngOnDestroy() {
+    this._directive[ ON_DESTROY ] = this._onDestroy;
+    this._directive[ ON_MEDIA_CHANGES ] = this._onMediaQueryChanges;
+    try {
+
+      this._onDestroy();
+
+    } finally {
+      this._onDestroy = undefined;
+      this._onMediaQueryChanges = undefined;
+      this._directive = undefined;
+    }
+  }
+
+  /**
+   * Head-hook onDestroy and onMediaQueryChanges methods on the directive instance
+   */
+  private _interceptLifeCyclEvents() {
+    this._onDestroy           = this._directive[ ON_DESTROY ].bind(this._directive);
+    this._onMediaQueryChanges = this._directive[ ON_MEDIA_CHANGES ].bind(this._directive);
+
+    this._directive[ ON_DESTROY ]       = this.ngOnDestroy.bind(this);
+    this._directive[ ON_MEDIA_CHANGES ] = this.ngOnMediaQueryChanges.bind(this);
+  }
+
+  /**
+   * Internal Logging mechanism
+   */
+  private _logMediaQueryChanges( changes:MediaQueryChanges ) {
+    let current = changes.current, previous = changes.previous;
+
+    if ( current && current.mqAlias == "" )  current.mqAlias = "all";
+    if ( previous && previous.mqAlias == "" ) previous.mqAlias = "all";
+
+    console.log( `mqChange[ matches = ${current.matches} ]: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};` );
+  }
+}
+
+
+/**
+ * MQ Notification data emitted to external observers
+ *
+ * Contains usefule 'extractInputKeysFor()' method to easily map mq changes to input
+ * property value lookups.
+ *
+ */
+export class MediaQueryChanges {
+
+  constructor(public previous : MediaQueryChange, public current : MediaQueryChange) { }
+
+}
+

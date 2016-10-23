@@ -14,7 +14,13 @@ import { MediaQueryList, MediaQueryListFactory} from "./media-query-factory";
  * Class instances emitted [to observers] for each mql notification
  */
 export class MediaQueryChange {
-  constructor(public matches:boolean, public mqAlias:string, public suffix:string = ""){}
+  constructor(
+    public matches:boolean,
+    public mqAlias:string,
+    public suffix:string = "",
+    public value:string = ""
+    ){
+  }
 }
 
 // ****************************************************************
