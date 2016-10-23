@@ -15,10 +15,10 @@ import { MediaQueryList, MediaQueryListFactory} from "./media-query-factory";
  */
 export class MediaQueryChange {
   constructor(
-    public matches:boolean,
-    public mqAlias:string,
-    public suffix:string = "",
-    public value:string = ""
+    public matches:boolean,         // Is the mq currently activated
+    public mqAlias:string,          // e.g.   gt-sm, md, gt-lg
+    public suffix:string = "",      // e.g.   GtSM, Md, GtLg
+    public value:string = ""        // @Input value associated for the current mq
     ){
   }
 }

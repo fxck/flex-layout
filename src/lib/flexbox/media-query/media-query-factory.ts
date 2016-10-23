@@ -5,6 +5,14 @@ import { isDefined } from '../../utils/global';
 // ****************************************************************
 
 /**
+ * EventHandler callback with the mediaQuery [range] activates or deactivates
+ */
+export interface MediaQueryListListener {
+    // Function with Window's MediaQueryList argument
+    (mql: MediaQueryList): void;
+}
+
+/**
  * EventDispatcher for a specific mediaQuery [range]
  */
 export interface MediaQueryList {
@@ -14,21 +22,18 @@ export interface MediaQueryList {
     removeListener(listener: MediaQueryListListener): void;
 }
 
+// ****************************************************************
+// ****************************************************************
+
 /**
- * EventHandler callback with the mediaQuery [range] activates or deactivates
+ * Private global registry for all dynamically-created, injected style tags
+ * @see prepare(query)
  */
-export interface MediaQueryListListener {
-    // Function with Window's MediaQueryList argument
-    (mql: MediaQueryList): void;
-}
-
-
-
-// ****************************************************************
-// ****************************************************************
+const ALL_STYLES = { };
 
 /**
  * Factory class used to quickly create a mq listener for a specified mediaQuery range
+ * No need to implement polyfill
  */
 export class MediaQueryListFactory {
 
@@ -39,6 +44,8 @@ export class MediaQueryListFactory {
   static instanceOf(query:string) : MediaQueryList {
     let canListen = isDefined(window.matchMedia('all').addListener);
 
+    prepare(query);
+
     return canListen ? window.matchMedia(query) : <MediaQueryList> {
       matches       : query === 'all' || query === '',
       media         : query,
@@ -48,3 +55,33 @@ export class MediaQueryListFactory {
   }
 }
 
+
+/**
+ * For Webkit engines that only trigger the MediaQueryListListener
+ * when there is at least one CSS selector for the respective media query.
+ *
+ * @param query string The mediaQuery used to create a faux CSS selector
+ *
+ */
+function prepare(query){
+  if ( !ALL_STYLES[query] ) {
+    try {
+
+      let style = document.createElement('style');
+
+      style.setAttribute('type', 'text/css');
+      document.getElementsByTagName('head')[0].appendChild(style);
+
+      if ( !style["styleSheet"] ) {
+        let cssText = `@media ${query} {.ngl-query-test{ }}`;
+        style.appendChild(document.createTextNode( cssText ));
+      }
+
+      // Store in private global registry
+      ALL_STYLES[query] = style;
+
+    } catch ( e ) {
+      console.error( e );
+    }
+  }
+}

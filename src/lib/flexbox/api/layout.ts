@@ -5,8 +5,8 @@ import {
 
 import { BaseStyleDirective } from "./_abstract";
 import {
-  MediaQueryAdapter, MediaQueryChanges, OnMediaQueryChanges,
-  MediaQueryActivation
+  MediaQueryAdapter, MediaQueryChanges,
+  OnMediaQueryChanges, MediaQueryActivation
 } from "../media-query/media-query-adapter";
 
 import { Subscription } from "rxjs/Subscription";
@@ -27,18 +27,19 @@ import { isDefined } from '../../utils/global';
 })
 export class LayoutDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges {
   /**
+   * MediaQuery Activation Tracker
+   */
+  private _mqActivation : MediaQueryActivation;
+
+  /**
    * Create Observable for nested/child 'flex' directives. This allows
    * child flex directives to subscribe/listen for flexbox direction changes.
    */
   private _layout: BehaviorSubject<string> = new BehaviorSubject<string>(this.layout);
 
   /**
-   * MediaQuery Activation Tracker
-   */
-  private _mqActivation : MediaQueryActivation;
-
-  /**
-   * Publish observer for nested directives to listen to parent "layout" direction changes
+   * Publish observer to enabled nested, dependent directives to listen
+   * to parent "layout" direction changes
    */
   public onLayoutChange: Observable<string> = this._layout.asObservable();
 
@@ -86,12 +87,16 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
     this._updateWithDirection( direction );
   }
 
+  /**
+   * After the initial onChanges, build an mqActivation object that bridges
+   * mql change events to onMediaQueryChange handlers
+   */
   ngOnInit() {
     this._mqActivation = this._$mq.attach(this, "layout", "row");
   }
 
   /**
-   *  Special mql callback used my MediaQueryAdapter when a mql event occurs
+   *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
   ngOnMediaQueryChanges(changes: MediaQueryChanges) {
     this._updateWithDirection( changes.current.value );

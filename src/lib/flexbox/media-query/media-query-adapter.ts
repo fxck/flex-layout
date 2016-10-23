@@ -4,7 +4,7 @@ import { Subscription } from "rxjs/Subscription";
 import { isDefined } from '../../utils/global';
 
 import { MediaQueries, MediaQueryChange } from "./media-queries";
-import {BreakPoints} from "./break-points";
+import { BreakPoints } from "./break-points";
 
 const ON_MEDIA_CHANGES = 'ngOnMediaQueryChanges';
 const ON_DESTROY = 'ngOnDestroy';
@@ -32,6 +32,19 @@ export declare type SubscriptionList = Array<Subscription>;
 // ****************************************************************
 // ****************************************************************
 
+
+/**
+ * MQ Notification data emitted to external observers
+ *
+ * Contains usefule 'extractInputKeysFor()' method to easily map mq changes to input
+ * property value lookups.
+ *
+ */
+export class MediaQueryChanges {
+
+  constructor(public previous : MediaQueryChange, public current : MediaQueryChange) { }
+
+}
 
 
 /**
@@ -239,17 +252,4 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   }
 }
 
-
-/**
- * MQ Notification data emitted to external observers
- *
- * Contains usefule 'extractInputKeysFor()' method to easily map mq changes to input
- * property value lookups.
- *
- */
-export class MediaQueryChanges {
-
-  constructor(public previous : MediaQueryChange, public current : MediaQueryChange) { }
-
-}
 
