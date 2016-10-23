@@ -75,13 +75,17 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
    */
   ngOnMediaQueryChanges(changes: MediaQueryChanges) {
     let input = changes.extractInputKeysFor( "layout" );
-    let direction = input.previous ? this[ input.previous ] : this.layout;
+    let direction = input.previous ? this[ input.previous ] : this.layout;    // fallback direction
+    if ( changes.current.matches ) direction = this[ input.current ] || direction;  // new activation direction
+
+    direction = this._updateWithDirection(direction);
 
     if ( changes.current.matches ) {
-      direction = this[ input.current ] || direction;
+      console.log(`ngOnMediaQueryChanges( update ${input.current} direction = ${direction} ) `)
+    } else {
+      console.log(`%c ngOnMediaQueryChanges( fallback restore direction = ${direction} )`, 'background: #ceffff; color: #3749A4')
     }
 
-    this._updateWithDirection(direction);
   }
 
 
@@ -104,6 +108,8 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
 
     // Announce to subscribers a layout direction change
     this._layout.next(direction);
+
+    return direction;
   }
 
 

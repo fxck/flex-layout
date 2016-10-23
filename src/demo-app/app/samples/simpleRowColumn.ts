@@ -8,12 +8,13 @@ import {Component, ViewEncapsulation} from '@angular/core';
   template: `
   <div>
     <div class="title">Simple row with nested layout containers.</div> 
-    <div class="colorNested box" layout="row">
+    <!--<button (click)="isVisible = !isVisible">Toggle</button>-->
+    <div class="colorNested box" layout="row" *ngIf="isVisible">
       <div  [layout]="firstCol" 
             [layout.xs]="'column'" 
             layout.md="column" 
             layout.lg="invalid"  
-            [layout.gt-lg]="firstCol" 
+            [layout.gt-lg]="responsiveCol" 
             flex="25%" (click)="toggleLayoutFor(1)">
         <div flex>First item in row</div>
         <div flex>Second item in row</div>
@@ -35,6 +36,9 @@ import {Component, ViewEncapsulation} from '@angular/core';
 export class SimpleRowColumnComponent {
   firstCol = "row";
   secondCol = "column";
+  responsiveCol = "column";
+
+  isVisible = true;
 
   toggleLayoutFor(col) {
     let key = (col == "2") ? "secondCol" : "firstCol" ;

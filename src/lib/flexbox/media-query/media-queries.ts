@@ -2,12 +2,9 @@ import {Injectable} from "@angular/core";
 
 import { Observable } from "rxjs/Observable";
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
-import 'rxjs/add/operator/filter';
-
 
 import { BreakPoint, BreakPoints } from './break-points';
 import { MediaQueryList, MediaQueryListFactory} from "./media-query-factory";
-import { MediaQueryAdapter } from "./media-query-adapter";
 
 // ****************************************************************
 // Exported Types and Interfaces
@@ -47,7 +44,7 @@ export class MediaQueries {
    * Read-only accessor to the list of breakpoints configured in the BreakPoints provider
    */
   get breakpoints() : Array<BreakPoint> {
-    return [].concat( this._breakpoints.registry );
+    return [ ...this._breakpoints.registry ];
   }
 
   /**
@@ -73,6 +70,9 @@ export class MediaQueries {
 
         // Cache this permanent listener
         this._mqls[ it.mediaQuery ] = mql;
+
+        // Announce activate range for initial subscribers
+        if ( mql.matches ) this.onMQLEvent(it, mql);
 
       }
     });

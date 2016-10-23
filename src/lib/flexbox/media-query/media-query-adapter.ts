@@ -1,10 +1,10 @@
 import { Directive, Injectable } from "@angular/core";
-import { MediaQueries, MediaQueryChange } from "./media-queries";
 import { Subscription } from "rxjs/Subscription";
-import 'rxjs/add/operator/map';
 
-import {BreakPoints} from "./break-points";
 import { isDefined } from '../../utils/global';
+
+import { MediaQueries, MediaQueryChange } from "./media-queries";
+import {BreakPoints} from "./break-points";
 
 const ON_MEDIA_CHANGES = 'ngOnMediaQueryChanges';
 const ON_DESTROY = 'ngOnDestroy';
@@ -76,9 +76,10 @@ export class MediaQueryChanges {
     if ( previous && previous.mqAlias == "" ) previous.mqAlias = "all";
 
     if ( previous ) {
-      console.log(`mqChange[previous]: ${baseKey}.${previous.mqAlias} = ${previous.matches}`);
+      let pMessage = `%c mqChange[previous]: ${baseKey}.${previous.mqAlias} = ${previous.matches}`;
+      console.log(pMessage, 'background: #cecece; color: #3749A4');
     }
-    console.log(`mqChange[current]: ${baseKey}.${current.mqAlias} = ${current.matches};`);
+    console.log( `mqChange[current]: ${baseKey}.${current.mqAlias} = ${current.matches};` );
   }
 }
 
@@ -128,6 +129,9 @@ export class MediaQueryAdapter {
           s.unsubscribe();
         });
         onDestroyFn();
+
+        // release array
+        subscribers.length = 0;
       };
     }
   }
@@ -144,9 +148,10 @@ export class MediaQueryAdapter {
       if ( isDefined(directive[it.key]) ) {
 
           let lastEvent : MediaQueryChange,
-              mergeWithLastEvent = function (current:MediaQueryChange) : MediaQueryChanges {
+              mergeWithLastEvent = (current:MediaQueryChange) : MediaQueryChanges => {
                 let previous = lastEvent;
-                    lastEvent = current;
+                if ( this._isDifferentChange(lastEvent, current) ) lastEvent = current;
+
                 return new MediaQueryChanges(previous, current);
               },
               subscription = this._$mq.observe( it.alias )
@@ -171,5 +176,12 @@ export class MediaQueryAdapter {
           alias : it.alias
         }
       }).filter( it => isDefined(directive[ it.key ]) );
+  }
+
+  /**
+   * Is the current activation event different from the last activation event ?
+   */
+  private _isDifferentChange(previous:MediaQueryChange, current:MediaQueryChange):boolean {
+    return current && current.matches && (current.mqAlias != (previous ? previous.mqAlias : ""));
   }
 }

@@ -4,6 +4,11 @@ import { BreakPoints } from "./break-points";
 import { MediaQueries } from "./media-queries";
 import { MediaQueryAdapter } from "./media-query-adapter";
 
+// RxJS Operators used by the classes...
+
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
+
 
 const ALL_COMPONENTS = [
   BreakPoints,
