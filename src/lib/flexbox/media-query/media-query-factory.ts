@@ -66,16 +66,15 @@ export class MediaQueryListFactory {
 function prepare(query){
   if ( !ALL_STYLES[query] ) {
     try {
-
       let style = document.createElement('style');
 
-      style.setAttribute('type', 'text/css');
-      document.getElementsByTagName('head')[0].appendChild(style);
+          style.setAttribute('type', 'text/css');
+          if ( !style["styleSheet"] ) {
+            let cssText = `@media ${query} {.ngl-query-test{ }}`;
+            style.appendChild(document.createTextNode( cssText ));
+          }
 
-      if ( !style["styleSheet"] ) {
-        let cssText = `@media ${query} {.ngl-query-test{ }}`;
-        style.appendChild(document.createTextNode( cssText ));
-      }
+      document.getElementsByTagName('head')[0].appendChild(style);
 
       // Store in private global registry
       ALL_STYLES[query] = style;

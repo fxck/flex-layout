@@ -1,10 +1,17 @@
+import { isDefined } from '../../utils/global';
+
 import {
   Directive, Input, ElementRef, Renderer,
-  SimpleChanges, Optional, OnChanges, OnDestroy, SkipSelf
+  SimpleChanges, Optional, OnChanges, OnDestroy, SkipSelf, OnInit
 } from '@angular/core';
 
 import { BaseStyleDirective } from "./_abstract";
 import { LayoutDirective } from "./layout";
+import {
+  MediaQueryAdapter, MediaQueryChanges,
+  OnMediaQueryChanges, MediaQueryActivation
+} from "../media-query/media-query-adapter";
+
 import { Subscription } from "rxjs/Subscription";
 
 
@@ -16,13 +23,33 @@ import { Subscription } from "rxjs/Subscription";
 @Directive({
   selector:'[flex]',
 })
-export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDestroy {
+export class FlexDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
+  /**
+   * MediaQuery Activation Tracker
+   */
+  private _mqActivation : MediaQueryActivation;
+
+
   private _layout = 'row';   // default flex-direction
   private _layoutWatcher : Subscription;
 
   @Input() shrink:number = 1;
   @Input() grow:number = 1;
   @Input() flex:string;
+
+  // *******************************************************
+  // Optional input variations to support mediaQuery triggers
+  // *******************************************************
+
+  @Input('flex.xs')     flexXs;
+  @Input('flex.gt-xs')  flexGtXs;
+  @Input('flex.sm')     flexSm;
+  @Input('flex.gt-sm')  flexGtSm;
+  @Input('flex.md')     flexMd;
+  @Input('flex.gt-md')  flexGtMd;
+  @Input('flex.lg')     flexLg;
+  @Input('flex.gt-lg')  flexGtLg;
+  @Input('flex.xl')     flexXl;
 
   /**
    * Note: the optional `layout="column|row"` directive must be PARENT container.
@@ -34,8 +61,9 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
    * </div>
    */
   constructor(
+    private _$mq: MediaQueryAdapter,
     @Optional() @SkipSelf() private container:LayoutDirective,
-    private elRef: ElementRef, private renderer: Renderer) {
+    elRef: ElementRef, renderer: Renderer) {
       super(elRef, renderer);
 
       if (container) {
@@ -49,11 +77,31 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
   // *********************************************
 
   /**
-   * For any @Input changes, delegate to the onLayoutChange()
+   * For @Input changes on the current mq activation property, delegate to the onLayoutChange()
    */
   ngOnChanges( changes?:SimpleChanges ) {
-    this._onLayoutChange(this._layout);
+    let activated = this._mqActivation;
+    let activationChange = activated && isDefined(changes[activated.activatedInputKey]);
+
+    if ( activationChange || isDefined(changes['flex']) ) {
+     this._onLayoutChange(this._layout);
+    }
   }
+
+   /**
+    * After the initial onChanges, build an mqActivation object that bridges
+    * mql change events to onMediaQueryChange handlers
+    */
+   ngOnInit() {
+     this._mqActivation = this._$mq.attach(this, "flex", "");
+   }
+
+   /**
+    *  Special mql callback used by MediaQueryActivation when a mql event occurs
+    */
+   ngOnMediaQueryChanges(changes: MediaQueryChanges) {
+     this._updateWithValue( changes.current.value );
+   }
 
   ngOnDestroy(){
     this._layoutWatcher.unsubscribe();
@@ -61,14 +109,25 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
 
   // *********************************************
   // Protected methods
-  // *********************************************
+  // ***************************************s******
 
   /**
    * Cache the parent container 'flex-direction' and update the 'flex' styles
    */
   _onLayoutChange(direction) {
     this._layout = direction;
-    this._updateStyle(this._buildCSS());
+
+    let value = this.flex || "";
+    if (isDefined( this._mqActivation )) {
+      value = this._mqActivation.activatedInput;
+    }
+
+    this._updateWithValue( value );
+  }
+
+  _updateWithValue( value:string ) {
+    let css = this._validateValue( this.grow, this.shrink, value );
+    this._updateStyle(this._buildCSS( css ));
   }
 
   /**
@@ -77,8 +136,8 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
    *  BUG - min-height on a column flex container won’t apply to its flex item children in IE 10-11.
    *  Use height instead if possible.
    */
-  _buildCSS() {
-    return this._modernizer(this._validateValue( this.grow, this.shrink, this.flex));
+  _buildCSS(css) {
+    return this._modernizer(css);
   }
 
   /**
@@ -118,7 +177,7 @@ export class FlexDirective extends BaseStyleDirective implements OnChanges, OnDe
 
          css = {
            'flex' : `${grow} ${shrink} ${ isPx ? basis : '100%' }`,     // fix issue #5345
-           'max-width'  : null,                                         // use `null` to remove styles
+           'max-width'  : null,                                         // ! use `null` to remove styles
            'max-height' : null,
            'min-width'  : null,
            'min-height' : null

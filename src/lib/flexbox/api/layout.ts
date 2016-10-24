@@ -25,7 +25,7 @@ import { isDefined } from '../../utils/global';
 @Directive({
   selector: '[layout]'
 })
-export class LayoutDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges {
+export class LayoutDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
    */
@@ -163,11 +163,30 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
 @Directive({
   selector: '[layout-wrap]'
 })
-export class LayoutWrapDirective extends BaseStyleDirective implements OnChanges{
+export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
+  /**
+   * MediaQuery Activation Tracker
+   */
+  private _mqActivation : MediaQueryActivation;
+
   @Input('layout-wrap')
   wrap : string = 'wrap';
 
-  constructor(public elRef: ElementRef, public renderer: Renderer) {
+  // *******************************************************
+  // Optional input variations to support mediaQuery triggers
+  // *******************************************************
+
+  @Input('layout-wrap.xs')     wrapXs;
+  @Input('layout-wrap.gt-xs')  wrapGtXs;
+  @Input('layout-wrap.sm')     wrapSm;
+  @Input('layout-wrap.gt-sm')  wrapGtSm;
+  @Input('layout-wrap.md')     wrapMd;
+  @Input('layout-wrap.gt-md')  wrapGtMd;
+  @Input('layout-wrap.lg')     wrapLg;
+  @Input('layout-wrap.gt-lg')  wrapGtLg;
+  @Input('layout-wrap.xl')     wrapXl;
+
+  constructor(private _$mq: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer)
   }
 
@@ -176,7 +195,26 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnChanges
   // *********************************************
 
   ngOnChanges( changes:SimpleChanges ) {
-    this._updateStyle( this._buildCSS(this.wrap || 'wrap') );
+    let value = this.wrap || "wrap";
+     if (isDefined( this._mqActivation )) {
+       value = this._mqActivation.activatedInput;
+     }
+    this._updateWithValue( value );
+  }
+
+  /**
+   * After the initial onChanges, build an mqActivation object that bridges
+   * mql change events to onMediaQueryChange handlers
+   */
+  ngOnInit() {
+    this._mqActivation = this._$mq.attach(this, "wrap", "wrap");
+  }
+
+  /**
+   *  Special mql callback used by MediaQueryActivation when a mql event occurs
+   */
+  ngOnMediaQueryChanges(changes: MediaQueryChanges) {
+    this._updateWithValue( changes.current.value );
   }
 
   ngOnDestroy(){
@@ -185,6 +223,11 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnChanges
   // *********************************************
   // Protected methods
   // *********************************************
+
+  _updateWithValue( value:string ) {
+    this._updateStyle( this._buildCSS(value || 'wrap') );
+  }
+
 
   /**
    * Build the CSS that should be assigned to the element instance
@@ -234,13 +277,32 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnChanges
 @Directive({
   selector:'[layout-align]',
 })
-export class LayoutAlignDirective extends BaseStyleDirective implements OnChanges, OnDestroy {
+export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
+  /**
+   * MediaQuery Activation Tracker
+   */
+  private _mqActivation : MediaQueryActivation;
+
   private _layout = 'row';   // default flex-direction
   private _layoutWatcher : Subscription;
 
   @Input('layout-align') align : string = "start stretch";
 
-  constructor(@Optional() public container:LayoutDirective, public elRef: ElementRef, public renderer: Renderer) {
+  // *******************************************************
+  // Optional input variations to support mediaQuery triggers
+  // *******************************************************
+
+  @Input('layout-align.xs')     alignXs;
+  @Input('layout-align.gt-xs')  alignGtXs;
+  @Input('layout-align.sm')     alignSm;
+  @Input('layout-align.gt-sm')  alignGtSm;
+  @Input('layout-align.md')     alignMd;
+  @Input('layout-align.gt-md')  alignGtMd;
+  @Input('layout-align.lg')     alignLg;
+  @Input('layout-align.gt-lg')  alignGtLg;
+  @Input('layout-align.xl')     alignXl;
+
+  constructor(@Optional() public container:LayoutDirective, private _$mq: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
 
     if (container) {  // Subscribe to layout direction changes
@@ -254,8 +316,28 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
   // *********************************************
 
   ngOnChanges( changes?:SimpleChanges ) {
-    this._updateStyle(this._buildCSS( this.align ));
+    let value = this.align || "start stretch";
+    if (isDefined( this._mqActivation )) {
+      value = this._mqActivation.activatedInput;
+    }
+    this._updateWithValue( value );
   }
+
+  /**
+   * After the initial onChanges, build an mqActivation object that bridges
+   * mql change events to onMediaQueryChange handlers
+   */
+  ngOnInit() {
+    this._mqActivation = this._$mq.attach(this, "align", "start stretch");
+  }
+
+  /**
+   *  Special mql callback used by MediaQueryActivation when a mql event occurs
+   */
+  ngOnMediaQueryChanges(changes: MediaQueryChanges) {
+    this._updateWithValue( changes.current.value );
+  }
+
 
   ngOnDestroy(){
     this._layoutWatcher.unsubscribe();
@@ -265,6 +347,10 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
   // Protected methods
   // *********************************************
 
+  _updateWithValue( value:string ) {
+    this._updateStyle( this._buildCSS(value || 'start stretch') );
+  }
+
   /**
    * Cache the parent container 'flex-direction' and update the 'flex' styles
    */
@@ -272,7 +358,11 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnChange
     this._layout = (direction || "").toLowerCase().replace('-reverse',"");
     if ( this._layout !== 'column') this._layout = "row";
 
-    this._allowStretching(this.align, this._layout);
+    let value = this.align || "start stretch";
+    if (isDefined( this._mqActivation )) {
+      value = this._mqActivation.activatedInput;
+    }
+    this._allowStretching(value, this._layout);
   }
 
   _buildCSS(align) {

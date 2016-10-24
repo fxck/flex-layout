@@ -8,7 +8,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
   template: `
   <div>
     <div class="title">Simple row with nested layout containers.</div> 
-    <!--<button (click)="isVisible = !isVisible">Toggle</button>-->
+    <button (click)="isVisible = !isVisible">Toggle</button>
     <div class="colorNested box" layout="row" *ngIf="isVisible">
       <div  [layout]="firstCol" 
             [layout.xs]="'column'" 

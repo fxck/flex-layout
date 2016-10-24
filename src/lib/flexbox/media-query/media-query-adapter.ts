@@ -36,9 +36,6 @@ export declare type SubscriptionList = Array<Subscription>;
 /**
  * MQ Notification data emitted to external observers
  *
- * Contains usefule 'extractInputKeysFor()' method to easily map mq changes to input
- * property value lookups.
- *
  */
 export class MediaQueryChanges {
 
@@ -52,6 +49,7 @@ export class MediaQueryChanges {
  *
  *  Using this adapter encapsulates most of the complexity of mql subscriptions
  *  and insures lean integration-code in the Layout directives
+ *
  */
 @Injectable()
 export class MediaQueryAdapter {
@@ -102,19 +100,17 @@ export class MediaQueryAdapter {
     let onDestroyFn = directive[ ON_DESTROY ];
     if ( onDestroyFn ){
       directive[ ON_DESTROY ] = function () {
+        // Unsubscribe all for this directive
         subscribers.forEach( (s:Subscription) => {
           s.unsubscribe();
         });
         onDestroyFn();
 
-        // release array
+        // release array and restore original fn
         subscribers.length = 0;
         directive[ ON_DESTROY ] = onDestroyFn
       };
     }
-
-    // Return detach...
-    return directive[ ON_DESTROY ];
   }
 
   /**
@@ -130,10 +126,11 @@ export class MediaQueryAdapter {
           let lastEvent : MediaQueryChange,
               mergeWithLastEvent = (current:MediaQueryChange) : MediaQueryChanges => {
                 let previous = lastEvent;
-                if ( this._isDifferentChange(lastEvent, current) ) lastEvent = current;
+                if ( this._isDifferentChange(previous, current) ) lastEvent = current;
 
                 return new MediaQueryChanges(previous, current);
               },
+              // Create subscription for mq changes for each alias (e.g. gt-sm, md, etc)
               subscription = this._$mq.observe( it.alias )
                   .map( mergeWithLastEvent )
                   .subscribe( subscriber );
@@ -160,9 +157,15 @@ export class MediaQueryAdapter {
 
   /**
    * Is the current activation event different from the last activation event ?
+   *
+   * !! change events may arrive out-of-order (activate before deactivate)
+   *    so make sure the deactivate is used ONLY when the keys match
+   *    (since a different activate may be in use)
+   *
    */
   private _isDifferentChange(previous:MediaQueryChange, current:MediaQueryChange):boolean {
-    return current.matches || (!current.matches && current.mqAlias != (previous ? previous.mqAlias : ""));
+    let prevAlias = (previous ? previous.mqAlias : "");
+    return current.matches || (!current.matches && current.mqAlias !== prevAlias);
   }
 }
 
@@ -177,12 +180,15 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   private _onMediaQueryChanges : Function;
   private _activatedInputKey   : string;
 
+  get activatedInputKey():string {
+    return this._activatedInputKey || this._baseKey;
+  }
+
   /**
    * Get the currently activated @Input value or the fallback default @Input value
    */
   get activatedInput():any {
-    let key = this._activatedInputKey || this._baseKey;
-    return this._directive[ key ] || this._defaultValue;
+    return this._directive[ this.activatedInputKey ] || this._defaultValue;
   }
 
   /**
@@ -197,13 +203,17 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
    * mq-activated input value or the default value
    */
   ngOnMediaQueryChanges( changes:MediaQueryChanges ) {
-    debugger;
+    let currentKey = (this._baseKey + changes.current.suffix);
 
-    this._activatedInputKey = changes.current.matches ? (this._baseKey + changes.current.suffix) : undefined;
+    // !! change events may arrive out-of-order (activate before deactivate)
+    //    so make sure the deactivate is used ONLY when the keys match
+    //    (since a different activate may be in use)
+    this._activatedInputKey = changes.current.matches  ? currentKey :
+                              (this._activatedInputKey !== currentKey ) ? this._activatedInputKey : undefined;
 
     let current = changes.current;
+        current.value = this.activatedInput;    // calculated value
 
-    current.value = this.activatedInput;
     changes = new MediaQueryChanges( changes.previous, current );
 
     this._logMediaQueryChanges( changes );
@@ -248,7 +258,9 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
     if ( current && current.mqAlias == "" )  current.mqAlias = "all";
     if ( previous && previous.mqAlias == "" ) previous.mqAlias = "all";
 
-    console.log( `mqChange[ matches = ${current.matches} ]: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};` );
+    if ( current.matches ) {
+      console.log( `mqChange[ matches = ${current.matches} ]: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};` );
+    }
   }
 }
 
