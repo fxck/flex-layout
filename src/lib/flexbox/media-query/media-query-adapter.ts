@@ -1,10 +1,12 @@
-import {Directive, Injectable, OnDestroy } from "@angular/core";
-import { Subscription } from "rxjs/Subscription";
+import {
+  Directive, Injectable, OnDestroy
+} from "@angular/core";
 
 import { isDefined } from '../../utils/global';
+import { MediaQueries, MediaQueryChange } from "../../media-query/media-queries";
+import { BreakPoints } from "../../media-query/break-points";
 
-import { MediaQueries, MediaQueryChange } from "./media-queries";
-import { BreakPoints } from "./break-points";
+import { Subscription } from "rxjs/Subscription";
 
 const ON_MEDIA_CHANGES = 'ngOnMediaQueryChanges';
 const ON_DESTROY = 'ngOnDestroy';
@@ -69,7 +71,7 @@ export class MediaQueryAdapter {
    * Create a custom MQ Activation instance for each directive instance; the activation object
    * tracks the current mq-activated input and manages the calls to the directive's ngOnMediaQueryChanges
    */
-  attach(directive : Directive,  property :string, defaultVal:string ) : MediaQueryActivation {
+  attach(directive : Directive,  property :string, defaultVal:string|number ) : MediaQueryActivation {
     let activation : MediaQueryActivation = new MediaQueryActivation(directive, property, defaultVal );
     let list : SubscriptionList = this._linkOnMediaChanges( directive, property );
 
@@ -194,7 +196,7 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   /**
    *
    */
-  constructor(private _directive:Directive, private _baseKey:string, private _defaultValue:string ){
+  constructor(private _directive:Directive, private _baseKey:string, private _defaultValue:string|number ){
       this._interceptLifeCyclEvents();
   }
 
@@ -232,9 +234,9 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
       this._onDestroy();
 
     } finally {
+      this._directive = undefined;
       this._onDestroy = undefined;
       this._onMediaQueryChanges = undefined;
-      this._directive = undefined;
     }
   }
 
@@ -259,7 +261,7 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
     if ( previous && previous.mqAlias == "" ) previous.mqAlias = "all";
 
     if ( current.matches ) {
-      console.log( `mqChange[ matches = ${current.matches} ]: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};` );
+      console.log( `mqChange: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};` );
     }
   }
 }

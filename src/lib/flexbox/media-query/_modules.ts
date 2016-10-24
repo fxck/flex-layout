@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
-import { BreakPoints } from "./break-points";
-import { MediaQueries } from "./media-queries";
+import { BreakPoints } from "../../media-query/break-points";
+import { MediaQueries } from "../../media-query/media-queries";
 import { MediaQueryAdapter } from "./media-query-adapter";
 
 // RxJS Operators used by the classes...

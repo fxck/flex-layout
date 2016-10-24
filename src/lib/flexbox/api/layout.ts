@@ -3,7 +3,7 @@ import {
   SimpleChanges, Optional, OnChanges, OnDestroy, OnInit,
 } from '@angular/core';
 
-import { BaseStyleDirective } from "./_abstract";
+import { BaseStyleDirective } from "./abstract";
 import {
   MediaQueryAdapter, MediaQueryChanges,
   OnMediaQueryChanges, MediaQueryActivation

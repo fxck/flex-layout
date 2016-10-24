@@ -15,7 +15,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
             layout.md="column" 
             layout.lg="invalid"  
             [layout.gt-lg]="responsiveCol" 
-            flex="25%" (click)="toggleLayoutFor(1)">
+            flex="50%" flex.gt-sm="25" (click)="toggleLayoutFor(1)">
         <div flex>First item in row</div>
         <div flex>Second item in row</div>
       </div>
@@ -25,7 +25,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
       </div>
     </div>
     <div layout="row" class="hint" layout-align="space-around"> 
-      <div>&lt;div layout="{{ firstCol }}" flex="25%"&gt;</div>
+      <div>&lt;div layout="{{ firstCol }}" flex="25%" flex.gt-sm="50%" &gt;</div>
       <div flex></div>
       <div>&lt;div layout="{{ secondCol }}" flex&gt;</div>
     </div>

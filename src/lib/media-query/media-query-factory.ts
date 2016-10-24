@@ -1,4 +1,4 @@
-import { isDefined } from '../../utils/global';
+import { isDefined } from '../utils/global';
 
 // ****************************************************************
 // Exported Types and Interfaces
