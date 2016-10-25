@@ -14,6 +14,11 @@ import {
   FlexAlignDirective
 } from "./flex";
 
+import {
+  ShowDirective,
+  HideDirective
+} from "./show-hide";
+
 /**
  * *****************************************************************
  * Define module for the Layout API
@@ -31,7 +36,9 @@ import {
     FlexOrderDirective,
     FlexOffsetDirective,
     FlexFillDirective,
-    FlexAlignDirective
+    FlexAlignDirective,
+    ShowDirective,
+    HideDirective
   ],
   declarations: [
     LayoutDirective,
@@ -41,7 +48,9 @@ import {
     FlexOrderDirective,
     FlexOffsetDirective,
     FlexFillDirective,
-    FlexAlignDirective
+    FlexAlignDirective,
+    ShowDirective,
+    HideDirective
   ]
 })
 export class LayoutDirectivesModule { }

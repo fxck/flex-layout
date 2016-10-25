@@ -10,13 +10,8 @@ export default function modernizr(target) {
 
     switch( key ) {
       case 'display':
-        if ( value == 'flex' ) {
-          // @TOOD - detect Browser and adjust value
-          //  display: -webkit-flex;
-          //  display: -ms-flexbox;
-        }
+        target[ 'display' ]                = value;
         break;
-
       case 'flex' :
         target['-ms-flex']                 = value;
         target['-webkit-flex']             = value;
