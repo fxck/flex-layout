@@ -5,18 +5,18 @@ import {Component, ViewEncapsulation} from '@angular/core';
   template: `
     <div>
     <div class="title">Using "layout-wrap" to wrap positioned items within a layout container</div>        
-    <div [layout]="direction" layout-wrap class="colored wrapped box" (click)="toggleDirection()">
+    <div [fl-layout]="direction" fl-layout-wrap class="colored wrapped box" (click)="toggleDirection()">
     
-      <div flex="30"> [flex="30"] </div>
-      <div flex="45"> [flex="45"] </div>
-      <div flex="19"> [flex="19"] </div>
-      <div flex="33"> [flex="33"] </div>
-      <div flex="67"> [flex="67"] </div>
-      <div flex="50"> [flex="50"] </div>
-      <div flex>      [flex]      </div>
+      <div fl-flex="30"> [fl-flex="30"] </div>
+      <div fl-flex="45"> [fl-flex="45"] </div>
+      <div fl-flex="19"> [fl-flex="19"] </div>
+      <div fl-flex="33"> [fl-flex="33"] </div>
+      <div fl-flex="67"> [fl-flex="67"] </div>
+      <div fl-flex="50"> [fl-flex="50"] </div>
+      <div fl-flex>      [fl-flex]      </div>
       
     </div>    
-    <div class="hint">layout = "{{ direction }}"</div>
+    <div class="hint">fl-layout = "{{ direction }}"</div>
     </div>
     
   `,

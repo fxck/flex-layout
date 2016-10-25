@@ -23,7 +23,7 @@ import { isDefined } from '../../utils/global';
  *
  */
 @Directive({
-  selector: '[layout]'
+  selector: '[fl-layout]'
 })
 export class LayoutDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
   /**
@@ -46,21 +46,21 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
   /**
    * Default layout property with default direction value
    */
-  @Input() layout = 'row';
+  @Input('fl-layout')        layout = 'row';
 
   // *******************************************************
   // Optional input variations to support mediaQuery triggers
   // *******************************************************
 
-  @Input('layout.xs')     layoutXs;
-  @Input('layout.gt-xs')  layoutGtXs;
-  @Input('layout.sm')     layoutSm;
-  @Input('layout.gt-sm')  layoutGtSm;
-  @Input('layout.md')     layoutMd;
-  @Input('layout.gt-md')  layoutGtMd;
-  @Input('layout.lg')     layoutLg;
-  @Input('layout.gt-lg')  layoutGtLg;
-  @Input('layout.xl')     layoutXl;
+  @Input('fl-layout.xs')     layoutXs;
+  @Input('fl-layout.gt-xs')  layoutGtXs;
+  @Input('fl-layout.sm')     layoutSm;
+  @Input('fl-layout.gt-sm')  layoutGtSm;
+  @Input('fl-layout.md')     layoutMd;
+  @Input('fl-layout.gt-md')  layoutGtMd;
+  @Input('fl-layout.lg')     layoutLg;
+  @Input('fl-layout.gt-lg')  layoutGtLg;
+  @Input('fl-layout.xl')     layoutXl;
 
   /**
    *
@@ -75,16 +75,20 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
 
   /**
    * On changes to any @Input properties...
-   * Default to use the non-responsive Input value ('layout')
+   * Default to use the non-responsive Input value ('fl-layout')
    * Then conditionally override with the mq-activated Input's current value
    */
   ngOnChanges( changes:SimpleChanges ) {
-    let direction = this.layout || "row";
-    if (isDefined( this._mqActivation )) {
-      direction = this._mqActivation.activatedInput;
+    let activated = this._mqActivation;
+    let activationChange = activated && isDefined(changes[activated.activatedInputKey]);
+
+    if ( isDefined(changes['layout'])  || activationChange ) {
+      if ( activationChange) {
+        console.log(`LayoutDirective::ngOnchanges( ${activated.activatedInputKey} = ${changes[activated.activatedInputKey]} )`)
+      }
+      this._updateWithDirection( );
     }
 
-    this._updateWithDirection( direction );
   }
 
   /**
@@ -102,8 +106,6 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
     this._updateWithDirection( changes.current.value );
   }
 
-
-
   // *********************************************
   // Protected methods
   // *********************************************
@@ -116,14 +118,16 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
    *         laid out and drawn inside that element's specified width and height.
    *
    */
-  _updateWithDirection(direction) {
+  _updateWithDirection(direction?:string) {
+    direction = direction || this.layout || "row";
+    if (  isDefined(this._mqActivation) ) {
+      direction = this._mqActivation.activatedInput;
+    }
     direction = this._validateValue(direction);
-    this._updateStyle(this._buildCSS(direction));
 
-    // Announce to subscribers a layout direction change
+    // Update styles and announce to subscribers the *new* direction
+    this._updateStyle(this._buildCSS( direction ));
     this._layout.next(direction);
-
-    return direction;
   }
 
 
@@ -147,7 +151,7 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
    * Use default fallback of "row"
    */
   _validateValue(value) {
-    value = value.toLowerCase();
+    value = value ? value.toLowerCase() : "";
     return LAYOUT_VALUES.find(x => x === value) ? value : LAYOUT_VALUES[0];  // "row"
   }
 
@@ -161,7 +165,7 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
  * @see https://css-tricks.com/almanac/properties/f/flex-wrap/
  */
 @Directive({
-  selector: '[layout-wrap]'
+  selector: '[fl-layout-wrap]'
 })
 export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
   /**
@@ -169,22 +173,21 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
    */
   private _mqActivation : MediaQueryActivation;
 
-  @Input('layout-wrap')
-  wrap : string = 'wrap';
+  @Input('fl-layout-wrap')        wrap : string = 'wrap';
 
   // *******************************************************
   // Optional input variations to support mediaQuery triggers
   // *******************************************************
 
-  @Input('layout-wrap.xs')     wrapXs;
-  @Input('layout-wrap.gt-xs')  wrapGtXs;
-  @Input('layout-wrap.sm')     wrapSm;
-  @Input('layout-wrap.gt-sm')  wrapGtSm;
-  @Input('layout-wrap.md')     wrapMd;
-  @Input('layout-wrap.gt-md')  wrapGtMd;
-  @Input('layout-wrap.lg')     wrapLg;
-  @Input('layout-wrap.gt-lg')  wrapGtLg;
-  @Input('layout-wrap.xl')     wrapXl;
+  @Input('fl-layout-wrap.xs')     wrapXs;
+  @Input('fl-layout-wrap.gt-xs')  wrapGtXs;
+  @Input('fl-layout-wrap.sm')     wrapSm;
+  @Input('fl-layout-wrap.gt-sm')  wrapGtSm;
+  @Input('fl-layout-wrap.md')     wrapMd;
+  @Input('fl-layout-wrap.gt-md')  wrapGtMd;
+  @Input('fl-layout-wrap.lg')     wrapLg;
+  @Input('fl-layout-wrap.gt-lg')  wrapGtLg;
+  @Input('fl-layout-wrap.xl')     wrapXl;
 
   constructor(private _$mq: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer)
@@ -195,11 +198,12 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
   // *********************************************
 
   ngOnChanges( changes:SimpleChanges ) {
-    let value = this.wrap || "wrap";
-     if (isDefined( this._mqActivation )) {
-       value = this._mqActivation.activatedInput;
-     }
-    this._updateWithValue( value );
+    let activated = this._mqActivation;
+    let activationChange = activated && isDefined(changes[activated.activatedInputKey]);
+
+    if ( isDefined(changes['wrap'])  || activationChange ) {
+      this._updateWithValue( );
+    }
   }
 
   /**
@@ -224,8 +228,14 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
   // Protected methods
   // *********************************************
 
-  _updateWithValue( value:string ) {
-    this._updateStyle( this._buildCSS(value || 'wrap') );
+  _updateWithValue( value?:string ) {
+    value = value || this.wrap || "wrap";
+    if (isDefined( this._mqActivation )) {
+      value = this._mqActivation.activatedInput;
+    }
+    value = this._validateValue(value);
+
+    this._updateStyle(this._buildCSS( value ));
   }
 
 
@@ -234,7 +244,7 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
    */
   _buildCSS(value) {
     return this._modernizer({
-      'flex-wrap' : this._validateValue(value)
+      'flex-wrap' : value
     });
   }
 
@@ -275,7 +285,7 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
  *  @see https://css-tricks.com/almanac/properties/a/align-content/
  */
 @Directive({
-  selector:'[layout-align]',
+  selector:'[fl-layout-align]'
 })
 export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
   /**
@@ -286,21 +296,21 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, 
   private _layout = 'row';   // default flex-direction
   private _layoutWatcher : Subscription;
 
-  @Input('layout-align') align : string = "start stretch";
+  @Input('fl-layout-align') align : string = "start stretch";
 
   // *******************************************************
   // Optional input variations to support mediaQuery triggers
   // *******************************************************
 
-  @Input('layout-align.xs')     alignXs;
-  @Input('layout-align.gt-xs')  alignGtXs;
-  @Input('layout-align.sm')     alignSm;
-  @Input('layout-align.gt-sm')  alignGtSm;
-  @Input('layout-align.md')     alignMd;
-  @Input('layout-align.gt-md')  alignGtMd;
-  @Input('layout-align.lg')     alignLg;
-  @Input('layout-align.gt-lg')  alignGtLg;
-  @Input('layout-align.xl')     alignXl;
+  @Input('fl-layout-align.xs')     alignXs;
+  @Input('fl-layout-align.gt-xs')  alignGtXs;
+  @Input('fl-layout-align.sm')     alignSm;
+  @Input('fl-layout-align.gt-sm')  alignGtSm;
+  @Input('fl-layout-align.md')     alignMd;
+  @Input('fl-layout-align.gt-md')  alignGtMd;
+  @Input('fl-layout-align.lg')     alignLg;
+  @Input('fl-layout-align.gt-lg')  alignGtLg;
+  @Input('fl-layout-align.xl')     alignXl;
 
   constructor(@Optional() public container:LayoutDirective, private _$mq: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
@@ -316,11 +326,12 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, 
   // *********************************************
 
   ngOnChanges( changes?:SimpleChanges ) {
-    let value = this.align || "start stretch";
-    if (isDefined( this._mqActivation )) {
-      value = this._mqActivation.activatedInput;
+    let activated = this._mqActivation;
+    let activationChange = activated && isDefined(changes[activated.activatedInputKey]);
+
+    if ( isDefined(changes['align'])  || activationChange ) {
+      this._updateWithValue( );
     }
-    this._updateWithValue( value );
   }
 
   /**
@@ -347,8 +358,16 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, 
   // Protected methods
   // *********************************************
 
-  _updateWithValue( value:string ) {
-    this._updateStyle( this._buildCSS(value || 'start stretch') );
+  /**
+   *
+   */
+  _updateWithValue( value?:string ) {
+    value = value || this.align || "start stretch";
+    if (isDefined( this._mqActivation )) {
+      value = this._mqActivation.activatedInput;
+    }
+
+    this._updateStyle(this._buildCSS(value ));
   }
 
   /**
@@ -356,7 +375,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, 
    */
   _onLayoutChange(direction) {
     this._layout = (direction || "").toLowerCase().replace('-reverse',"");
-    if ( this._layout !== 'column') this._layout = "row";
+    if ( !LAYOUT_VALUES.find(x => x === this._layout) ) this._layout = "row";
 
     let value = this.align || "start stretch";
     if (isDefined( this._mqActivation )) {

@@ -9,25 +9,25 @@ import {Component, ViewEncapsulation} from '@angular/core';
   <div>
     <div class="title">Simple row with nested layout containers.</div> 
     <button (click)="isVisible = !isVisible">Toggle</button>
-    <div class="colorNested box" layout="row" *ngIf="isVisible">
-      <div  [layout]="firstCol" 
-            [layout.xs]="'column'" 
-            layout.md="column" 
-            layout.lg="invalid"  
-            [layout.gt-lg]="responsiveCol" 
-            flex="50%" flex.gt-sm="25" (click)="toggleLayoutFor(1)">
-        <div flex>First item in row</div>
-        <div flex>Second item in row</div>
+    <div class="colorNested box" fl-layout="row" *ngIf="isVisible">
+      <div  [fl-layout]="firstCol" 
+            [fl-layout.xs]="'column'" 
+            fl-layout.md="column" 
+            fl-layout.lg="invalid"  
+            [fl-layout.gt-lg]="responsiveCol" 
+            fl-flex="50%" fl-flex.gt-sm="25" (click)="toggleLayoutFor(1)">
+        <div fl-flex>First item in row</div>
+        <div fl-flex>Second item in row</div>
       </div>
-      <div [layout]="secondCol" flex (click)="toggleLayoutFor(2)">
-        <div flex>First item in column</div>
-        <div flex>Second item in column</div>
+      <div [fl-layout]="secondCol" fl-flex (click)="toggleLayoutFor(2)">
+        <div fl-flex>First item in column</div>
+        <div fl-flex>Second item in column</div>
       </div>
     </div>
-    <div layout="row" class="hint" layout-align="space-around"> 
-      <div>&lt;div layout="{{ firstCol }}" flex="25%" flex.gt-sm="50%" &gt;</div>
-      <div flex></div>
-      <div>&lt;div layout="{{ secondCol }}" flex&gt;</div>
+    <div fl-layout="row" class="hint" fl-layout-align="space-around"> 
+      <div>&lt;div fl-layout="{{ firstCol }}" fl-flex="25%" fl-flex.gt-sm="50%" &gt;</div>
+      <div fl-flex></div>
+      <div>&lt;div fl-layout="{{ secondCol }}" fl-flex&gt;</div>
     </div>
   </div>
   `,

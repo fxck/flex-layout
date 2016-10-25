@@ -5,15 +5,15 @@ import {Component, ViewEncapsulation} from '@angular/core';
   template: `
   <div>
     <div class="title">Simple row using "flex" on 3rd element to fill available main axis.</div> 
-    <div [layout]="direction" (click)="toggleDirection()" class="colored box" >
-      <div flex="20">
-        flex="20"
+    <div [fl-layout]="direction" (click)="toggleDirection()" class="colored box" >
+      <div fl-flex="20">
+        fl-flex="20"
       </div>
-      <div flex="60">
-        flex="60"
+      <div fl-flex="60">
+        fl-flex="60"
       </div>
-      <div flex >
-        flex
+      <div fl-flex >
+        fl-flex
       </div>
     </div>
     <div class="hint">layout = "{{ direction }}"</div>
