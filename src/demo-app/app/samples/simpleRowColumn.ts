@@ -1,4 +1,6 @@
 import {Component, ViewEncapsulation} from '@angular/core';
+import { MediaQueries } from '../../../lib/media-query/';
+
 
 @Component({
   selector: 'sample-simple-row-column',
@@ -44,7 +46,14 @@ export class SimpleRowColumnComponent {
 
   isVisible = true;
 
+  constructor( public $mdMedia : MediaQueries ) {
+  }
+
   toggleLayoutFor(col) {
+    if ( this.$mdMedia.isActive('gt-sm') ) {
+        console.log("SimpleRowColumn: gt-sm")
+    }
+
     let key = (col == "2") ? "secondCol" : "firstCol" ;
     this[key] = (this[key] == "row") ? "column" : "row";
   }

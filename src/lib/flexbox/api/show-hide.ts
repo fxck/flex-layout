@@ -268,8 +268,5 @@ export class HideDirective extends BaseStyleDirective implements OnInit, OnChang
 
 function calculateDisplayStyle(elRef: ElementRef):string {
   let domEl = elRef.nativeElement;
-  let computed = window.getComputedStyle(domEl);
-
-
-  return computed.display;
+  return window.getComputedStyle(domEl).display;
 }

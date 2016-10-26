@@ -54,6 +54,18 @@ export class MediaQueries {
   }
 
   /**
+   * For the specified mediaQuery alias, is the mediaQuery range active?
+   */
+  isActive(alias:string) : boolean {
+    let bp = this._breakpoints.findBreakpointBy(alias);
+    if ( bp ) {
+      let mql = this._mqls[ bp.mediaQuery ];
+      if ( mql.matches ) return true;
+    }
+    return false;
+  }
+
+  /**
    * External observers can watch for specific mql changes;
    * typically used by the MediaQueryAdaptor
    */

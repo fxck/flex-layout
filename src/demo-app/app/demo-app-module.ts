@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { LayoutsModule } from "../../lib/flexbox/all";
+import { LayoutsModule } from "../../lib/flexbox/";
 import { DemoAppComponent } from './demo-app.component';
 
 // import { IssuesModule} from './issues/_modules';

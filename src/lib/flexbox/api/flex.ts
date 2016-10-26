@@ -21,7 +21,8 @@ import { Subscription } from "rxjs/Subscription";
  * @see https://css-tricks.com/snippets/css/a-guide-to-flexbox/
  */
 @Directive({
-  selector:'[ng-flex]'
+  selector:'[ng-flex]',
+
 })
 export class FlexDirective extends BaseStyleDirective implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
   /**
@@ -33,9 +34,9 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
   private _layout = 'row';   // default flex-direction
   private _layoutWatcher : Subscription;
 
+  @Input('ng-flex')    flex   :string = "";
   @Input('ng-shrink')  shrink :number = 1;
   @Input('ng-grow')    grow   :number = 1;
-  @Input('ng-flex')    flex   :string = "";
 
   // *******************************************************
   // Optional input variations to support mediaQuery triggers
@@ -160,12 +161,18 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
      *      with 'flex-grow: 1' on the same row.
      *
      */
+     let clearStyles = {
+        'max-width'  : null,  // ! use `null` to remove styles
+        'max-height' : null,
+        'min-width'  : null,
+        'min-height' : null
+      };
     switch(basis || "") {
-       case ""      : css = { 'flex'  : '1'        }; break;
-       case GROW    : css = { 'flex'  : "1 1 100%" }; break;
-       case INITIAL : css = { 'flex'  : "0 1 auto" }; break;    // default
-       case AUTO    : css = { 'flex'  : "1 1 auto" }; break;
-       case NONE    : css = { 'flex'  : "0 0 auto" }; break;
+       case ""      : css = Object.assign(clearStyles, { 'flex'  : '1'        }); break;
+       case GROW    : css = Object.assign(clearStyles, { 'flex'  : "1 1 100%" }); break;
+       case INITIAL : css = Object.assign(clearStyles, { 'flex'  : "0 1 auto" }); break;    // default
+       case AUTO    : css = Object.assign(clearStyles, { 'flex'  : "1 1 auto" }); break;
+       case NONE    : css = Object.assign(clearStyles, { 'flex'  : "0 0 auto" }); break;
 
        default      :
          let isPercent = String(basis).indexOf("%")  > -1;
@@ -175,22 +182,18 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
          if (!isPx && !isPercent && !isNaN(basis))  basis = basis + '%';
          if ( basis === "0px" )                     basis = "0%";
 
-         css = {
+         css = Object.assign(clearStyles, {
            'flex' : `${grow} ${shrink} ${ isPx ? basis : '100%' }`,     // fix issue #5345
-           'max-width'  : null,                                         // ! use `null` to remove styles
-           'max-height' : null,
-           'min-width'  : null,
-           'min-height' : null
-         };
-
-         let max = ( direction === 'row' ) ? 'max-width' : 'max-height';
-         let min = ( direction === 'row' ) ? 'min-width' : 'min-height';
-
-         css[ min ] = (basis == '0%') ? basis : null;
-         css[ max ] = basis;
-
+         });
          break;
      }
+
+      let max = ( direction === 'row' ) ? 'max-width' : 'max-height';
+      let min = ( direction === 'row' ) ? 'min-width' : 'min-height';
+
+      css[ min ] = (basis == '0%') ? basis : null;
+      css[ max ] = basis;
+
      return Object.assign(css, { 'box-sizing' : 'border-box' });
    }
 }

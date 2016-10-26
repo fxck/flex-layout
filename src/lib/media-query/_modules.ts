@@ -1,19 +1,12 @@
 import { NgModule } from '@angular/core';
 
-import { BreakPoints } from "../../media-query/break-points";
-import { MediaQueries } from "../../media-query/media-queries";
-import { MediaQueryAdapter } from "./media-query-adapter";
-
-// RxJS Operators used by the classes...
-
-import 'rxjs/add/operator/filter';
-import 'rxjs/add/operator/map';
+import { BreakPoints } from "./break-points";
+import { MediaQueries } from "./media-queries";
 
 
 const ALL_COMPONENTS = [
   BreakPoints,
-  MediaQueries,
-  MediaQueryAdapter
+  MediaQueries
 ];
 
 /**
@@ -24,10 +17,9 @@ const ALL_COMPONENTS = [
 
 
 @NgModule({
-  declarations : [ ],
   providers : [
     BreakPoints,
-    MediaQueryAdapter
+    MediaQueries
   ]
 })
 export class MediaQueriesModule {
@@ -35,7 +27,8 @@ export class MediaQueriesModule {
     return {
       ngModule : MediaQueriesModule,
       providers : [
-        BreakPoints     // Default Breakpoints for application
+        BreakPoints,     // Default Breakpoints for application
+        MediaQueries
       ]
     };
   }
