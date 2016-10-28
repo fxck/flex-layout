@@ -1,20 +1,22 @@
-import {Component, OnInit, NgModule} from '@angular/core';
+import {Component, NgModule} from '@angular/core';
 import { DemoIssue5345 } from "./issue.5345.component";
+import {LayoutsModule} from "../../../lib/flexbox/_module";
 
 @Component({
     selector: 'demos-github-issues',
     template: `
-        <h2>Demos from GitHub Issues</h2>
-        
         <demo-issue-5345></demo-issue-5345>
     `
 })
-export class DemosGithubIssues implements OnInit {
-    constructor() { }
-    ngOnInit() { }
-}
+export class DemosGithubIssues { }
 
 @NgModule({
-  declarations : [ DemoIssue5345 ]
+  declarations : [
+    DemosGithubIssues,      // used by the Router with the root app component
+    DemoIssue5345
+  ],
+  imports : [
+    LayoutsModule
+  ]
 })
 export class DemosGithubIssuesModule{ }

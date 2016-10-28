@@ -4,11 +4,10 @@ import {Component, ViewEncapsulation} from '@angular/core';
   selector: 'demo-app',
   styleUrls : ['demo-app.component.css'],
   templateUrl: `
-      
     <md-toolbar>
       <h2>Demos: </h2>
-      <button md-raised-button color="primary" [routerLink]="['issues']">Github Issues</button>
       <button md-raised-button color="primary" [routerLink]="['']">Layout Docs</button>
+      <button md-raised-button color="primary" [routerLink]="['issues']">Github Issues</button>
       <button md-raised-button color="primary" [routerLink]="['stackoverflow']">StackOverflow</button>
     </md-toolbar>
     

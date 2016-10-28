@@ -100,3 +100,8 @@ div.colored > div:nth-child(7), .seven {
 .box {
   border: solid 1px gray;
 }
+
+
+button.md-primary {
+  margin-left:25px;
+}

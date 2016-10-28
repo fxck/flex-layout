@@ -49,8 +49,8 @@ const ALL_MODULES = [
 
 @NgModule({
   declarations  : ALL_DIRECTIVES,
-  imports       : ALL_MODULES,
-  exports       : [...ALL_DIRECTIVES, ...ALL_MODULES],
+  imports       : [ MediaQueriesModule],
+  exports       : [ MediaQueriesModule, ...ALL_DIRECTIVES ],
   providers     : [ MediaQueryAdapter ]
 })
 export class LayoutsModule {
