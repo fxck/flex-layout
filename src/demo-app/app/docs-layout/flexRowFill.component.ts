@@ -1,7 +1,7 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'sample-flex-row-fill',
+  selector: 'demo-flex-row-fill',
   template: `
   <div>
     <div class="title">Simple row using "flex" on 3rd element to fill available main axis.</div> 
@@ -21,7 +21,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class FlexRowFillComponent  {
+export class DemoFlexRowFill {
   direction = "row";
 
   toggleDirection() {

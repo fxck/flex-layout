@@ -1,7 +1,7 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'sample-complex-column-ordering',
+  selector: 'demo-complex-column-ordering',
   styles : [
     `.containerX {
       width: 490px;
@@ -39,7 +39,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
     <div class="containerX" (click)="toggleDirection()" [ng-layout]="direction" ng-layout-wrap>
       <div class="one   flexitem "                    > 1 <div class="markup">&lt;div ng-flex-order="1"&gt;</div> </div>
       <div class="two   flexitem "  ng-flex-order="3" > 2 <div class="markup">&lt;div ng-flex-order="3"&gt;</div> </div>
-      <div class="three flexitem "  ng-flex-order="5" > 3 <div class="markup">&lt;div ng-flex-order="4"&gt;</div> </div>
+      <div class="three flexitem "  ng-flex-order="5" > 3 <div class="markup">&lt;div ng-flex-order="5"&gt;</div> </div>
       <div class="four  flexitem "                    > 4 <div class="markup">&lt;div ng-flex-order="2"&gt;</div> </div>
       <div class="five  flexitem "  ng-flex-order="4" > 5 <div class="markup">&lt;div ng-flex-order="4"&gt;</div> </div>
     </div>
@@ -48,7 +48,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class ComplexColumnOrderComponent  {
+export class DemoComplexColumnOrder {
   direction = "column";
 
   toggleDirection() {

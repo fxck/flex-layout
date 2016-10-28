@@ -14,14 +14,14 @@
     "mapRoot": "",
     "module": "es2015",
     "moduleResolution": "node",
-    "outDir": "../../dist/@angular/layouts",
+    "outDir": "../../dist/",
     "rootDir": ".",
     "sourceMap": true,
     "target": "es5",
     "baseUrl": "",
     "paths": {
-      "@angular/layouts/*": [
-        "./*"
+      "@angular/layouts/": [
+          "../../dist/@angular/layouts"
       ]
     },
     "typeRoots": [

@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {NgModule, ModuleWithProviders} from '@angular/core';
 
 import {
   LayoutDirective,
@@ -32,15 +32,15 @@ import 'rxjs/add/operator/map';
 
 const ALL_DIRECTIVES = [
   LayoutDirective,
-      LayoutWrapDirective,
-      LayoutAlignDirective,
-      FlexDirective,
-      FlexOrderDirective,
-      FlexOffsetDirective,
-      FlexFillDirective,
-      FlexAlignDirective,
-      ShowDirective,
-      HideDirective
+  LayoutWrapDirective,
+  LayoutAlignDirective,
+  FlexDirective,
+  FlexOrderDirective,
+  FlexOffsetDirective,
+  FlexFillDirective,
+  FlexAlignDirective,
+  ShowDirective,
+  HideDirective
 ];
 
 const ALL_MODULES = [
@@ -48,13 +48,17 @@ const ALL_MODULES = [
 ];
 
 @NgModule({
-  declarations : ALL_DIRECTIVES,
-  imports: ALL_MODULES,
-  exports: [...ALL_DIRECTIVES, ALL_MODULES],
-  providers : [
-    MediaQueryAdapter
-  ]
+  declarations  : ALL_DIRECTIVES,
+  imports       : ALL_MODULES,
+  exports       : [...ALL_DIRECTIVES, ...ALL_MODULES],
+  providers     : [ MediaQueryAdapter ]
 })
 export class LayoutsModule {
+  static forRoot(): ModuleWithProviders {
+      return {
+        ngModule  : LayoutsModule,
+        providers : [ MediaQueryAdapter ]
+      };
+    }
 }
 

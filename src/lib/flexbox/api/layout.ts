@@ -384,7 +384,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, 
   _buildCSS(align) {
     let css = { }, [ main_axis, cross_axis ] = align.split(" ");
 
-    css['justify-content'] = "start";     // default
+    css['justify-content'] = "flex-start";     // default
     css['align-items']     = "stretch";   // default
     css['align-content']   = "stretch";   // default
 

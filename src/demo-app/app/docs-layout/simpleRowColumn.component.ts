@@ -3,7 +3,7 @@ import { MediaQueries } from '../../../lib/media-query/';
 
 
 @Component({
-  selector: 'sample-simple-row-column',
+  selector: 'demo-simple-row-column',
   styles : [
     ".hint { margin:5px; font-size:0.9em;color: #a3a3a3; margin-bottom:0;}"
   ],
@@ -39,7 +39,7 @@ import { MediaQueries } from '../../../lib/media-query/';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class SimpleRowColumnComponent {
+export class DemoSimpleRowColumn {
   firstCol = "row";
   secondCol = "column";
   responsiveCol = "column";

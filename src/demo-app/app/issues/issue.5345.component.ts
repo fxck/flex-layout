@@ -1,7 +1,7 @@
 import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
-  selector: 'issue-5345',
+  selector: 'demo-issue-5345',
   styleUrls: ['issue.5345.component.css'],
   template: `
   <div style="margin-top: 50px;">
@@ -30,7 +30,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
   `,
   encapsulation: ViewEncapsulation.None,
 })
-export class Issue5345Component  {
+export class DemoIssue5345  {
   direction = "row";
 
     toggleDirection() {

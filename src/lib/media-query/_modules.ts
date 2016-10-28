@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { BreakPoints } from "./break-points";
 import { MediaQueries } from "./media-queries";
 
-
 const ALL_COMPONENTS = [
   BreakPoints,
   MediaQueries

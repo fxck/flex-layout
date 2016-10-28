@@ -1,42 +1,35 @@
-import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule }       from '@angular/core';
+import { BrowserModule }  from '@angular/platform-browser';
+import { FormsModule }    from '@angular/forms';
+import { RouterModule }   from "@angular/router";
+import { MaterialModule } from "@angular/material";
 
-import { LayoutsModule } from "../../lib/flexbox/";
-import { DemoAppComponent } from './demo-app.component';
+import { LayoutsModule }  from "../../lib/flexbox/"; //"@angular/layouts";
 
-// import { IssuesModule} from './issues/_modules';
-// import { SamplesModule } from './samples/_modules';
-//
-// @NgModule({
-//   declarations    : [
-//     DemoAppComponent
-//   ],
-//   imports         : [ LayoutsModule, BrowserModule, IssuesModule, SamplesModule],
-//   bootstrap       : [ DemoAppComponent ]
-// })
-// export class DemoAppModule { }
+import { DemoApp }                                     from './demo-app/demo-app.component';
+import { DEMO_APP_ROUTES }                             from "./demo-app-routes";
+// import { DemosLayoutAPI, DemosLayoutAPIModule}         from "./docs-layout/DemosLayoutAPI";
+// import { DemosGithubIssues, DemosGithubIssuesModule}   from "./issues/DemosGithubIssues";
+import {DemosStackOverflow, DemosStackOverflowModule} from "./stack-overflow/DemosStackOverflow";
+import {DemoComplexColumnOrder} from "./stack-overflow/columnOrder.component";
 
-
-
-import { SimpleRowColumnComponent } from './samples/simpleRowColumn';
-import { FlexRowFillComponent } from './samples/flexRowFill.component';
-import { FlexRowFillWrapComponent } from './samples/flexRowFillWrap.component';
-import { ComplexColumnOrderComponent } from './samples/columnOrder.component'
-import { Issue5345Component } from './issues/issue.5345.component';
 
 @NgModule({
-
   declarations    : [
-    DemoAppComponent,
-
-    SimpleRowColumnComponent,
-    FlexRowFillComponent,
-    FlexRowFillWrapComponent,
-    ComplexColumnOrderComponent,
-
-    Issue5345Component
+    // DemosLayoutAPI,
+    // DemosGithubIssues,
+    DemoApp
   ],
-  imports         : [ LayoutsModule, BrowserModule ],
-  bootstrap       : [ DemoAppComponent ]
+  imports         : [
+    BrowserModule,
+    FormsModule,
+    RouterModule.forRoot(DEMO_APP_ROUTES),
+    MaterialModule.forRoot(),
+    LayoutsModule.forRoot(),
+    DemosStackOverflowModule
+    // DemosGithubIssuesModule,
+    // DemosLayoutAPIModule
+  ],
+  bootstrap       : [ DemoApp ],
 })
 export class DemoAppModule { }

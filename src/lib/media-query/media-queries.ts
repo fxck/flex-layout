@@ -6,6 +6,11 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { BreakPoint, BreakPoints } from './break-points';
 import { MediaQueryList, MediaQueryListFactory} from "./media-query-factory";
 
+// RxJS Operators used by the classes...
+
+import 'rxjs/add/operator/filter';
+import 'rxjs/add/operator/map';
+
 // ****************************************************************
 // Exported Types and Interfaces
 // ****************************************************************
