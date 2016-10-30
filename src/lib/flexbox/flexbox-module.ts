@@ -1,29 +1,11 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
 
-import {
-  LayoutDirective,
-  LayoutWrapDirective,
-  LayoutAlignDirective
-} from "./api/layout";
+import { ShowDirective, HideDirective } from "./api/show-hide";
+import { LayoutDirective, LayoutWrapDirective, LayoutAlignDirective } from "./api/layout";
+import { FlexDirective, FlexOrderDirective, FlexOffsetDirective, FlexFillDirective, FlexAlignDirective } from "./api/flex";
 
-import {
-  FlexDirective,
-  FlexOrderDirective,
-  FlexOffsetDirective,
-  FlexFillDirective,
-  FlexAlignDirective
-} from "./api/flex";
-
-import {
-  ShowDirective,
-  HideDirective
-} from "./api/show-hide";
-
-import {
-  MediaQueryAdapter
-} from "./media-query/media-query-adapter";
-
-import {MediaQueriesModule} from '../media-query/_modules';
+import { MediaQueryAdapter }  from "./media-query/media-query-adapter";
+import { MediaQueriesModule } from '../media-query/media-query-module';
 
 // RxJS Operators used by the classes...
 

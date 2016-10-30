@@ -14,16 +14,10 @@
     "mapRoot": "",
     "module": "es2015",
     "moduleResolution": "node",
-    "outDir": "../../dist/",
+    "outDir": "../../dist/@angular/layouts",
     "rootDir": ".",
-    "sourceMap": false,
+    "sourceMap": true,
     "target": "es5",
-    "baseUrl": "",
-    "paths": {
-      "@angular/layouts": [
-          "../../dist/@angular/layouts"
-      ]
-    },
     "typeRoots": [
       "../../node_modules/@types"
     ],
@@ -35,7 +29,7 @@
     "system-config-spec"
   ],
   "angularCompilerOptions": {
-    "genDir": "../../dist",
+    "genDir": "../../dist/@angular/layouts",
     "skipTemplateCodegen": true,
     "debug": true
   }

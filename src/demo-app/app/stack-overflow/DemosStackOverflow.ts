@@ -11,7 +11,8 @@ export class DemosStackOverflow { }
 import {NgModule}                 from '@angular/core';
 import {CommonModule}             from "@angular/common";
 import {MaterialModule}           from "@angular/material";
-import {LayoutsModule}            from "../../../lib/flexbox/_module";
+
+import {LayoutsModule}            from "../../../lib/flexbox/flexbox-module";
 
 import { DemoComplexColumnOrder } from "./columnOrder.demo";
 

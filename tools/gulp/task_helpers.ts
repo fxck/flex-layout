@@ -4,7 +4,7 @@ import * as gulp from 'gulp';
 import * as gulpTs from 'gulp-typescript';
 import * as path from 'path';
 
-import {NPM_VENDOR_FILES, PROJECT_ROOT, DIST_ROOT} from './constants';
+import {NPM_VENDOR_FILES, PROJECT_ROOT, DIST_ROOT, SASS_AUTOPREFIXER_OPTIONS} from './constants';
 
 
 /** Those imports lack typings. */
@@ -14,21 +14,32 @@ const gulpRunSequence = require('run-sequence');
 const gulpSass = require('gulp-sass');
 const gulpServer = require('gulp-server-livereload');
 const gulpSourcemaps = require('gulp-sourcemaps');
+const gulpAutoprefixer = require('gulp-autoprefixer');
 const resolveBin = require('resolve-bin');
+
 
 
 /** If the string passed in is a glob, returns it, otherwise append '**\/*' to it. */
 function _globify(maybeGlob: string, suffix = '**/*') {
-  return maybeGlob.indexOf('*') != -1 ? maybeGlob : path.join(maybeGlob, suffix);
+  if (maybeGlob.indexOf('*') != -1) {
+    return maybeGlob;
+  }
+  try {
+    const stat = fs.statSync(maybeGlob);
+    if (stat.isFile()) {
+      return maybeGlob;
+    }
+  } catch (e) {}
+  return path.join(maybeGlob, suffix);
 }
 
-
 /** Create a TS Build Task, based on the options. */
-export function tsBuildTask(tsConfigPath: string) {
+export function tsBuildTask(tsConfigPath: string, tsConfigName = 'tsconfig.json') {
   let tsConfigDir = tsConfigPath;
-  if (fs.existsSync(path.join(tsConfigDir, 'tsconfig.json'))) {
+
+  if (fs.existsSync(path.join(tsConfigDir, tsConfigName))) {
     // Append tsconfig.json
-    tsConfigPath = path.join(tsConfigDir, 'tsconfig.json');
+    tsConfigPath = path.join(tsConfigDir, tsConfigName);
   } else {
     tsConfigDir = path.dirname(tsConfigDir);
   }
@@ -36,6 +47,8 @@ export function tsBuildTask(tsConfigPath: string) {
   return () => {
     const tsConfig: any = JSON.parse(fs.readFileSync(tsConfigPath, 'utf-8'));
     const dest: string = path.join(tsConfigDir, tsConfig['compilerOptions']['outDir']);
+
+    //console.log(`tsBuildTask dest = ${dest}`);
 
     const tsProject = gulpTs.createProject(tsConfigPath, {
       typescript: require('typescript')
@@ -54,6 +67,7 @@ export function tsBuildTask(tsConfigPath: string) {
     ]);
   };
 }
+
 
 
 /** Create a SASS Build Task. */
@@ -133,9 +147,11 @@ export function execNodeTask(packageName: string, executable: string | string[],
 
 
 /** Copy files from a glob to a destination. */
-export function copyTask(srcGlobOrDir: string, outRoot: string) {
-  return () => {
-    return gulp.src(_globify(srcGlobOrDir)).pipe(gulp.dest(outRoot));
+export function copyTask(srcGlobOrDir: string | string[], outRoot: string) {
+  if (typeof srcGlobOrDir === 'string') {
+    return () => gulp.src(_globify(srcGlobOrDir)).pipe(gulp.dest(outRoot));
+  } else {
+    return () => gulp.src(srcGlobOrDir.map(name => _globify(name))).pipe(gulp.dest(outRoot));
   }
 }
 

@@ -11,7 +11,6 @@ import { isDefined } from "../utils/global";
 
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/do';
 
 // ****************************************************************
 // Exported Types and Interfaces
