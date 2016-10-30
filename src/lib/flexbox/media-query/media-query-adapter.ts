@@ -1,10 +1,10 @@
 import {
-  Directive, Injectable, OnDestroy
+  Directive, Injectable, OnDestroy, NgZone
 } from "@angular/core";
 
 import { isDefined } from '../../utils/global';
 import { MediaQueries, MediaQueryChange } from "../../media-query/media-queries";
-import { BreakPoints } from "../../media-query/break-points";
+import { BreakPoints, BreakPoint } from "../../media-query/break-points";
 
 import { Subscription } from "rxjs/Subscription";
 
@@ -62,9 +62,9 @@ export class MediaQueryAdapter {
   /**
    *
    */
-  constructor(breakpoints : BreakPoints) {
+  constructor(breakpoints : BreakPoints, zone: NgZone) {
     this._breakpoints = breakpoints;
-    this._$mq = new MediaQueries( breakpoints );
+    this._$mq = new MediaQueries( breakpoints, zone );
   }
 
   /**
@@ -72,7 +72,7 @@ export class MediaQueryAdapter {
    * tracks the current mq-activated input and manages the calls to the directive's ngOnMediaQueryChanges
    */
   attach(directive : Directive,  property :string, defaultVal:string|number ) : MediaQueryActivation {
-    let activation : MediaQueryActivation = new MediaQueryActivation(directive, property, defaultVal );
+    let activation : MediaQueryActivation = new MediaQueryActivation(this._$mq, directive, property, defaultVal );
     let list : SubscriptionList = this._linkOnMediaChanges( directive, property );
 
     this._listenOnDestroy( directive, list );
@@ -183,6 +183,15 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   private _activatedInputKey   : string;
 
   get activatedInputKey():string {
+        let items:Array<BreakPoint> = this._$mq.activeOverlaps;
+        items.forEach( bp => {
+          if ( !isDefined(this._activatedInputKey) ) {
+            let key = this._baseKey + bp.suffix;
+            if ( isDefined(this._directive[ key ]) ) {
+              this._activatedInputKey = key;
+            }
+          }
+        });
     return this._activatedInputKey || this._baseKey;
   }
 
@@ -196,7 +205,7 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   /**
    *
    */
-  constructor(private _directive:Directive, private _baseKey:string, private _defaultValue:string|number ){
+  constructor(private _$mq:MediaQueries, private _directive:Directive, private _baseKey:string, private _defaultValue:string|number ){
       this._interceptLifeCyclEvents();
   }
 

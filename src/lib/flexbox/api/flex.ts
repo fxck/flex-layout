@@ -105,7 +105,9 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
    }
 
   ngOnDestroy(){
-    this._layoutWatcher.unsubscribe();
+    if (this._layoutWatcher)  {
+      this._layoutWatcher.unsubscribe();
+    }
   }
 
   // *********************************************
@@ -439,7 +441,6 @@ export class FlexAlignDirective extends BaseStyleDirective implements OnInit, On
     ngOnMediaQueryChanges(changes: MediaQueryChanges) {
       this._updateWithValue( changes.current.value );
     }
-
 
   // *********************************************
   // Protected methods

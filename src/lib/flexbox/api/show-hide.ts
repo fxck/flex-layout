@@ -65,13 +65,12 @@ export class ShowDirective extends BaseStyleDirective implements OnInit, OnChang
 
   /**
    * On changes to any @Input properties...
-   * Default to use the non-responsive Input value ('ng-layout')
+   * Default to use the non-responsive Input value ('ng-show')
    * Then conditionally override with the mq-activated Input's current value
    */
   ngOnChanges( changes:SimpleChanges ) {
     let activated = this._mqActivation;
     let activationChange = activated && isDefined(changes[activated.activatedInputKey]);
-
     if ( isDefined(changes['show'])  || activationChange ) {
       this._updateWithValue( );
     }
@@ -83,8 +82,8 @@ export class ShowDirective extends BaseStyleDirective implements OnInit, OnChang
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._display = calculateDisplayStyle(this.elRef);
     this._mqActivation = this._$mq.attach(this, "show", "true");
+    this._updateWithValue()
   }
 
   /**
@@ -94,7 +93,6 @@ export class ShowDirective extends BaseStyleDirective implements OnInit, OnChang
     // console.log("ShowDirective::ngOnMediaChanges()");
 
     delay(()=>{
-      this._display = calculateDisplayStyle(this.elRef);
       this._updateWithValue( changes.current.value );
     });
   }
@@ -190,10 +188,10 @@ export class HideDirective extends BaseStyleDirective implements OnInit, OnChang
 
   /**
    * On changes to any @Input properties...
-   * Default to use the non-responsive Input value ('ng-layout')
+   * Default to use the non-responsive Input value ('ng-hide')
    * Then conditionally override with the mq-activated Input's current value
    */
-  ngOnChanges( changes:SimpleChanges ) {
+  ngOnChanges( changes?:SimpleChanges ) {
     let activated = this._mqActivation;
     let activationChange = activated && isDefined(changes[activated.activatedInputKey]);
 
@@ -208,8 +206,9 @@ export class HideDirective extends BaseStyleDirective implements OnInit, OnChang
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._display = calculateDisplayStyle(this.elRef);
+
     this._mqActivation = this._$mq.attach(this, "hide", "true");
+    this._updateWithValue( );
   }
 
   /**
@@ -219,7 +218,6 @@ export class HideDirective extends BaseStyleDirective implements OnInit, OnChang
     // console.log("HideDirective::ngOnMediaChanges()");
 
     delay(()=>{
-      this._display = calculateDisplayStyle(this.elRef);
       this._updateWithValue( changes.current.value );
     });
   }
@@ -232,9 +230,13 @@ export class HideDirective extends BaseStyleDirective implements OnInit, OnChang
    * Validate the visibility value and then update the host's inline display style
    */
   _updateWithValue(value?:string|number|boolean) {
+    let key = "";
+
     value = value || this.hide || true;
+
     if (  isDefined(this._mqActivation) ) {
       value = this._mqActivation.activatedInput;
+      key = this._mqActivation.activatedInputKey;
     }
     value = this._validateValue(value);
 

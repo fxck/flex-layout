@@ -1,15 +1,19 @@
-import {Component, NgModule} from '@angular/core';
-import { DemoComplexColumnOrder } from "./columnOrder.component";
-import {LayoutsModule} from "../../../lib/flexbox/_module";
+import {Component} from '@angular/core';
 
 @Component({
   selector: 'demos-stackoverflow',
   template: `
-    <div ng-layout="row"></div>
-    <demo-complex-column-ordering class="small-demo" ></demo-complex-column-ordering>
+    <demo-complex-column-ordering></demo-complex-column-ordering>
   `
 })
 export class DemosStackOverflow { }
+
+import {NgModule}                 from '@angular/core';
+import {CommonModule}             from "@angular/common";
+import {MaterialModule}           from "@angular/material";
+import {LayoutsModule}            from "../../../lib/flexbox/_module";
+
+import { DemoComplexColumnOrder } from "./columnOrder.demo";
 
 @NgModule({
   declarations : [
@@ -17,6 +21,8 @@ export class DemosStackOverflow { }
     DemoComplexColumnOrder
   ],
   imports : [
+    CommonModule,
+    MaterialModule,
     LayoutsModule
   ]
 })

@@ -2,6 +2,7 @@ import {Injectable} from "@angular/core";
 
 export interface BreakPoint {
   mediaQuery: string;
+  overlapping:boolean;
   suffix : string;
   alias: string;
 }
@@ -20,16 +21,16 @@ export class BreakPoints {
    */
   constructor() {
     this.registry = [
-      { alias: ''     , suffix: ''     , mediaQuery: 'screen'                                                 },
-      { alias: 'xs'   , suffix: 'Xs'   , mediaQuery: 'screen and (max-width: 599px)'                         },
-      { alias: 'gt-xs', suffix: 'GtXs' , mediaQuery: 'screen and (min-width: 600px)'                         },
-      { alias: 'sm'   , suffix: 'Sm'   , mediaQuery: 'screen and (min-width: 600px) and (max-width: 959px)'  },
-      { alias: 'gt-sm', suffix: 'GtSm' , mediaQuery: 'screen and (min-width: 960px)'                         },
-      { alias: 'md'   , suffix: 'Md'   , mediaQuery: 'screen and (min-width: 960px) and (max-width: 1279px)' },
-      { alias: 'gt-md', suffix: 'GtMd' , mediaQuery: 'screen and (min-width: 1280px)'                        },
-      { alias: 'lg'   , suffix: 'Lg'   , mediaQuery: 'screen and (min-width: 1280px) and (max-width: 1919px)'},
-      { alias: 'gt-lg', suffix: 'GtLg' , mediaQuery: 'screen and (min-width: 1920px)'                        },
-      { alias: 'xl'   , suffix: 'Xl'   , mediaQuery: 'screen and (min-width: 1920px)'                        }
+      { alias: ''     , suffix: ''     , overlapping:true  , mediaQuery: 'screen'                                                },
+      { alias: 'xs'   , suffix: 'Xs'   , overlapping:false , mediaQuery: 'screen and (max-width: 599px)'                         },
+      { alias: 'gt-xs', suffix: 'GtXs' , overlapping:true  , mediaQuery: 'screen and (min-width: 600px)'                         },
+      { alias: 'sm'   , suffix: 'Sm'   , overlapping:false , mediaQuery: 'screen and (min-width: 600px) and (max-width: 959px)'  },
+      { alias: 'gt-sm', suffix: 'GtSm' , overlapping:true  , mediaQuery: 'screen and (min-width: 960px)'                         },
+      { alias: 'md'   , suffix: 'Md'   , overlapping:false , mediaQuery: 'screen and (min-width: 960px) and (max-width: 1279px)' },
+      { alias: 'gt-md', suffix: 'GtMd' , overlapping:true  , mediaQuery: 'screen and (min-width: 1280px)'                        },
+      { alias: 'lg'   , suffix: 'Lg'   , overlapping:false , mediaQuery: 'screen and (min-width: 1280px) and (max-width: 1919px)'},
+      { alias: 'gt-lg', suffix: 'GtLg' , overlapping:true  , mediaQuery: 'screen and (min-width: 1920px)'                        },
+      { alias: 'xl'   , suffix: 'Xl'   , overlapping:false , mediaQuery: 'screen and (min-width: 1920px)'                        }
     ];
   }
 
@@ -43,6 +44,14 @@ export class BreakPoints {
       }
     }
     return null;
+  }
+
+  /**
+   * Get all the breakpoints whose ranges could overlapping `normal` ranges;
+   * e.g. gt-sm overlaps md, lg, and xl
+   */
+  get overlappings() : Array<BreakPoint> {
+    return this.registry.filter( it => it.overlapping == true );
   }
 
   /**
