@@ -6,6 +6,7 @@ import { Component } from '@angular/core';
       <demo-responsive-direction  class="small-demo">  </demo-responsive-direction>
       <demo-responsive-row-column class="small-demo">  </demo-responsive-row-column>
       <demo-responsive-flex-directive  class="small-demo">  </demo-responsive-flex-directive>
+      <demo-responsive-flex-order  class="small-demo">  </demo-responsive-flex-order>
       <demo-responsive-show-hide  class="small-demo">  </demo-responsive-show-hide>
     `
 })
@@ -22,7 +23,7 @@ import {DemoResponsiveRows}  from "./responsiveRowColumns.demo";
 import {DemoResponsiveDirection }  from "./responsiveDirections.demo";
 import {DemoResponsiveShowHide} from "./responsiveShowHide.demo";
 import {DemoResponsiveFlexDirectives} from "./responsiveFlexDirective.demo";
-
+import {DemoResponsiveFlexOrder} from "./responsiveFlexOrder.demo";
 
 @NgModule({
   declarations : [
@@ -31,6 +32,7 @@ import {DemoResponsiveFlexDirectives} from "./responsiveFlexDirective.demo";
     DemoResponsiveRows,
     DemoResponsiveDirection,
     DemoResponsiveFlexDirectives,
+    DemoResponsiveFlexOrder,
     DemoResponsiveShowHide
 
   ],
