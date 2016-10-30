@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 
 import { BaseStyleDirective } from "./abstract";
-import { LayoutDirective } from "./layout";
+import { LayoutDirective, LayoutWrapDirective } from "./layout";
 import {
   MediaQueryAdapter, MediaQueryChanges,
   OnMediaQueryChanges, MediaQueryActivation
@@ -63,12 +63,13 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
    */
   constructor(
     private _$mq: MediaQueryAdapter,
-    @Optional() @SkipSelf() private container:LayoutDirective,
+    @Optional() @SkipSelf() private _container:LayoutDirective,
+    @Optional() @SkipSelf() private _wrap:LayoutWrapDirective,
     elRef: ElementRef, renderer: Renderer) {
       super(elRef, renderer);
 
-      if (container) {
-        this._layoutWatcher = container.onLayoutChange    // Subscribe to layout immediate parent direction changes
+      if (_container) {
+        this._layoutWatcher = _container.onLayoutChange    // Subscribe to layout immediate parent direction changes
             .subscribe(this._onLayoutChange.bind(this));
       }
   }
@@ -187,8 +188,11 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
          if (!isPx && !isPercent && !isNaN(basis))  basis = basis + '%';
          if ( basis === "0px" )                     basis = "0%";
 
+         // Set max-width = basis if using layout-wrap
+         // @see https://github.com/philipwalton/flexbugs#11-min-and-max-size-declarations-are-ignored-when-wrapping-flex-items
+
          css = Object.assign(clearStyles, {
-           'flex' : `${grow} ${shrink} ${ isPx ? basis : '100%' }`,     // fix issue #5345
+           'flex' : `${grow} ${shrink} ${ (isPx || this._wrap) ? basis : '100%' }`,     // fix issue #5345
          });
          break;
      }
@@ -198,6 +202,7 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
 
       css[ min ] = (basis == '0%') ? 0 : null;
       css[ max ] = (basis == '0%') ? 0 : basis;
+
 
      return Object.assign(css, { 'box-sizing' : 'border-box' });
    }

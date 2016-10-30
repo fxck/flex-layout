@@ -10,7 +10,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
       <md-card-title>Fill Row with 'Flex'</md-card-title>
       <md-card-subtitle>Simple row using "flex" on 3rd element to fill available main axis.</md-card-subtitle>
       <md-card-content>
-        <div class="containerX">
+        <div class="containerX"> 
           <div [ng-layout]="direction" (click)="toggleDirection()" class="colored box" >
             <div ng-flex="20">  ng-flex="20"  </div>
             <div ng-flex="60">  ng-flex="60"  </div>

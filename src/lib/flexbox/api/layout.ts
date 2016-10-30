@@ -243,7 +243,8 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
    */
   _buildCSS(value) {
     return this._modernizer({
-      'flex-wrap' : value
+      'flex-wrap' : value,
+      '-webkit-flex-wrap' : value
     });
   }
 

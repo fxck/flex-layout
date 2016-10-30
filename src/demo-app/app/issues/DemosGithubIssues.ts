@@ -4,6 +4,7 @@ import {Component} from '@angular/core';
     selector: 'demos-github-issues',
     template: `
         <demo-issue-5345></demo-issue-5345>
+        <demo-issue-9897></demo-issue-9897>
     `
 })
 export class DemosGithubIssues { }
@@ -15,11 +16,13 @@ import {MaterialModule}      from "@angular/material";
 import {LayoutsModule}       from "../../../lib/flexbox/_module";
 
 import { DemoIssue5345 }     from "./issue.5345.demo";
+import { DemoIssue9897 }     from "./issue.9897.demo";
 
 @NgModule({
   declarations : [
     DemosGithubIssues,      // used by the Router with the root app component
-    DemoIssue5345
+    DemoIssue5345,
+    DemoIssue9897
   ],
   imports : [
     CommonModule,
