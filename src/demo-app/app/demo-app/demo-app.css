@@ -121,3 +121,7 @@ button.md-primary {
 md-toolbar-row  button {
   min-width: 150px;
 }
+
+div.colored.box.nopad > div {
+  padding: 0;
+}

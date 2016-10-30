@@ -171,11 +171,13 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
         'min-height' : null
       };
     switch(basis || "") {
-       case ""      : css = Object.assign(clearStyles, { 'flex'  : '1'        }); break;
-       case GROW    : css = Object.assign(clearStyles, { 'flex'  : "1 1 100%" }); break;
-       case INITIAL : css = Object.assign(clearStyles, { 'flex'  : "0 1 auto" }); break;    // default
-       case AUTO    : css = Object.assign(clearStyles, { 'flex'  : "1 1 auto" }); break;
-       case NONE    : css = Object.assign(clearStyles, { 'flex'  : "0 0 auto" }); break;
+       case ""        : css = Object.assign(clearStyles, { 'flex'  : '1'        }); break;
+       case GROW      : css = Object.assign(clearStyles, { 'flex'  : "1 1 100%" }); break;
+       case INITIAL   : css = Object.assign(clearStyles, { 'flex'  : "0 1 auto" }); break;    // default
+       case AUTO      : css = Object.assign(clearStyles, { 'flex'  : "1 1 auto" }); break;
+       case NONE      : css = Object.assign(clearStyles, { 'flex'  : "0 0 auto" }); break;
+       case NO_GROW   : css = Object.assign(clearStyles, { 'flex'  : "0 1 auto" }); break;
+       case NO_SHRINK : css = Object.assign(clearStyles, { 'flex'  : "1 0 auto" }); break;
 
        default      :
          let isPercent = String(basis).indexOf("%")  > -1;
@@ -194,8 +196,8 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
       let max = ( direction === 'row' ) ? 'max-width' : 'max-height';
       let min = ( direction === 'row' ) ? 'min-width' : 'min-height';
 
-      css[ min ] = (basis == '0%') ? basis : null;
-      css[ max ] = basis;
+      css[ min ] = (basis == '0%') ? 0 : null;
+      css[ max ] = (basis == '0%') ? 0 : basis;
 
      return Object.assign(css, { 'box-sizing' : 'border-box' });
    }
@@ -510,3 +512,6 @@ const GROW      = "grow";
 const INITIAL   = "initial";
 const AUTO      = "auto";
 const NONE      = "none";
+const NO_GROW   = "nogrow";
+const NO_SHRINK = "noshrink";
+

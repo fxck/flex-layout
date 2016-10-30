@@ -3,9 +3,11 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'demos-docs-layout',
     template: `
-      <demo-layout-alignment    class="small-demo">  </demo-layout-alignment>          
-      <demo-flex-row-fill       class="small-demo">  </demo-flex-row-fill>
-      <demo-flex-row-fill-wrap  class="small-demo">  </demo-flex-row-fill-wrap>
+      <demo-layout-alignment      class="small-demo">  </demo-layout-alignment>          
+      <demo-flex-row-fill         class="small-demo">  </demo-flex-row-fill>
+      <demo-flex-row-fill-wrap    class="small-demo">  </demo-flex-row-fill-wrap>
+      <demo-flex-attribute-values class="small-demo">  </demo-flex-attribute-values>
+      <demo-flex-offset-values    class="small-demo">  </demo-flex-offset-values>
     `
 })
 export class DemosLayoutAPI { }
@@ -20,6 +22,8 @@ import {LayoutsModule}       from "../../../lib/flexbox/_module";
 import {DemoLayoutAlignment} from "./layoutAlignment.demo";
 import {DemoFlexRowFill}     from "./flexRowFill.demo";
 import {DemoFlexRowFillWrap} from "./flexRowFillWrap.demo";
+import {DemoFlexAttributeValues} from "./flexOtherValues.demo";
+import {DemoFlexOffsetValues}    from "./flexOffetValues.demo";
 
 
 @NgModule({
@@ -28,7 +32,9 @@ import {DemoFlexRowFillWrap} from "./flexRowFillWrap.demo";
 
     DemoFlexRowFill,
     DemoFlexRowFillWrap,
-    DemoLayoutAlignment
+    DemoLayoutAlignment,
+    DemoFlexAttributeValues,
+    DemoFlexOffsetValues
   ],
   imports : [
     CommonModule,
