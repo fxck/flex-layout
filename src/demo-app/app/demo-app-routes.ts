@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 
 import {DemosLayoutAPI}         from "./docs-layout/DemosLayoutAPI";
 import {DemosResponsiveLayout}  from "./docs-layout-responsive/DemosResponsiveLayouts";
-import {DemosGithubIssues}      from "./issues/DemosGithubIssues";
+import {DemosGithubIssues}      from "./github-issues/DemosGithubIssues";
 import {DemosStackOverflow}     from "./stack-overflow/DemosStackOverflow";
 
 export const DEMO_APP_ROUTES: Routes = [

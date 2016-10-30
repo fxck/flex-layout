@@ -9,7 +9,7 @@ import { LayoutsModule }  from "../../lib/flexbox/"; //"@angular/layouts";
 import { DemoApp }                  from './demo-app/demo-app';
 import { DEMO_APP_ROUTES }          from "./demo-app-routes";
 import { DemosStackOverflowModule } from "./stack-overflow/DemosStackOverflow";
-import { DemosGithubIssuesModule }  from './issues/DemosGithubIssues';
+import { DemosGithubIssuesModule }  from './github-issues/DemosGithubIssues';
 import { DemosLayoutAPIModule }     from './docs-layout/DemosLayoutAPI';
 import { DemosResponsiveLayoutsModule } from './docs-layout-responsive/DemosResponsiveLayouts';
 
