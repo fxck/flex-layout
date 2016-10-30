@@ -40,7 +40,7 @@ import { MediaQueries } from '../../../lib/media-query/';
       <!--</md-card-actions>-->
       <md-card-footer style="width:95%">
          <div ng-layout="row" class="hint" ng-layout-align="space-around" > 
-            <div>&lt;div ng-layout="{{ firstCol }}" ng-flex="25%" ng-flex.gt-sm="50%" &gt;</div>
+            <div>&lt; ng-layout="{{ firstCol }}" ng-flex="50%" ng-flex.gt-sm="25%" ng-show.md="false" &gt;</div>
             <div ng-flex></div>
             <div>&lt;div ng-layout="{{ secondCol }}" ng-flex&gt;</div>
          </div>

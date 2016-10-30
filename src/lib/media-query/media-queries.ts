@@ -5,6 +5,7 @@ import { BehaviorSubject } from "rxjs/BehaviorSubject";
 
 import { BreakPoint, BreakPoints } from './break-points';
 import { MediaQueryList, MediaQueryListFactory} from "./media-query-factory";
+import { isDefined } from "../utils/global";
 
 // RxJS Operators used by the classes...
 
@@ -92,19 +93,14 @@ export class MediaQueries {
   }
 
   /**
-   * External observers can watch for specific mql changes;
-   * typically used by the MediaQueryAdaptor
+   * External observers can watch for all (or a specific) mql changes.
+   * Typically used by the MediaQueryAdaptor; optionally available to components
+   * use the MediaQueries as $mdMedia service
    */
-  observe(alias:string) : Observable<MediaQueryChange> {
-    return this._announcer.filter(e => e && e.mqAlias === alias );
-  }
-
-  /**
-   *
-   */
-  observeAll() : Observable<MediaQueryChange> {
-    return this._announcer
-      .filter(e => e && e.matches === true );
+  observe(alias?:string) : Observable<MediaQueryChange> {
+    return this._announcer.filter(e => {
+      return !isDefined(alias) ? (e.matches === true) : (e.mqAlias === alias);
+    });
   }
 
   /**
@@ -114,18 +110,18 @@ export class MediaQueries {
     ranges.forEach((it:BreakPoint)=> {
       let mql = this._mqls[ it.mediaQuery ];
       if ( !mql) {
-
         mql = MediaQueryListFactory.instanceOf((it.mediaQuery));
 
         // Each listener uses a shared eventHandler: which emits specific data to observers
-        mql.addListener( this.onMQLEvent.bind(this, it) );
-
         // Cache this permanent listener
+
+        mql.addListener( this.onMQLEvent.bind(this, it) );
         this._mqls[ it.mediaQuery ] = mql;
 
-        // Announce activate range for initial subscribers
-        if ( mql.matches ) this.onMQLEvent(it, mql);
-
+        if ( mql.matches ) {
+          // Announce activate range for initial subscribers
+          this.onMQLEvent(it, mql);
+        }
       }
     });
   }

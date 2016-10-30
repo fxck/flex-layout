@@ -95,6 +95,7 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
     */
    ngOnInit() {
      this._mqActivation = this._$mq.attach(this, "flex", "");
+     this._onLayoutChange();
    }
 
    /**
@@ -117,8 +118,8 @@ export class FlexDirective extends BaseStyleDirective implements OnInit, OnChang
   /**
    * Cache the parent container 'flex-direction' and update the 'ng-flex' styles
    */
-  _onLayoutChange(direction) {
-    this._layout = direction;
+  _onLayoutChange(direction?:string) {
+    this._layout = direction || this._layout;
 
     let value = this.flex || "";
     if (isDefined( this._mqActivation )) {
@@ -256,6 +257,7 @@ export class FlexOrderDirective extends BaseStyleDirective implements OnInit, On
      */
     ngOnInit() {
       this._mqActivation = this._$mq.attach(this, "order", "1");
+      this._updateWithValue();
     }
 
     /**
@@ -270,7 +272,7 @@ export class FlexOrderDirective extends BaseStyleDirective implements OnInit, On
   // *********************************************
 
     _updateWithValue( value?:string ) {
-    value = this.order || "";
+    value = value || this.order || "1";
     if (  isDefined(this._mqActivation) ) {
       value = this._mqActivation.activatedInput;
     }
@@ -433,6 +435,7 @@ export class FlexAlignDirective extends BaseStyleDirective implements OnInit, On
      */
     ngOnInit() {
       this._mqActivation = this._$mq.attach(this, "align", "stretch");
+      this._updateWithValue();
     }
 
     /**

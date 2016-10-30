@@ -28,7 +28,7 @@ import {BreakPoint} from "../../../lib/media-query/break-points";
 export class DemoResponsiveFlexDirectives implements OnInit {
   public activeMediaQuery = "";
 
-  constructor(private _$mq : MediaQueries) {  }
+  constructor(private _$mdMedia : MediaQueries) {  }
 
   ngOnInit() {
     this.watchMQChanges();
@@ -36,11 +36,11 @@ export class DemoResponsiveFlexDirectives implements OnInit {
 
 
   watchMQChanges() {
-    this._$mq.observeAll().subscribe((e:MediaQueryChange) => {
-      let current : BreakPoint = this._$mq.active;
+    this._$mdMedia.observe().subscribe((e:MediaQueryChange) => {
+      let current : BreakPoint = this._$mdMedia.active;
       let value = current ? `'${current.alias}' = ${current.mediaQuery} )` : "";
 
-      console.log(`watchMQChanges( ${value}`);
+      // console.log(`watchMQChanges( ${value}`);
       this.activeMediaQuery = value;
     });
   }

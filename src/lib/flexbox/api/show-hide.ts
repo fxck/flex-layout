@@ -83,7 +83,7 @@ export class ShowDirective extends BaseStyleDirective implements OnInit, OnChang
    */
   ngOnInit() {
     this._mqActivation = this._$mq.attach(this, "show", "true");
-    this._updateWithValue()
+    this._updateWithValue();
   }
 
   /**

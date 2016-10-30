@@ -94,6 +94,7 @@ export class LayoutDirective extends BaseStyleDirective implements OnInit, OnCha
    */
   ngOnInit() {
     this._mqActivation = this._$mq.attach(this, "layout", "row");
+    this._updateWithDirection();
   }
 
   /**
@@ -209,6 +210,7 @@ export class LayoutWrapDirective extends BaseStyleDirective implements OnInit, O
    */
   ngOnInit() {
     this._mqActivation = this._$mq.attach(this, "wrap", "wrap");
+    this._updateWithValue();
   }
 
   /**
@@ -337,6 +339,7 @@ export class LayoutAlignDirective extends BaseStyleDirective implements OnInit, 
    */
   ngOnInit() {
     this._mqActivation = this._$mq.attach(this, "align", "start stretch");
+    this._updateWithValue();
   }
 
   /**
