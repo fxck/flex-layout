@@ -13,6 +13,9 @@ Developers can easily install this `@angular/layouts` library using **npm** (pen
 npm install @angular/layouts -save
 ```
 
+> Note: This ^ feature is pending public release of the Github repository!
+
+#### Application Usages
 In their application module, developers import the global Layout API directives (as shown below): 
 
 ```ts
@@ -49,8 +52,8 @@ complex, dynamic layouts:
 
 ### Overview
 
-The Angular Layout features provide smart, syntactic sugar to allow developers to easily and intuitively create 
-responsive and adaptive layouts. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
+The Angular Layout features provide smart, syntactic directives to allow developers to easily and intuitively create 
+responsive and adaptive layouts using Flexbox CSS. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
 
 ![demos3](https://cloud.githubusercontent.com/assets/210413/11566167/e074446c-99a6-11e5-8b69-4e84ed0a1dde.jpg)
 
@@ -58,14 +61,14 @@ responsive and adaptive layouts. The public **Layout API** is a simply list of H
 
 | HTML Markup API | Allowed values (raw or interpolated) |
 |-----------------|----------------------------------------------------------------------------|
-|  layout         | `row | column | row-reverse | column-reverse`                                                          |                  
-|  layout-wrap    | `"" | wrap | none | nowrap | reverse`                                     |                   
-|  layout-align   | `start|center|end|space-around|space-between` `start|center|end|stretch`|                   
-|  flex           | "" , px , %                                                              |              
-|  flex-fill      |                                                                            |
-|  flex-order     | int                                                                        |                       
-|  flex-offset    | %, px                                                                         |     
-|  flex-align     | `start|baseline|center|end` |                   
+|  ng-layout         | `row | column | row-reverse | column-reverse`                                                          |                  
+|  ng-layout-wrap    | `"" | wrap | none | nowrap | reverse`                                     |                   
+|  ng-layout-align   | `start|center|end|space-around|space-between` `start|center|end|stretch`|                   
+|  ng-flex           | "" , px , %                                                              |              
+|  ng-flex-fill      |                                                                            |
+|  ng-flex-order     | int                                                                        |                       
+|  ng-flex-offset    | %, px                                                                         |     
+|  ng-flex-align     | `start|baseline|center|end` |                   
 
 <br/>
 
@@ -107,22 +110,22 @@ Below is an example usage of the Responsive Layout API:
   <div ng-flex="33" ng-layout="{{ vm.direction }}" layout.md="row" class="two">
 
     <div ng-flex="22"   ng-flex.md="10" hide-lg                         class="two_one"></div>
-    <div ng-flex="30px" ng-show hide.md="{{ vm.hideBox }}" fng-lex.md="25" class="two_two"></div>
-    <div ng-flex="20"   ng-flex.md="65"                                 class="two_three"></div>
+    <div ng-flex="20"   ng-flex.md="65"                                 class="two_two"></div>
+    <div ng-flex="30px" ng-show hide.md="{{ hideBox }}" ng-flex.md="25" class="two_three"></div>
 
   </div>
-  <div flex class="three"></div>
+  <div ng-flex class="three"></div>
 
 </div>
 ```
 
 <br/>
 
-#### 'Ng 2' Implementation
+#### Implementation
 
-The revised architecture for Layouts eliminates `all` external stylesheets and SCSS files. This is a pure, Angular JS Layout engine that is both independent of Angular Material and easily used within ngMaterial.
+The Angular 2 architecture for Layouts eliminates `all` external stylesheets and SCSS files. This is a pure, Angular Layout engine that is both independent of Angular Material; yet can be used easily within any Material 2 application.
 
-Layout directives are used to create Layout injectors; which inject specific flexbox css directly to the DOM element. For example, consider the use of the `ng-layout="row"` and `ng-layout-align="center center"` directives.
+The Layout API directives are used to create DOM element style injectors which inject specific, custom Flexbox CSS directly to the DOM element. For example, consider the use of the `ng-layout="row"` and `ng-layout-align="center center"` directives.
 
 Static Markup:
 
@@ -134,7 +137,7 @@ Static Markup:
 </div>
 ```
 
-is transformed to Dynamic styles:
+is transformed with inline, injected styles:
 
 ```html
 <div ng-layout="row" ng-layout-align="center center"
@@ -147,9 +150,13 @@ is transformed to Dynamic styles:
 
 #### Demos
 
-The **Generation 1** [layout demos](https://material.angularjs.org/latest/layout/grid) are included here to quickly demonstrate matching functionality (and more) when using the Gen2 implementation.
+Use the following command to start the WebPack server and launch the demo application with its non-responsive and responsive demos:
 
-![demos2](https://cloud.githubusercontent.com/assets/210413/11286935/cc5b325c-8edd-11e5-9723-f866ec69fd97.jpg)
+```
+npm run start	
+```
+
+![layoutdemos](https://cloud.githubusercontent.com/assets/210413/19868966/511c8eea-9f78-11e6-9692-7a23f399b502.jpg)
 
 <br/>
 
