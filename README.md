@@ -39,6 +39,7 @@ Developers can easily install this `@angular/layouts` library using **npm** (pen
 npm install @angular/layouts -save
 ```
 
+----
 
 #### Application Usages
 In their application module, developers import the global Layout API directives (as shown below): 
@@ -74,6 +75,7 @@ complex, dynamic layouts:
 </div>
 ``` 
 
+----
 
 ### API Overview
 
@@ -157,7 +159,7 @@ Below is an example usage of the Responsive Layout API:
 </div>
 ```
 
-<br/>
+----
 
 #### Implementation
 
@@ -187,6 +189,8 @@ is transformed with inline, injected styles:
   <div style="max-width: 100%; box-sizing: border-box;">three</div>
 </div>
 ```
+
+----
 
 #### Summary
 
