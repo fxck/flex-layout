@@ -7,13 +7,14 @@ This is a TypeScript implementation for Angular 2 *flexbox* Layouts. This module
 
 ### Fast Start
 
+> Note: This ^ feature is pending public release of the Github repository!
+
 Developers can easily install this `@angular/layouts` library using **npm** (pending feature):
 
 ```console
 npm install @angular/layouts -save
 ```
 
-> Note: This ^ feature is pending public release of the Github repository!
 
 #### Application Usages
 In their application module, developers import the global Layout API directives (as shown below): 
@@ -179,7 +180,7 @@ Not only is the generation-2 codebase easier to maintain and debug, other more i
 
 ---
 
-#### Build
+#### Build Instructions
 
 
 Use Gulp and Rollup to build a UMD `layouts.umd.js`:
@@ -206,12 +207,4 @@ Different from responsive layouts where components change sizes and positions, t
 
 The Gen2 engine here uses a MediaQueryWatcher in a Publish/Subcribe architecture. Layout injectors use an adaptor to subscribe to breakpoint change notifications. This subscription pattern can be extended to easily support breakpoint notifications to trigger Adaptive UX changes.
 
-#### More possibilities (future)
 
-With the new MediaQuery Pub/Sub mechanisms and Breakpoints, it would be quite easy to extend these injector-subscriber ideas to support constructs such as:
-
-```html
-<div md-class-sm="{'role_admin' : vm.isAdmin()}">
-   ... Admin content here
-</div>
-```
