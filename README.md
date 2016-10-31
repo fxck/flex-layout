@@ -27,6 +27,7 @@ npm update
 npm run start	
 ```
 
+----
 
 ### Fast Start
 
