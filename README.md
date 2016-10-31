@@ -5,6 +5,7 @@ Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQue
 *  This implementation of Angular Layouts is independent of Angular Material (v1 or v2).
 *  This implementation is currently only available for Angular 2 applications.
 
+----
 
 #### Live Layout Demos
 
