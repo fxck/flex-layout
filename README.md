@@ -67,6 +67,25 @@ responsive and adaptive layouts using Flexbox CSS. The public **Layout API** is 
 |  ng-flex-offset    | %, px                                                                         |     
 |  ng-flex-align     | `start|baseline|center|end` |                   
 
+Static Markup Example:
+
+```html
+<div ng-layout='column' class="zero">
+
+  <div ng-flex="33" class="one" ></div>
+  <div ng-flex="33" ng-layout="{{ vm.direction }}" class="two">
+
+    <div ng-flex="22"    class="two_one"></div>
+    <div ng-flex="205"   class="two_two"></div>
+    <div ng-flex="30px"  class="two_three"></div>
+
+  </div>
+  <div ng-flex class="three"></div>
+
+</div>
+```
+
+### Responsive Features
 
 And if we use Breakpoints as specified by Material Design:
 
@@ -104,7 +123,7 @@ Below is an example usage of the Responsive Layout API:
   <div ng-flex="33" ng-flex.md="{{ vm.box1Width }}" class="one" ></div>
   <div ng-flex="33" ng-layout="{{ vm.direction }}" layout.md="row" class="two">
 
-    <div ng-flex="22"    ng-flex.md="10px" hide-lg                       class="two_one"></div>
+    <div ng-flex="22"    ng-flex.md="10px" hide.lg                       class="two_one"></div>
     <div ng-flex="205"   ng-flex.md="65"                                 class="two_two"></div>
     <div ng-flex="30px"  ng-show hide.md="{{ hideBox }}" ng-flex.md="25" class="two_three"></div>
 
