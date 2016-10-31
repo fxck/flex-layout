@@ -38,7 +38,7 @@ module.exports = {
   resolve: {
     extensions: ['', '.webpack.js', '.ts', '.js'],
     alias : {
-      "@angular/layouts" : "./src/lib/flexbox/"
+      "@angular/layouts" : "./src/lib/"
     }
   },
 

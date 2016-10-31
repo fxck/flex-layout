@@ -8,7 +8,7 @@ import {writeFileSync} from 'fs';
 // No typings for these.
 const inlineResources = require('../../../scripts/release/inline-resources');
 const rollup = require('rollup').rollup;
-
+const uglify = require('rollup-plugin-uglify');
 
 // NOTE: there are two build "modes" in this file, based on which tsconfig is used.
 //
@@ -64,9 +64,9 @@ task(':build:components:rollup', [':build:components:ts'], () => {
     entry: path.join(DIST_COMPONENTS_ROOT, 'index.js'),
     context: 'this',
     external: Object.keys(globals),
-    // plugins: [
-    //   includePaths(includePathOptions)
-    //   ]
+    plugins: [
+      uglify()
+    ]
   }).then((bundle: { generate: any }) => {
     const result = bundle.generate({
       moduleName: 'ng.layouts',

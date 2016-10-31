@@ -16,10 +16,10 @@
     }
   ],
   "scripts": {
-    "build": "gulp build",
     "start": "concurrently \"npm run dev\" \"npm run open\"",
     "open": "opn http://localhost:8080/",
     "reinstall": "npm cache clean && npm install",
+    "deploy": "webpack -p --config ./src/demo-app/webpack.config.js --output-path ./dist --progress --colors ",
     "dev": "webpack-dev-server --config ./src/demo-app/webpack.config.js --content-base ./  --inline -d --hot --watch --progress --port 8080"
   },
   "license": "MIT",
