@@ -5,6 +5,25 @@ Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQue
 > This Angular 2 version is independent of Angular Material (v1 or v2); but is currently only available for Angular 2 applications
 
 
+#### Layout Demos
+
+![layoutdemos](https://cloud.githubusercontent.com/assets/210413/19868966/511c8eea-9f78-11e6-9692-7a23f399b502.jpg)
+
+
+Use the following command to start the WebPack server and launch the demo application with its non-responsive and responsive demos:
+
+```
+npm run start	
+```
+
+These static and responsive Layout Demos are based on real samples used in:
+
+*  Angular Material v1.x Layout Documentation
+*  GitHub Issuses
+*  StackOverflow Issues
+*  CodePen Issues
+
+
 ### Fast Start
 
 > Note: This ^ feature is pending public release of the Github repository!
@@ -163,19 +182,6 @@ is transformed with inline, injected styles:
   <div style="max-width: 100%; box-sizing: border-box;">three</div>
 </div>
 ```
-
-#### Demos
-
-Use the following command to start the WebPack server and launch the demo application with its non-responsive and responsive demos:
-
-```
-npm run start	
-```
-
-![layoutdemos](https://cloud.githubusercontent.com/assets/210413/19868966/511c8eea-9f78-11e6-9692-7a23f399b502.jpg)
-
-<br/>
-
 
 #### Summary
 
