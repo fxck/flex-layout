@@ -31,13 +31,14 @@ npm run start
 
 ### Fast Start
 
-> Note: This ^ feature is pending public release of the Github repository!
-
 Developers can easily install this `@angular/layouts` library using **npm** (pending feature):
 
 ```console
 npm install @angular/layouts -save
 ```
+
+
+> Note: This ^ feature is pending public release of the Github repository!
 
 ----
 
