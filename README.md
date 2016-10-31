@@ -9,7 +9,8 @@ The Flexbox Layout features enable developers to organize UI page elements in ro
 
 Integrating **mediaQuery** features into the Layout engine enables the API to be responsive: DOM elements can adjust layout-directions, visibility, and sizing constraints based on specific viewport sizes such as desktop or mobile devices. 
 
-####
+----
+
 
 User stories include scenarios:
 
