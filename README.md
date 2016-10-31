@@ -51,14 +51,10 @@ complex, dynamic layouts:
 ``` 
 
 
-### Overview
+### API Overview
 
 The Angular Layout features provide smart, syntactic directives to allow developers to easily and intuitively create 
 responsive and adaptive layouts using Flexbox CSS. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
-
-![demos3](https://cloud.githubusercontent.com/assets/210413/11566167/e074446c-99a6-11e5-8b69-4e84ed0a1dde.jpg)
-
-<br/>
 
 | HTML Markup API | Allowed values (raw or interpolated) |
 |-----------------|----------------------------------------------------------------------------|
@@ -71,10 +67,8 @@ responsive and adaptive layouts using Flexbox CSS. The public **Layout API** is 
 |  ng-flex-offset    | %, px                                                                         |     
 |  ng-flex-align     | `start|baseline|center|end` |                   
 
-<br/>
 
-
-And if we use Breakpoints as specified in Material Design:
+And if we use Breakpoints as specified by Material Design:
 
 ![](http://material-design.storage.googleapis.com/publish/material_v_4/material_ext_publish/0B8olV15J7abPSGFxemFiQVRtb1k/layout_adaptive_breakpoints_01.png)
 
@@ -96,10 +90,10 @@ We can associate breakpoints with mediaQuery definitions using breakpoint **alia
 | xl    | 'screen and (min-width: 1920px)'                        |
 <br/>
 
-If we combine the breakpoint `alias` with the Layout API we can easily support Responsive breakpoints with a simple markup convention: the `alias` is used as suffix extensions to the Layout API.:
+If we combine the breakpoint `alias` with the Layout API we can easily support Responsive breakpoints with a simple markup convention: the `alias` is used as suffix extensions to the Layout API:
 
 ```html
-<api>-<breakpoint alias>=<value>
+<api>.<breakpoint alias>='<value>'
 ```
 
 Below is an example usage of the Responsive Layout API:
@@ -110,9 +104,9 @@ Below is an example usage of the Responsive Layout API:
   <div ng-flex="33" ng-flex.md="{{ vm.box1Width }}" class="one" ></div>
   <div ng-flex="33" ng-layout="{{ vm.direction }}" layout.md="row" class="two">
 
-    <div ng-flex="22"   ng-flex.md="10" hide-lg                         class="two_one"></div>
-    <div ng-flex="20"   ng-flex.md="65"                                 class="two_two"></div>
-    <div ng-flex="30px" ng-show hide.md="{{ hideBox }}" ng-flex.md="25" class="two_three"></div>
+    <div ng-flex="22"    ng-flex.md="10px" hide-lg                       class="two_one"></div>
+    <div ng-flex="205"   ng-flex.md="65"                                 class="two_two"></div>
+    <div ng-flex="30px"  ng-show hide.md="{{ hideBox }}" ng-flex.md="25" class="two_three"></div>
 
   </div>
   <div ng-flex class="three"></div>
