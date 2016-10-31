@@ -1,9 +1,12 @@
 # Angular 2 Layouts
 
-Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQuery. This module provides Angular 2 developers with component layout features using a custom Layout API, mediaQuery observables,and injected DOM flexbox-2016 css stylings.  This Angular 2 version is independent of Angular Material (v1 or v2); but is currently only available for Angular 2 applications
+Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQuery. This module provides Angular 2 developers with component layout features using a custom Layout API, mediaQuery observables,and injected DOM flexbox-2016 css stylings.  
+
+*  This implementation of Angular Layouts is independent of Angular Material (v1 or v2).
+*  This implementation is currently only available for Angular 2 applications.
 
 
-#### Layout Demos
+#### Live Layout Demos
 
 ![layoutdemos](https://cloud.githubusercontent.com/assets/210413/19868966/511c8eea-9f78-11e6-9692-7a23f399b502.jpg)
 
