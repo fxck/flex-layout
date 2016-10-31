@@ -1,13 +1,32 @@
-# Angular 2 Layouts
+# Angular Layouts
 
-Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQuery. This module provides Angular 2 developers with component layout features using a custom Layout API, mediaQuery observables,and injected DOM flexbox-2016 css stylings.  
+Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQuery. This module provides Angular developers with component layout features using a custom Layout API, mediaQuery observables,and injected DOM flexbox-2016 css stylings.  
 
 *  This implementation of Angular Layouts is independent of Angular Material (v1 or v2).
-*  This implementation is currently only available for Angular 2 applications.
+*  This implementation is currently only available for Angular applications.
+
+The Flexbox Layout features enable developers to organize UI page elements in row and column structures with alignments, resizing, and padding. These layouts can be nested and easily used with hierarchical DOM structures. Since the Layout applies/injects **Flexbox CSS**, DOM layout will fluidly update is positioning and sizes as the viewport size changes.
+
+Integrating **mediaQuery** features into the Layout engine enables the API to be responsive: DOM elements can adjust layout-directions, visibility, and sizing constraints based on specific viewport sizes such as desktop or mobile devices. 
+
+####
+
+User stories include scenarios:
+
+#### Non-responsive :
+
+*  Layout elements in rows
+*  Layout elements in columns
+*  Nested containers should have isolated layout constraints
+*  Adjust container children sizes based on static percentages
+*  Adjust container children sizes based on static pixel values
+*  Adjust container children sizes based on expressions
+*  Adjust alignment of container children basedon static/dynamic values
+*  Container children resizing is dependent upon container layout directions
 
 ----
 
-#### Live Layout Demos
+### Live Layout Demos
 
 ![layoutdemos](https://cloud.githubusercontent.com/assets/210413/19868966/511c8eea-9f78-11e6-9692-7a23f399b502.jpg)
 
