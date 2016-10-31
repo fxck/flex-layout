@@ -137,7 +137,9 @@ Below is an example usage of the Responsive Layout API:
 
 #### Implementation
 
-The Angular 2 architecture for Layouts eliminates `all` external stylesheets and SCSS files. This is a pure, Angular Layout engine that is both independent of Angular Material; yet can be used easily within any Material 2 application.
+The Angular 2 architecture for Layouts eliminates `all` external Flexbox stylesheets and SCSS files (as used in Angular Material 1 Layout API). 
+
+This is a pure, Angular Layout engine that is independent of Angular Material yet can be used easily within any Material 2 application.
 
 The Layout API directives are used to create DOM element style injectors which inject specific, custom Flexbox CSS directly to the DOM element. For example, consider the use of the `ng-layout="row"` and `ng-layout-align="center center"` directives.
 
