@@ -209,7 +209,8 @@ is transformed with inline, injected styles:
 ```
 
 
-![ng2layouts](https://cloud.githubusercontent.com/assets/210413/19878200/f76f3582-9fb3-11e6-8946-6afb4d2d0b50.png)
+![ng2layouts_classdiagram](https://cloud.githubusercontent.com/assets/210413/19878402/04fc9e40-9fb6-11e6-9bd7-86a65862a334.png)
+
 
 ----
 
