@@ -1,29 +1,20 @@
 # Angular Layouts
 
-Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQuery. This module provides Angular developers with component layout features using a custom Layout API, mediaQuery observables,and injected DOM flexbox-2016 css stylings.  
+Angular Layouts provides a sophisticated layout API using FlexBox CSS + mediaQuery. This module provides Angular 
+developers with component layout features using a custom Layout API, mediaQuery observables,and injected DOM 
+flexbox-2016 css stylings.  
 
 *  This implementation of Angular Layouts is independent of Angular Material (v1 or v2).
 *  This implementation is currently only available for Angular applications.
 
-The Flexbox Layout features enable developers to organize UI page elements in row and column structures with alignments, resizing, and padding. These layouts can be nested and easily used with hierarchical DOM structures. Since the Layout applies/injects **Flexbox CSS**, DOM layout will fluidly update is positioning and sizes as the viewport size changes.
+The Flexbox Layout features enable developers to organize UI page elements in row and column structures with 
+alignments, resizing, and padding. These layouts can be nested and easily used with hierarchical DOM structures. 
+Since the Layout applies/injects **Flexbox CSS**, DOM layout will fluidly update is positioning and sizes as the 
+viewport size changes.
 
-Integrating **mediaQuery** features into the Layout engine enables the API to be responsive: DOM elements can adjust layout-directions, visibility, and sizing constraints based on specific viewport sizes such as desktop or mobile devices. 
 
-----
-
-
-User stories include scenarios:
-
-#### Non-responsive :
-
-*  Layout elements in rows
-*  Layout elements in columns
-*  Nested containers should have isolated layout constraints
-*  Adjust container children sizes based on static percentages
-*  Adjust container children sizes based on static pixel values
-*  Adjust container children sizes based on expressions
-*  Adjust alignment of container children basedon static/dynamic values
-*  Container children resizing is dependent upon container layout directions
+Integrating **mediaQuery** features into the Layout engine enables the API to be responsive: DOM elements can adjust 
+layout-directions, visibility, and sizing constraints based on specific viewport sizes such as desktop or mobile devices. 
 
 ----
 
@@ -34,13 +25,14 @@ User stories include scenarios:
 
 These static and responsive Layout Demos are based on real samples used in:
 
-*  Angular Material v1.x Layout Documentation
+*  Layout Documentation (Angular Material v1.x)
 *  GitHub Issuses
 *  StackOverflow Issues
 *  CodePen Issues
 
 
-Use the following Terminal command(s) to start the WebPack server and launch the demo application with its non-responsive and responsive demos:
+Use the following Terminal command(s) to start the WebPack server and launch the demo application with its 
+non-responsive and responsive demos:
 
 ```
 npm update
@@ -101,7 +93,8 @@ complex, dynamic layouts:
 ### API Overview
 
 The Angular Layout features provide smart, syntactic directives to allow developers to easily and intuitively create 
-responsive and adaptive layouts using Flexbox CSS. The public **Layout API** is a simply list of HTML attributes that can be used on HTML containers and elements:
+responsive and adaptive layouts using Flexbox CSS. The public **Layout API** is a simply list of HTML attributes that 
+can be used on HTML containers and elements:
 
 | HTML Markup API | Allowed values (raw or interpolated) |
 |-----------------|----------------------------------------------------------------------------|
@@ -156,7 +149,8 @@ We can associate breakpoints with mediaQuery definitions using breakpoint **alia
 | xl    | 'screen and (min-width: 1920px)'                        |
 <br/>
 
-If we combine the breakpoint `alias` with the Layout API we can easily support Responsive breakpoints with a simple markup convention: the `alias` is used as suffix extensions to the Layout API:
+If we combine the breakpoint `alias` with the Layout API we can easily support Responsive breakpoints with a 
+simple markup convention: the `alias` is used as suffix extensions to the Layout API:
 
 ```html
 <api>.<breakpoint alias>='<value>'
@@ -184,11 +178,14 @@ Below is an example usage of the Responsive Layout API:
 
 #### Implementation
 
-The Angular 2 architecture for Layouts eliminates `all` external Flexbox stylesheets and SCSS files (as used in Angular Material 1 Layout API). 
+The Angular 2 architecture for Layouts eliminates `all` external Flexbox stylesheets and SCSS files formerly used 
+in the Angular Material 1 Layout implementations.  This is pure typescript- Angular Layout engine that is 
+independent of Angular Material yet can be used easily within any Material 2 application.
 
-This is a pure, Angular Layout engine that is independent of Angular Material yet can be used easily within any Material 2 application.
+The Layout API directives are used to create DOM element style injectors which inject specific, custom Flexbox 
+CSS directly as inline styles onto the DOM element. 
 
-The Layout API directives are used to create DOM element style injectors which inject specific, custom Flexbox CSS directly to the DOM element. For example, consider the use of the `ng-layout="row"` and `ng-layout-align="center center"` directives.
+For example, consider the use of the `ng-layout="row"` and `ng-layout-align="center center"` directives.
 
 Static Markup:
 
@@ -211,7 +208,50 @@ is transformed with inline, injected styles:
 </div>
 ```
 
+
+![ng2layouts](https://cloud.githubusercontent.com/assets/210413/19878200/f76f3582-9fb3-11e6-8946-6afb4d2d0b50.png)
+
 ----
+
+
+### User stories 
+
+##### Non-responsive Use Cases:
+
+*  Layout elements in rows
+*  Layout elements in columns
+*  Nested containers should have isolated layout constraints
+*  Adjust container children sizes (flex) based on static percentages
+*  Adjust container children sizes (flex) based on static pixel values
+*  Adjust container children sizes (flex) based on expressions
+*  Adjust alignment of container children based on static/dynamic values
+*  Adjust offset of container children based on static/dynamic values
+*  Adjust ordering of container children based on static/dynamic values
+*  Container children resizing (flex) is dependent upon container layout directions (layout)
+*  Changes in Layout directives will update nested Flex children 
+
+##### Responsive API Use Cases:
+
+* Change Detection: `ngOnChanges` due to Layout attribute expressions only trigger for defined activated breakpoints or used as fallback
+  *  Input changes are filtered so the default input key is used if the activation key is not defined
+  *  Input changes are filtered so only the current activated input change will trigger an update
+* Activations: when the mediaQuery becomes active
+  *  mq Activation only uses expressions for the activated breakpoint 
+  *  mq Activation fallback to use to non-responsive expressions (fallback) if no breakpoint defined
+* Subscription notifications: using **OnMediaQueryChanges**
+  *  Components implementing `OnMediaQueryChanges` will be notified for each activation  (pending)
+  *  `ngOnMediaQueryChanges()` uses **MediaQueryChanges** event arguments
+  *  `MediaQueryChanges` will contain the previous activation (and expression value) and the current
+* Querying: for imperative or template logic 
+  *  Components can use `MediaQueries::observe()` to subscribe to all activations [for imperative actions]
+  *  Component templates can use `$mdMedia.isActive(<query_alias>)`
+* Breakpoint Customization:
+  * Custom set of breakpoints can be defined as a Provider
+  * Custom breakpoints will override ALL default breakpoints (no merging)
+  
+  
+----
+
 
 #### Summary
 
@@ -223,7 +263,8 @@ Not only is the generation-2 codebase easier to maintain and debug, other more i
   *  Includes workaround for MediaQuery issues with **overlapping** breakpoints
 *  Support (future) for Handset/Tablet and Orientation breakpoints
 *  Support for **ANY** Layout injector value (instead of increments for 5)
-*  Change dectection for Layout injector values
+*  Change detection for Layout injector values
+*  MediaQuery Activation detection 
 *  Support for raw values or interpolated values
 *  Support for raw, percentage or px-suffix values
 
@@ -254,8 +295,9 @@ To use the bundle and the required, external AngularJS framework:
 
 #### Adaptive Layouts (future)
 
-Different from responsive layouts where components change sizes and positions, the concepts of Adaptive layouts provide for UX where  **different components** may be used for different breakpoints. 
+Different from responsive layouts where components change sizes and positions, the concepts of Adaptive layouts 
+provide for UX where  **different components** may be used for different breakpoints. 
 
-The Gen2 engine here uses a MediaQueryWatcher in a Publish/Subcribe architecture. Layout injectors use an adaptor to subscribe to breakpoint change notifications. This subscription pattern can be extended to easily support breakpoint notifications to trigger Adaptive UX changes.
+Animations can also be extended to support MediaQuery activations: different animations will run for different viewport sizes.
 
 
