@@ -20,7 +20,7 @@ import {Component, ViewEncapsulation} from '@angular/core';
       </div>
     </md-card-content>
     <md-card-footer class="bottomPad">
-      <div class="hint">ng-layout = "{{ direction }}"</div>
+      <div class="hint">&lt;ng-layout = "{{ direction }}"&gt;</div>
     </md-card-footer>
   </md-card>
   `
