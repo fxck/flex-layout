@@ -41,7 +41,8 @@ export class MediaQueryListFactory {
    * Publish a mockMQL if needed
    */
   static instanceOf(query: string): MediaQueryList {
-    let canListen = isDefined(window.matchMedia('all').addListener);
+    let mql = window.matchMedia('all');
+    let canListen = mql && mql.addListener;
 
     prepare(query);
 

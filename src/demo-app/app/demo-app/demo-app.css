@@ -147,9 +147,9 @@ md-toolbar.bigger {
 }
 
 md-toolbar .md-toolbar-layout md-toolbar-row {
-  flex-direction: column;
-  align-content: flex-start;
-  align-items: flex-start;
+  /*flex-direction: column;*/
+  /*align-content: flex-start;*/
+  /*align-items: flex-start;*/
   min-height: 40px;
 }
 

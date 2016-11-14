@@ -8,7 +8,7 @@ import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query
 import {BaseStyleDirective} from './abstract';
 
 
-const FALSY = ['false', '0', false, 0];
+const FALSY = ['false', false, 0];
 
 /**
  * 'show' Layout API directive
