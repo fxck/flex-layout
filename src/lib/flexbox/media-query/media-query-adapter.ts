@@ -93,7 +93,10 @@ export class MediaQueryAdapter {
             key: key + it.suffix  // e.g.  layoutGtSm, layoutMd, layoutGtLg
           }
         })
-        .filter(it => !!directive[it.key]);
+        .filter(it => {
+          // Directive property must have be used in the HTML markup or have a value
+          return !!directive[it.key]
+        });
   }
 
   /**

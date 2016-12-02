@@ -18,6 +18,6 @@ export const MEDIA_QUERY_OBSERVABLE : OpaqueToken = new OpaqueToken('fx-observab
  */
 export const MediaQueryObservable = {
   provide: MEDIA_QUERY_OBSERVABLE,
-  deps: [ BreakPoints, MediaQueries, MatchMedia ],
-  useValue: (mq:MediaQueries) => mq.observe()
+  deps: [ MediaQueries ],
+  useFactory: (mq:MediaQueries) => mq.observe()
 };

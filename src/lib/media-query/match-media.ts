@@ -2,6 +2,7 @@ import {Injectable, NgZone} from '@angular/core';
 
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
+
 // RxJS Operators used by the classes...
 import 'rxjs/add/operator/filter';
 import 'rxjs/add/operator/map';
@@ -34,11 +35,15 @@ export interface MediaQueryList {
  */
 @Injectable()
 export class MatchMedia {
-  private _registry: Map<string, MediaQueryList> = new Map( );
+  private _registry: Map<string, MediaQueryList>;
   private _source: BehaviorSubject<MediaChange>;
   private _observable$: Observable<MediaChange>;
 
   constructor(private _zone: NgZone) {
+    this._registry = new Map<string, MediaQueryList>( );
+
+    this._source = new BehaviorSubject<MediaChange>(new MediaChange(true));
+    this._observable$ = this._source.asObservable();
   }
 
 
@@ -64,8 +69,9 @@ export class MatchMedia {
   observe(mediaQuery?: string): Observable<MediaChange> {
     this._prepareWatchers(mediaQuery);
 
-    return this._observable$
-      .filter((e: MediaChange) => !!mediaQuery ? e.mediaQuery === mediaQuery : false );
+    return this._observable$.filter((e: MediaChange) => {
+      return !!mediaQuery ? e.mediaQuery === mediaQuery : false;
+    });
   }
 
   /**
