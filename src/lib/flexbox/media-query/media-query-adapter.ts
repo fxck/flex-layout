@@ -3,17 +3,23 @@ import 'rxjs/add/operator/map';
 import {Directive, Injectable, NgZone} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 
+import {BreakPoint} from '../../media-query/breakpoints/break-point';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaQueries} from '../../media-query/media-queries';
+
 import {MediaQueryActivation} from './media-query-activation';
-import {MediaQueryChanges, MediaQuerySubscriber, OnMediaQueryChanges} from './media-query-changes';
-import {BreakPoint} from '../../media-query/break-point';
+import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
+import {extendObject} from '../../utils/object-extend';
 
 export declare type SubscriptionList = Subscription[];
 
 const ON_DESTROY = 'ngOnDestroy';
-const ON_MEDIA_CHANGES = 'onMediaChanges';
+const ON_MEDIA_CHANGES = 'onMediaQueryChanges';
 
+export interface BreakPointX extends BreakPoint{
+  key : string;
+  baseKey : string;
+}
 /**
  *  Adapter between Layout API directives and the MediaQueries mdl service
  *
@@ -86,16 +92,15 @@ export class MediaQueryAdapter {
    */
   private _buildRegistryMap(directive: Directive, key: string) {
     return this._breakpoints
-        .map(it => {
-          return {
-            alias: it.alias,      // e.g.  gt-sm, md, gt-lg
-            baseKey: key,        // e.g.  layout, hide, self-align, flex-wrap
-            key: key + it.suffix  // e.g.  layoutGtSm, layoutMd, layoutGtLg
-          }
+        .map(bp => {
+          return <BreakPointX> extendObject({}, bp, {
+            baseKey : key,              // e.g.  layout, hide, self-align, flex-wrap
+            key     : key + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
+          });
         })
-        .filter(it => {
-          // Directive property must have be used in the HTML markup or have a value
-          return !!directive[it.key]
+        .filter((bp : BreakPointX)=> {
+          let input = bp.key;        // Directive input property key
+          return !!directive[ input ];  // Directive property must be used in the HTML markup
         });
   }
 
@@ -104,22 +109,19 @@ export class MediaQueryAdapter {
    * Cache 1..n subscriptions for internal auto-unsubscribes during the directive ngOnDestory()
    * notification
    */
-  private _configureChangeObservers(directive: Directive, property: string, keys: any, callback: MediaQuerySubscriber): SubscriptionList {
+  private _configureChangeObservers(directive: Directive, property: string, breakpoints: any, callback: MediaQuerySubscriber): SubscriptionList {
     let subscriptions = [];
 
-    keys.forEach(it => {
+    breakpoints.forEach((bp:BreakPointX)=> {
       // Only subscribe if the directive API is defined (in use)
-      if (directive[it.key] != null) {
-        let subscription = this._mq.observe(it.alias)
-            .map((ev: MediaChange) => {
-
+      if (directive[bp.key] != null) {
+        let buildChanges = (change: MediaChange) => {
               // Inject directive default property key name: to let onMediaChange() calls
               // know which property is being triggered...
-              ev.property = property;
-
-              return new MediaQueryChanges(null,  ev);
-            })
-            .subscribe(callback);
+              change.property = property;
+              return new MediaQueryChanges(null,  change);
+            };
+        let subscription = this._mq.observe(bp.alias).map(buildChanges).subscribe(callback);
 
         subscriptions.push(subscription);
       }

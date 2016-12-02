@@ -1,7 +1,7 @@
 import {Directive, OnDestroy} from '@angular/core';
 
 import {MediaChange} from '../../media-query/media-change';
-import {BreakPoint} from '../../media-query/break-point';
+import {BreakPoint} from '../../media-query/breakpoints/break-point';
 import {MediaQueries} from '../../media-query/media-queries';
 import {MediaQueryChanges, OnMediaQueryChanges} from './media-query-changes';
 

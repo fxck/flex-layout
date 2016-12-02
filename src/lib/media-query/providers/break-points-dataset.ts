@@ -1,5 +1,5 @@
 import { OpaqueToken } from '@angular/core';
-import { BreakPoint} from './break-point';
+import { BreakPoint} from '../breakpoints/break-point';
 
 const registry : BreakPoint[ ] = [
       {alias: '', suffix: '', overlapping: true, mediaQuery: 'screen'},
@@ -50,7 +50,7 @@ const registry : BreakPoint[ ] = [
         alias: 'xl',
         suffix: 'Xl',
         overlapping: false,
-        mediaQuery: 'screen and (min-width: 1920px)'
+        mediaQuery: 'screen and (min-width: 1921px)'
       }
     ];
 

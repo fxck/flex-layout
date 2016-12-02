@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'demos-docs-layout',
     template: `
-      <demo-responsive-direction  class="small-demo">  </demo-responsive-direction>
-      <demo-responsive-row-column class="small-demo">  </demo-responsive-row-column>
-      <demo-responsive-flex-directive  class="small-demo">  </demo-responsive-flex-directive>
-      <demo-responsive-flex-order  class="small-demo">  </demo-responsive-flex-order>
-      <demo-responsive-show-hide  class="small-demo">  </demo-responsive-show-hide>
+      <demo-responsive-layout-direction  class="small-demo">  </demo-responsive-layout-direction>
+      <!--<demo-responsive-row-column class="small-demo">  </demo-responsive-row-column>-->
+      <!--<demo-responsive-flex-directive  class="small-demo">  </demo-responsive-flex-directive>-->
+      <!--<demo-responsive-flex-order  class="small-demo">  </demo-responsive-flex-order>-->
+      <!--<demo-responsive-show-hide  class="small-demo">  </demo-responsive-show-hide>-->
     `
 })
 export class DemosResponsiveLayout { }
@@ -19,7 +19,7 @@ import {MaterialModule}      from "@angular/material";
 import {FlexLayoutModule}    from "../../../lib";     // `gulp build:components` to deploy to node_modules manually
 
 import {DemoResponsiveRows}  from "./responsiveRowColumns.demo";
-import {DemoResponsiveDirection }  from "./responsiveDirections.demo";
+import {DemoResponsiveLayoutDirection }  from "./responsiveLayoutDirections.demo";
 import {DemoResponsiveShowHide} from "./responsiveShowHide.demo";
 import {DemoResponsiveFlexDirectives} from "./responsiveFlexDirective.demo";
 import {DemoResponsiveFlexOrder} from "./responsiveFlexOrder.demo";
@@ -30,7 +30,7 @@ import {DemoResponsiveFlexOrder} from "./responsiveFlexOrder.demo";
     DemosResponsiveLayout,       // used by the Router with the root app component
 
     DemoResponsiveRows,
-    DemoResponsiveDirection,
+    DemoResponsiveLayoutDirection,
     DemoResponsiveFlexDirectives,
     DemoResponsiveFlexOrder,
     DemoResponsiveShowHide

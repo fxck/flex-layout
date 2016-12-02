@@ -3,7 +3,7 @@ import {Subscription} from "rxjs";
 import 'rxjs/add/operator/filter';
 
 import {MediaChange} from "../../../lib/media-query/media-change";
-import {MEDIA_QUERY_OBSERVABLE} from "../../../lib/media-query/media-queries-observable";
+import {MediaQuery$} from "../../../lib/media-query/providers/media-queries-observable";
 
 @Component({
   selector: 'demo-responsive-flex-directive',
@@ -32,7 +32,7 @@ export class DemoResponsiveFlexDirectives implements OnInit, OnDestroy {
   private _watcher : Subscription;
   public activeMediaQuery = "";
 
-  constructor(@Inject(MEDIA_QUERY_OBSERVABLE)  private _mediaQuery$) { }
+  constructor(@Inject(MediaQuery$)  private _mediaQuery$) { }
 
   ngOnInit() {
     this._watcher = this.watchMQChanges();

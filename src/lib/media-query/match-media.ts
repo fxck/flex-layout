@@ -40,12 +40,11 @@ export class MatchMedia {
   private _observable$: Observable<MediaChange>;
 
   constructor(private _zone: NgZone) {
+    debugger;
     this._registry = new Map<string, MediaQueryList>( );
-
     this._source = new BehaviorSubject<MediaChange>(new MediaChange(true));
     this._observable$ = this._source.asObservable();
   }
-
 
   /**
    * For the specified mediaQuery?
@@ -63,14 +62,14 @@ export class MatchMedia {
    * Typically used by the MediaQueryAdaptor; optionally available to components
    * who wish to use the MediaQueries as $mdMedia service.
    *
-   * NOTE: if a mediaQuery is not specified, then ALL mediaQuery changes (registered) will
-   *       be announced; including activation and deactivation.
+   * NOTE: if a mediaQuery is not specified, then ALL mediaQuery activations will
+   *       be announced.
    */
   observe(mediaQuery?: string): Observable<MediaChange> {
-    this._prepareWatchers(mediaQuery);
+    this.registerQuery(mediaQuery);
 
-    return this._observable$.filter((e: MediaChange) => {
-      return !!mediaQuery ? e.mediaQuery === mediaQuery : false;
+    return this._observable$.filter((change: MediaChange) => {
+      return mediaQuery ? (change.mediaQuery === mediaQuery) : true;
     });
   }
 
@@ -78,7 +77,7 @@ export class MatchMedia {
    * Based on the BreakPoints provider, register internal listeners for each unique mediaQuery
    * Each listener emits specific MediaChange data to observers
    */
-  private _prepareWatchers(mediaQuery: string) {
+  registerQuery(mediaQuery: string) {
     if ( mediaQuery ) {
       let mql = this._registry.get(mediaQuery);
       if (!mql) {
@@ -101,18 +100,19 @@ export class MatchMedia {
 
   }
 
+  /**
+   * Call window.matchMedia() to build a MediaQueryList; which
+   * supports 0..n listeners for activation/deactivation
+   */
   private _buildMQL(query: string): MediaQueryList {
-    let canListen = !!(<any>window).matchMedia('all').addListener;
-
     prepareQueryCSS(query);
 
+    let canListen = !!(<any>window).matchMedia('all').addListener;
     return canListen ? (<any>window).matchMedia(query) : <MediaQueryList>{
       matches: query === 'all' || query === '',
       media: query,
-      addListener: () => {
-      },
-      removeListener: () => {
-      }
+      addListener: () => { },
+      removeListener: () => { }
     };
   }
 

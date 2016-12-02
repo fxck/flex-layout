@@ -1,6 +1,7 @@
 import {Injectable, Inject} from '@angular/core';
-import {BREAKPOINTS_DATASET} from "./break-points-dataset";
+
 import {BreakPoint} from './break-point';
+import {BREAKPOINTS_DATASET} from "../providers/break-points-dataset";
 
 /**
  * Registry of 1..n MediaQuery breakpoint ranges

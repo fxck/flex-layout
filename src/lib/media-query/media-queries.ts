@@ -1,11 +1,13 @@
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import 'rxjs/add/operator/map';
 
-import {BreakPoint} from './break-point';
-import {BreakPoints} from './break-points';
+import {BreakPoint} from './breakpoints/break-point';
+import {BreakPoints} from './breakpoints/break-points';
 import {MatchMedia} from './match-media';
 import {MediaChange} from './media-change';
+import {mergeAlias} from '../utils/add-alias';
 
-import {Observable} from 'rxjs/Observable';
 
 /**
  * MediaQueries uses the MatchMedia service to observe mediaQuery changes; which are published as
@@ -14,7 +16,9 @@ import {Observable} from 'rxjs/Observable';
  */
 @Injectable()
 export class MediaQueries {
-  constructor(private _breakpoints: BreakPoints, private _matchMedia: MatchMedia) { }
+  constructor(private _breakpoints: BreakPoints, private _matchMedia: MatchMedia) {
+    this._registerBreakpoints();
+  }
 
   /**
    * Read-only accessor to the list of breakpoints configured in the BreakPoints provider
@@ -59,8 +63,16 @@ export class MediaQueries {
    */
   observe(alias?: string): Observable<MediaChange> {
     let bp = this._breakpoints.findByAlias(alias) || this._breakpoints.findByQuery(alias);
-    let result$ = bp ?  this._matchMedia.observe(bp.mediaQuery).filter( e => e.matches ) : null;
 
-    return  result$ || this._matchMedia.observe( alias );
+    // Note: the raw MediaChange events [from MatchMedia] do not contain important alias information
+    return this._matchMedia
+      .observe( bp ? bp.mediaQuery : alias )
+      .map((change:MediaChange) =>  mergeAlias( change, bp));
+  }
+
+  private _registerBreakpoints() {
+    this._breakpoints.registry.forEach( bp => {
+      this._matchMedia.registerQuery( bp.mediaQuery );
+    })
   }
 }

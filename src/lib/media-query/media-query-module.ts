@@ -1,14 +1,14 @@
 import {OpaqueToken, NgModule, ModuleWithProviders} from '@angular/core';
 import {Observable} from "rxjs/Observable";
 
-import {BreakPoint} from './break-point';
-import {BreakPoints} from './break-points';
-import {BreakPointsDataset} from "./break-points-dataset";
+import {BreakPoint} from './breakpoints/break-point';
+import {BreakPoints} from './breakpoints/break-points';
+import {BreakPointsDataset} from "./providers/break-points-dataset";
 
 
 import {MatchMedia} from './match-media';
 import {MediaQueries} from './media-queries';
-import {MediaQueryObservable} from './media-queries-observable';
+import {MediaQueryObservable} from './providers/media-queries-observable';
 
 /**
  * *****************************************************************
@@ -19,8 +19,8 @@ import {MediaQueryObservable} from './media-queries-observable';
 
 @NgModule({
   providers: [
-    MatchMedia,                // Low-level service to publish observables around window.matchMedia()
     BreakPoints,               // Registry of known BreakPoint(s)
+    MatchMedia,                // Low-level service to publish observables around window.matchMedia()
     MediaQueries,              // MediaQuery service that easily observes all known breakpoints
     BreakPointsDataset,        // Supports developer overrides of list of known breakpoints
     MediaQueryObservable       // Allows easy subscription to injectable `mediaQuery$` observable
