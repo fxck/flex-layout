@@ -3,16 +3,16 @@ import 'rxjs/add/operator/map';
 import {Directive, Injectable, NgZone} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 
-import {BreakPoints} from '../../media-query/break-points';
-import {MediaQueries, MediaQueryChange} from '../../media-query/media-queries';
-
+import {MediaChange} from '../../media-query/media-change';
+import {MediaQueries} from '../../media-query/media-queries';
 import {MediaQueryActivation} from './media-query-activation';
-import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
+import {MediaQueryChanges, MediaQuerySubscriber, OnMediaQueryChanges} from './media-query-changes';
+import {BreakPoint} from '../../media-query/break-point';
 
 export declare type SubscriptionList = Subscription[];
 
 const ON_DESTROY = 'ngOnDestroy';
-const ON_MEDIA_CHANGES = 'onMediaQueryChanges';
+const ON_MEDIA_CHANGES = 'onMediaChanges';
 
 /**
  *  Adapter between Layout API directives and the MediaQueries mdl service
@@ -23,19 +23,19 @@ const ON_MEDIA_CHANGES = 'onMediaQueryChanges';
  */
 @Injectable()
 export class MediaQueryAdapter {
-  private _mq: MediaQueries;
+  private _breakpoints: BreakPoint[ ];
 
   /**
    *
    */
-  constructor(private _breakpoints: BreakPoints, zone: NgZone) {
-    this._mq = new MediaQueries(_breakpoints, zone);
+  constructor(private _mq: MediaQueries) {
+    this._breakpoints = this._mq.breakpoints;
   }
 
   /**
    * Create a custom MQ Activation instance for each directive instance; the activation object
    * tracks the current mq-activated input and manages the calls to the directive's
-   * `onMediaQueryChanges( )`
+   * `onMediaChanges( )`
    */
   attach(directive: Directive, property: string, defaultVal: string|number|boolean): MediaQueryActivation {
     let activation: MediaQueryActivation = new MediaQueryActivation(this._mq, directive, property, defaultVal);
@@ -54,7 +54,7 @@ export class MediaQueryAdapter {
 
     if (handler) {
       let keys = this._buildRegistryMap(directive, property);
-      list = this._configureChangeObservers(directive,  property, keys, handler);
+      list = this._configureChangeObservers(directive, property, keys, handler);
     }
     return list;
   }
@@ -66,7 +66,7 @@ export class MediaQueryAdapter {
   private _listenOnDestroy(directive: Directive, subscribers: SubscriptionList) {
     let onDestroyFn = directive[ON_DESTROY];
     if (onDestroyFn) {
-      directive[ON_DESTROY] = function() {
+      directive[ON_DESTROY] = function () {
         // Unsubscribe all for this directive
         subscribers.forEach((s: Subscription) => {
           s.unsubscribe();
@@ -85,50 +85,38 @@ export class MediaQueryAdapter {
    * Build mediaQuery key-hashmap; only for the directive properties that are actually defined
    */
   private _buildRegistryMap(directive: Directive, key: string) {
-    return this._breakpoints.registry
+    return this._breakpoints
         .map(it => {
           return {
             alias: it.alias,      // e.g.  gt-sm, md, gt-lg
-            baseKey : key,        // e.g.  layout, hide, self-align, flex-wrap
+            baseKey: key,        // e.g.  layout, hide, self-align, flex-wrap
             key: key + it.suffix  // e.g.  layoutGtSm, layoutMd, layoutGtLg
           }
         })
-        .filter(it => directive[it.key] != null);
+        .filter(it => !!directive[it.key]);
   }
+
   /**
-   * For each API property, register a callback to `onMediaQueryChanges( )`(e:MediaQueryEvent)
+   * For each API property, register a callback to `onMediaChanges( )`(e:MediaQueryEvent)
    * Cache 1..n subscriptions for internal auto-unsubscribes during the directive ngOnDestory()
    * notification
    */
-  private _configureChangeObservers(
-      directive: Directive, property:string,  keys: any, callback: MediaQuerySubscriber): SubscriptionList {
+  private _configureChangeObservers(directive: Directive, property: string, keys: any, callback: MediaQuerySubscriber): SubscriptionList {
     let subscriptions = [];
 
     keys.forEach(it => {
       // Only subscribe if the directive API is defined (in use)
       if (directive[it.key] != null) {
-        let lastEvent: MediaQueryChange,
-            mergeWithLastEvent = (current: MediaQueryChange):
-                MediaQueryChanges => {
-                  let previous = lastEvent;
-                  if (this._isDifferentChange(previous, current)){
-                    lastEvent = current;
-                  } else {
-                    previous = null;
-                  }
+        let subscription = this._mq.observe(it.alias)
+            .map((ev: MediaChange) => {
 
-                  return new MediaQueryChanges(previous, current);
-                },
-            // Create subscription for mq changes for each alias (e.g. gt-sm, md, etc)
-            subscription = this._mq.observe(it.alias)
-              .map(mergeWithLastEvent)
-              .map((it:MediaQueryChanges) => {
-                // Inject directive default property key name: to let onMediaQueryChange() calls
-                // know which property is being triggered...
-                it.current.property = property;
-                return it;
-              })
-              .subscribe(callback);
+              // Inject directive default property key name: to let onMediaChange() calls
+              // know which property is being triggered...
+              ev.property = property;
+
+              return new MediaQueryChanges(null,  ev);
+            })
+            .subscribe(callback);
 
         subscriptions.push(subscription);
       }
@@ -137,18 +125,5 @@ export class MediaQueryAdapter {
     return subscriptions;
   }
 
-  /**
-   * Is the current activation event different from the last activation event ?
-   *
-   * !! change events may arrive out-of-order (activate before deactivate)
-   *    so make sure the deactivate is used ONLY when the keys match
-   *    (since a different activate may be in use)
-   *
-   */
-  private _isDifferentChange(previous: MediaQueryChange, current: MediaQueryChange): boolean {
-    let prevAlias = (previous ? previous.mqAlias : '');
-    let sameProperty = current.property === (previous ? previous.property : undefined);
 
-    return current.matches || (!current.matches && (current.mqAlias !== prevAlias) && sameProperty);
-  }
 }

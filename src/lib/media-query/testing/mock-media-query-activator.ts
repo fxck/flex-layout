@@ -1,4 +1,5 @@
-import {BreakPoints, BreakPoint} from "../break-points";
+import {BreakPoint} from '../break-point';
+import {BreakPoints} from "../break-points";
 
 /**
  * MockMediaQueryActivator supports programmatic mediaQuery activation/deactivation to simulate viewport size changes

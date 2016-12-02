@@ -41,8 +41,7 @@ import {MediaQueryObservableProvider} from "../../../lib/media-query/media-query
     FormsModule,
     MaterialModule,
     FlexLayoutModule.forRoot()
-  ],
-  providers : [ MediaQueryObservableProvider ]
+  ]
 
 })
 export class DemosResponsiveLayoutsModule { }

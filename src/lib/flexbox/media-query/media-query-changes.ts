@@ -1,4 +1,4 @@
-import {MediaQueryChange} from '../../media-query/media-queries';
+import {MediaChange} from '../../media-query/media-change';
 
 // ****************************************************************
 // Exported Types and Interfaces
@@ -9,8 +9,9 @@ import {MediaQueryChange} from '../../media-query/media-queries';
  *
  */
 export class MediaQueryChanges {
-  constructor(public previous: MediaQueryChange, public current: MediaQueryChange) {}
+  constructor(public previous: MediaChange, public current: MediaChange) {}
 }
+
 
 
 /**

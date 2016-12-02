@@ -1,11 +1,6 @@
-import {Injectable} from '@angular/core';
-
-export interface BreakPoint {
-  mediaQuery: string;
-  overlapping: boolean;
-  suffix: string;
-  alias: string;
-}
+import {Injectable, Inject} from '@angular/core';
+import {BREAKPOINTS_DATASET} from "./break-points-dataset";
+import {BreakPoint} from './break-point';
 
 /**
  * Registry of 1..n MediaQuery breakpoint ranges
@@ -14,65 +9,8 @@ export interface BreakPoint {
  */
 @Injectable()
 export class BreakPoints {
-  public registry: BreakPoint[];
 
-  /**
-   *
-   */
-  constructor() {
-    this.registry = [
-      {alias: '', suffix: '', overlapping: true, mediaQuery: 'screen'},
-      {alias: 'xs', suffix: 'Xs', overlapping: false, mediaQuery: 'screen and (max-width: 599px)'},
-      {
-        alias: 'gt-xs',
-        suffix: 'GtXs',
-        overlapping: true,
-        mediaQuery: 'screen and (min-width: 600px)'
-      },
-      {
-        alias: 'sm',
-        suffix: 'Sm',
-        overlapping: false,
-        mediaQuery: 'screen and (min-width: 600px) and (max-width: 959px)'
-      },
-      {
-        alias: 'gt-sm',
-        suffix: 'GtSm',
-        overlapping: true,
-        mediaQuery: 'screen and (min-width: 960px)'
-      },
-      {
-        alias: 'md',
-        suffix: 'Md',
-        overlapping: false,
-        mediaQuery: 'screen and (min-width: 960px) and (max-width: 1279px)'
-      },
-      {
-        alias: 'gt-md',
-        suffix: 'GtMd',
-        overlapping: true,
-        mediaQuery: 'screen and (min-width: 1280px)'
-      },
-      {
-        alias: 'lg',
-        suffix: 'Lg',
-        overlapping: false,
-        mediaQuery: 'screen and (min-width: 1280px) and (max-width: 1919px)'
-      },
-      {
-        alias: 'gt-lg',
-        suffix: 'GtLg',
-        overlapping: true,
-        mediaQuery: 'screen and (min-width: 1920px)'
-      },
-      {
-        alias: 'xl',
-        suffix: 'Xl',
-        overlapping: false,
-        mediaQuery: 'screen and (min-width: 1920px)'
-      }
-    ];
-  }
+  constructor(@Inject(BREAKPOINTS_DATASET) public registry : BreakPoint[ ]) { }
 
   /**
    * Search breakpoints by alias (e.g. gt-xs)

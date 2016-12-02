@@ -1,8 +1,8 @@
 import {Directive, OnDestroy} from '@angular/core';
 
-import {BreakPoint} from '../../media-query/break-points';
-import {MediaQueries, MediaQueryChange} from '../../media-query/media-queries';
-
+import {MediaChange} from '../../media-query/media-change';
+import {BreakPoint} from '../../media-query/break-point';
+import {MediaQueries} from '../../media-query/media-queries';
 import {MediaQueryChanges, OnMediaQueryChanges} from './media-query-changes';
 
 const ON_DESTROY = 'ngOnDestroy';
@@ -104,10 +104,8 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   private _logMediaQueryChanges(changes: MediaQueryChanges) {
     let current = changes.current, previous = changes.previous;
 
-    if (current && current.mqAlias == '')
-      current.mqAlias = 'all';
-    if (previous && previous.mqAlias == '')
-      previous.mqAlias = 'all';
+    if (current && current.mqAlias == '')     current.mqAlias = 'all';
+    if (previous && previous.mqAlias == '')   previous.mqAlias = 'all';
 
     if (current.matches) {
       console.log(`mqChange: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};`);
@@ -122,7 +120,7 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
    *     so make sure the deactivate is used ONLY when the keys match
    *     (since a different activate may be in use)
    */
-  private _calculateActivatedValue(current:MediaQueryChange): any  {
+  private _calculateActivatedValue(current:MediaChange): any  {
     const currentKey = this._baseKey + current.suffix;    // e.g. suffix == 'GtSm', _baseKey == 'hide'
     let   newKey = this._activatedInputKey;                     // e.g. newKey == hideGtSm
 

@@ -5,7 +5,8 @@ import 'rxjs/add/operator/map';
 
 import { TestBed, inject, async } from '@angular/core/testing';
 
-import { BreakPoint, BreakPoints } from './break-points';
+import {BreakPoints} from './break-points';
+import {BreakPoint} from './break-point';
 import {MockMediaQueryActivator} from "./testing/mock-media-query-activator";
 import {MediaQueries, MediaQueryChange} from "./media-queries";
 
