@@ -40,7 +40,6 @@ export class MatchMedia {
   private _observable$: Observable<MediaChange>;
 
   constructor(private _zone: NgZone) {
-    debugger;
     this._registry = new Map<string, MediaQueryList>( );
     this._source = new BehaviorSubject<MediaChange>(new MediaChange(true));
     this._observable$ = this._source.asObservable();

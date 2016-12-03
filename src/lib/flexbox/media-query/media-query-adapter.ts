@@ -88,7 +88,8 @@ export class MediaQueryAdapter {
 
 
   /**
-   * Build mediaQuery key-hashmap; only for the directive properties that are actually defined
+   * Build mediaQuery key-hashmap; only for the directive properties that are actually defined/used
+   * in the HTML markup
    */
   private _buildRegistryMap(directive: Directive, key: string) {
     return this._breakpoints
@@ -98,10 +99,8 @@ export class MediaQueryAdapter {
             key     : key + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
           });
         })
-        .filter((bp : BreakPointX)=> {
-          let input = bp.key;        // Directive input property key
-          return !!directive[ input ];  // Directive property must be used in the HTML markup
-        });
+        .filter( bp => (directive[  bp.key ] !== undefined));
+
   }
 
   /**
