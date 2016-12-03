@@ -5,9 +5,8 @@ import 'rxjs/add/operator/map';
 import {extendObject} from '../../utils/object-extend';
 
 import {BreakPoint} from '../../media-query/breakpoints/break-point';
-import {MediaChange} from '../../media-query/media-change';
+import {MediaChange, MediaQuerySubscriber} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
 
 export declare type SubscriptionList = Subscription[];
 export interface BreakPointX extends BreakPoint{
@@ -92,13 +91,15 @@ export class MediaQueryActivation {
         // know which property is being triggered...
         let buildChanges = (change: MediaChange) => {
               change.property = this._options.baseKey;
-              return new MediaQueryChanges(null,  change);
+              return change;
             };
 
         subscriptions.push(
-          this.mediaMonitor.observe(bp.alias).map(buildChanges).subscribe(changes => {
-            this._onMonitorEvents(changes);
-          })
+          this.mediaMonitor.observe(bp.alias)
+              .map(buildChanges)
+              .subscribe(change => {
+                this._onMonitorEvents(change);
+              })
         );
       }
     });
@@ -125,12 +126,11 @@ export class MediaQueryActivation {
    * Synchronizes change notifications with the current mq-activated @Input and calculates the
    * mq-activated input value or the default value
    */
-  _onMonitorEvents(changes: MediaQueryChanges) {
-    if ( changes.current.property == this._options.baseKey ) {
-      changes = new MediaQueryChanges(null, changes.current);
-      changes.current.value = this._calculateActivatedValue(changes.current);
+  _onMonitorEvents(change: MediaChange) {
+    if ( change.property == this._options.baseKey ) {
+      change.value = this._calculateActivatedValue(change);
 
-      this._onMediaChanges.call(this._directive, changes.current);
+      this._onMediaChanges.call(this._directive, change);
     }
   }
 
