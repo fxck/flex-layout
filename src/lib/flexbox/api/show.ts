@@ -18,7 +18,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 import {HideDirective} from "./hide";
 import {LayoutDirective} from './layout';
@@ -72,7 +72,7 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    *
    */
   constructor(
-      private _monitor : MediaMonitor,
+      public monitor : MediaMonitor,
       @Optional() @Self() private _layout: LayoutDirective,
       @Inject(forwardRef(() => HideDirective)) @Optional() @Self() private _hideDirective,
       protected elRef: ElementRef,
@@ -118,7 +118,10 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'show', true);
+    let keyOptions = { baseKey:'show', defaultValue:true };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateWithValue(changes.value);
+    });
     this._updateWithValue();
   }
 
@@ -128,13 +131,6 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
        this._layoutWatcher.unsubscribe();
      }
    }
-
-  /**
-   *  Special mql callback used by MediaQueryActivation when a mql event occurs
-   */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateWithValue(changes.value);
-  }
 
   // *********************************************
   // Protected methods

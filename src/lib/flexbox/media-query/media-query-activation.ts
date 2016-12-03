@@ -14,6 +14,10 @@ export interface BreakPointX extends BreakPoint{
   key : string;
   baseKey : string;
 }
+export interface KeyOptions {
+  baseKey : string,
+  defaultValue : string|number|boolean
+}
 
 /**
  * MediaQueryActivation acts as a proxy between the MonitorMedia service (which emits mediaQuery changes)
@@ -27,7 +31,6 @@ export interface BreakPointX extends BreakPoint{
  * NOTE: these interceptions enables the logic in the fx API directives to remain terse and clean.
  */
 export class MediaQueryActivation {
-  private _onMediaChanges : MediaQuerySubscriber;
   private _subscribers : SubscriptionList = [ ];
   private _activatedInputKey: string;
 
@@ -35,16 +38,19 @@ export class MediaQueryActivation {
    * Constructor
    */
   constructor(
-      private _monitor: MediaMonitor,
       private _directive: Directive,
-      private _baseKey: string,
-      private _defaultValue: string|number|boolean,
-      onMediaChanges ?: MediaQuerySubscriber )
+      private _options : KeyOptions,
+      private _onMediaChanges : MediaQuerySubscriber )
   {
-    this._onMediaChanges = onMediaChanges || _directive["onMediaQueryChanges"];
     this._subscribers = this._configureChangeObservers();
   }
 
+  /**
+   * Accessor to the DI'ed directive property
+   */
+  get mediaMonitor() : MediaMonitor {
+    return this._directive["monitor"];
+  }
   /**
    * Determine which directive @Input() property is currently active (for the viewport size):
    * The key must be defined (in use) or fallback to the 'closest' overlapping property key
@@ -54,14 +60,14 @@ export class MediaQueryActivation {
    *      key is `.md` then `.gt-sm` should be used instead
    */
   get activatedInputKey(): string {
-    return this._activatedInputKey || this._baseKey;
+    return this._activatedInputKey || this._options.baseKey;
   }
 
   /**
    * Get the currently activated @Input value or the fallback default @Input value
    */
   get activatedInput(): any {
-    return this._directive[this.activatedInputKey] || this._defaultValue;
+    return this._directive[this.activatedInputKey] || this._options.defaultValue;
   }
 
   /**
@@ -69,7 +75,7 @@ export class MediaQueryActivation {
    * mq-activated input value or the default value
    */
   _onMonitorEvents(changes: MediaQueryChanges) {
-    if ( changes.current.property == this._baseKey ) {
+    if ( changes.current.property == this._options.baseKey ) {
       changes = new MediaQueryChanges(null, changes.current);
       changes.current.value = this._calculateActivatedValue(changes.current);
 
@@ -96,7 +102,7 @@ export class MediaQueryActivation {
    *     (since a different activate may be in use)
    */
   private _calculateActivatedValue(current:MediaChange): any  {
-    const currentKey = this._baseKey + current.suffix;    // e.g. suffix == 'GtSm', _baseKey == 'hide'
+    const currentKey = this._options.baseKey + current.suffix;    // e.g. suffix == 'GtSm', _baseKey == 'hide'
     let   newKey = this._activatedInputKey;                     // e.g. newKey == hideGtSm
 
           newKey = current.matches ? currentKey : ((newKey == currentKey) ? null : newKey);
@@ -112,12 +118,12 @@ export class MediaQueryActivation {
    * NOTE: scans in the order defined by activeOverLaps (largest viewport ranges -> smallest ranges)
    */
   private _validateInputKey(inputKey) {
-    let items: BreakPoint[] = this._monitor.activeOverlaps;
+    let items: BreakPoint[] = this.mediaMonitor.activeOverlaps;
     let isMissingKey = (key) => this._directive[key] === undefined;
 
     if ( isMissingKey( inputKey ) ) {
       items.some(bp => {
-        let key = this._baseKey + bp.suffix;
+        let key = this._options.baseKey + bp.suffix;
         if ( !isMissingKey(key) ) {
           inputKey = key;
           return true;
@@ -140,11 +146,11 @@ export class MediaQueryActivation {
         let buildChanges = (change: MediaChange) => {
               // Inject directive default property key name: to let onMediaChange() calls
               // know which property is being triggered...
-              change.property = this._baseKey;
+              change.property = this._options.baseKey;
               return new MediaQueryChanges(null,  change);
             };
         subscriptions.push(
-          this._monitor.observe(bp.alias).map(buildChanges).subscribe(changes => {
+          this.mediaMonitor.observe(bp.alias).map(buildChanges).subscribe(changes => {
             this._onMonitorEvents(changes);
           })
         );
@@ -159,11 +165,11 @@ export class MediaQueryActivation {
    * in the HTML markup
    */
   private _buildRegistryMap() {
-    return this._monitor.breakpoints
+    return this.mediaMonitor.breakpoints
         .map(bp => {
           return <BreakPointX> extendObject({}, bp, {
-            baseKey : this._baseKey,              // e.g.  layout, hide, self-align, flex-wrap
-            key     : this._baseKey + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
+            baseKey : this._options.baseKey,              // e.g.  layout, hide, self-align, flex-wrap
+            key     : this._options.baseKey + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
           });
         })
         .filter( bp => (this._directive[  bp.key ] !== undefined));

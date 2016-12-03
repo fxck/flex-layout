@@ -26,4 +26,4 @@ export declare abstract class OnMediaQueryChanges {
 }
 
 
-export type MediaQuerySubscriber = (e: MediaChange) => {};
+export type MediaQuerySubscriber = (changes: MediaChange) => void;

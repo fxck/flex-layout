@@ -14,7 +14,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 import {LAYOUT_VALUES, LayoutDirective} from './layout';
 
@@ -55,7 +55,7 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
   @Input('fx-layout-align.xl') alignXl;
 
   constructor(
-      private _monitor : MediaMonitor,
+      public monitor : MediaMonitor,
       elRef: ElementRef, renderer: Renderer,
       @Optional() container: LayoutDirective)
   {
@@ -84,17 +84,12 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'align', 'start stretch');
+    let keyOptions = { baseKey:'align', defaultValue:'start stretch' };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateWithValue(changes.value);
+    });
     this._updateWithValue();
   }
-
-  /**
-   *  Special mql callback used by MediaQueryActivation when a mql event occurs
-   */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateWithValue(changes.value);
-  }
-
 
   ngOnDestroy() {
     this._mqActivation.destroy();

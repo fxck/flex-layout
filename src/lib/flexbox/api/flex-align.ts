@@ -12,7 +12,7 @@ import {
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 /**
  * 'flex-align' flexbox styling directive
@@ -43,7 +43,7 @@ export class FlexAlignDirective extends BaseFxDirective implements OnInit, OnCha
   @Input('fx-flex-align.xl') alignXl;
 
 
-  constructor(private _monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
+  constructor(public monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
   }
 
@@ -68,19 +68,15 @@ export class FlexAlignDirective extends BaseFxDirective implements OnInit, OnCha
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'align', 'stretch');
+    let keyOptions = { baseKey: 'align', defaultValue:'stretch' };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateWithValue(changes.value);
+    });
     this._updateWithValue();
   }
 
   ngOnDestroy() {
     this._mqActivation.destroy();
-  }
-
-  /**
-   *  Special mql callback used by MediaQueryActivation when a mql event occurs
-   */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateWithValue(changes.value);
   }
 
   // *********************************************

@@ -16,7 +16,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 import {ShowDirective} from "./show";
 import {LayoutDirective} from './layout';
@@ -66,7 +66,7 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    *
    */
   constructor(
-      private _monitor : MediaMonitor,
+      public monitor : MediaMonitor,
       @Optional() @Self() private _layout: LayoutDirective,
       @Optional() @Self() private _showDirective : ShowDirective,
       protected elRef: ElementRef,
@@ -112,14 +112,13 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'hide', true);
+    let keyOptions = { baseKey:'hide', defaultValue:true };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateWithValue(changes.value);
+    });
     this._updateWithValue();
   }
 
-  /** Special mql callback used by MediaQueryActivation when a mql event occurs */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateWithValue(changes.value);
-  }
 
   ngOnDestroy() {
     this._mqActivation.destroy();

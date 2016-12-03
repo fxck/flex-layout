@@ -14,7 +14,7 @@ import {Observable} from 'rxjs/Observable';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 
 export const LAYOUT_VALUES = ['row', 'column', 'row-reverse', 'column-reverse'];
@@ -68,7 +68,7 @@ export class LayoutDirective extends BaseFxDirective implements OnInit, OnChange
   /**
    *
    */
-  constructor(private _monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
+  constructor(public monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
   }
 
@@ -95,19 +95,15 @@ export class LayoutDirective extends BaseFxDirective implements OnInit, OnChange
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'layout', 'row');
+    let keyOptions = { baseKey:'layout', defaultValue:'row' };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateWithDirection(changes.value);
+    });
     this._updateWithDirection();
   }
 
   ngOnDestroy() {
     this._mqActivation.destroy();
-  }
-
-  /**
-   *  Special mql callback used by MediaQueryActivation when a mql event occurs
-   */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateWithDirection(changes.value);
   }
 
   // *********************************************

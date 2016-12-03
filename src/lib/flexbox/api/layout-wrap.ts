@@ -12,7 +12,7 @@ import {
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 /**
  * 'layout-wrap' flexbox styling directive
@@ -43,7 +43,7 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
   @Input('fx-layout-wrap.gt-lg') wrapGtLg;
   @Input('fx-layout-wrap.xl') wrapXl;
 
-  constructor(private _monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
+  constructor(public monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer)
   }
 
@@ -65,15 +65,11 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'wrap', 'wrap');
+    let keyOptions = { baseKey:'wrap', defaultValue:'wrap' };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateWithValue(changes.value);
+    });
     this._updateWithValue();
-  }
-
-  /**
-   *  Special mql callback used by MediaQueryActivation when a mql event occurs
-   */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateWithValue(changes.value);
   }
 
   ngOnDestroy() {

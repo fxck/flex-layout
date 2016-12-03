@@ -16,7 +16,7 @@ import {extendObject} from '../../utils/object-extend';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
+import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
 
 import {LayoutDirective} from './layout';
 import {LayoutWrapDirective} from './layout-wrap';
@@ -69,7 +69,7 @@ export class FlexDirective extends BaseFxDirective
   // Explicitly @SkipSelf on LayoutDirective and LayoutWrapDirective because we want the
   // parent flex container for this flex item.
   constructor(
-      private _monitor : MediaMonitor,
+      public monitor : MediaMonitor,
       elRef: ElementRef,
       renderer: Renderer,
       @Optional() @SkipSelf() private _container: LayoutDirective,
@@ -100,15 +100,11 @@ export class FlexDirective extends BaseFxDirective
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'flex', '');
+    let keyOptions = { baseKey:'flex', defaultValue:'' };
+    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+      this._updateStyle(changes.value);
+    });
     this._onLayoutChange();
-  }
-
-  /**
-   *  Special mql callback used by MediaQueryActivation when a mql event occurs
-   */
-  onMediaQueryChanges(changes: MediaChange) {
-    this._updateStyle(changes.value);
   }
 
   ngOnDestroy() {
