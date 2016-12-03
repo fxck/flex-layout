@@ -42,8 +42,8 @@ export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnCha
   @Input('fx-flex-order.gt-lg') orderGtLg;
   @Input('fx-flex-order.xl') orderXl;
 
-  constructor(public monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
-    super(elRef, renderer);
+  constructor(monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
+    super(monitor, elRef, renderer);
   }
 
   // *********************************************
@@ -54,10 +54,7 @@ export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnCha
    * For @Input changes on the current mq activation property, see onMediaQueryChanges()
    */
   ngOnChanges(changes: SimpleChanges) {
-    let activated = this._mqActivation;
-    let activationChange = activated && changes[activated.activatedInputKey] != null;
-
-    if (changes['order'] != null || activationChange) {
+    if (changes['order'] != null || this._mqActivation) {
       this._updateWithValue();
     }
   }
@@ -67,7 +64,7 @@ export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnCha
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    let keyOptions = { baseKey:'order', defaultValue:'1' };
+    let keyOptions = new KeyOptions('order', '1');
     this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });

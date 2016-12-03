@@ -66,12 +66,12 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    *
    */
   constructor(
-      public monitor : MediaMonitor,
+      monitor : MediaMonitor,
       @Optional() @Self() private _layout: LayoutDirective,
       @Optional() @Self() private _showDirective : ShowDirective,
       protected elRef: ElementRef,
       protected renderer: Renderer) {
-    super(elRef, renderer);
+    super(monitor, elRef, renderer);
 
     if (_layout) {
       /**
@@ -99,10 +99,7 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    * Then conditionally override with the mq-activated Input's current value
    */
   ngOnChanges(changes: SimpleChanges) {
-    let activated = this._mqActivation;
-    let activationChange = activated && changes[activated.activatedInputKey] != null;
-
-    if (changes['hide'] != null || activationChange) {
+    if (changes['hide'] != null || this._mqActivation) {
       this._updateWithValue();
     }
   }
@@ -112,7 +109,7 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    let keyOptions = { baseKey:'hide', defaultValue:true };
+    let keyOptions = new KeyOptions('hide', true);
     this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });

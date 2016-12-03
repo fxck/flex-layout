@@ -1,22 +1,21 @@
 import {Directive} from '@angular/core';
+
 import {Subscription} from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
-
 import {extendObject} from '../../utils/object-extend';
 
 import {BreakPoint} from '../../media-query/breakpoints/break-point';
 import {MediaChange} from '../../media-query/media-change';
-import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
 import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
 
 export declare type SubscriptionList = Subscription[];
 export interface BreakPointX extends BreakPoint{
   key : string;
   baseKey : string;
 }
-export interface KeyOptions {
-  baseKey : string,
-  defaultValue : string|number|boolean
+export class KeyOptions {
+  constructor(public baseKey : string, public defaultValue : string|number|boolean) { }
 }
 
 /**
@@ -49,8 +48,9 @@ export class MediaQueryActivation {
    * Accessor to the DI'ed directive property
    */
   get mediaMonitor() : MediaMonitor {
-    return this._directive["monitor"];
+    return this._directive["mediaMonitor"];
   }
+
   /**
    * Determine which directive @Input() property is currently active (for the viewport size):
    * The key must be defined (in use) or fallback to the 'closest' overlapping property key
@@ -71,6 +71,57 @@ export class MediaQueryActivation {
   }
 
   /**
+   * Remove interceptors, restore original functions, and forward the onDestroy() call
+   */
+  destroy() {
+    this._subscribers.forEach((link: Subscription) => {
+      link.unsubscribe();
+    });
+  }
+
+  /**
+   * For each *defined* API property, register a callback to `_onMonitorEvents( )`
+   * Cache 1..n subscriptions for internal auto-unsubscribes when the the directive destructs
+   */
+  private _configureChangeObservers(): SubscriptionList {
+    let subscriptions = [];
+
+    this._buildRegistryMap().forEach((bp:BreakPointX)=> {
+      if ( this._keyInUse(bp.key) ) {
+        // Inject directive default property key name: to let onMediaChange() calls
+        // know which property is being triggered...
+        let buildChanges = (change: MediaChange) => {
+              change.property = this._options.baseKey;
+              return new MediaQueryChanges(null,  change);
+            };
+
+        subscriptions.push(
+          this.mediaMonitor.observe(bp.alias).map(buildChanges).subscribe(changes => {
+            this._onMonitorEvents(changes);
+          })
+        );
+      }
+    });
+
+    return subscriptions;
+  }
+
+  /**
+   * Build mediaQuery key-hashmap; only for the directive properties that are actually defined/used
+   * in the HTML markup
+   */
+  private _buildRegistryMap() {
+    return this.mediaMonitor.breakpoints
+        .map(bp => {
+          return <BreakPointX> extendObject({}, bp, {
+            baseKey : this._options.baseKey,              // e.g.  layout, hide, self-align, flex-wrap
+            key     : this._options.baseKey + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
+          });
+        })
+        .filter( bp => this._keyInUse(bp.key) );
+  }
+
+  /**
    * Synchronizes change notifications with the current mq-activated @Input and calculates the
    * mq-activated input value or the default value
    */
@@ -84,14 +135,12 @@ export class MediaQueryActivation {
   }
 
   /**
-   * Remove interceptors, restore original functions, and forward the onDestroy() call
+   * Has the key been specified in the HTML markup and thus is intended
+   * to participate in activation processes.
    */
-  destroy() {
-    this._subscribers.forEach((link: Subscription) => {
-      link.unsubscribe();
-    });
+  private _keyInUse(key ):boolean {
+    return this._directive[key] !== undefined;
   }
-
 
   /**
    *  Map input key associated with mediaQuery activation to closest defined input key
@@ -119,60 +168,18 @@ export class MediaQueryActivation {
    */
   private _validateInputKey(inputKey) {
     let items: BreakPoint[] = this.mediaMonitor.activeOverlaps;
-    let isMissingKey = (key) => this._directive[key] === undefined;
+    let isMissingKey = (key) => !this._keyInUse(key);
 
     if ( isMissingKey( inputKey ) ) {
       items.some(bp => {
         let key = this._options.baseKey + bp.suffix;
         if ( !isMissingKey(key) ) {
           inputKey = key;
-          return true;
+          return true;  // exit .some()
         }
       });
     }
     return inputKey;
-  }
-
-  /**
-   * For each *defined* API property, register a callback to `_onMonitorEvents( )`
-   * Cache 1..n subscriptions for internal auto-unsubscribes when the the directive destructs
-   */
-  private _configureChangeObservers(): SubscriptionList {
-    let subscriptions = [];
-
-    this._buildRegistryMap().forEach((bp:BreakPointX)=> {
-      // Only subscribe if the directive API is defined (in use)
-      if (this._directive[bp.key] != null) {
-        let buildChanges = (change: MediaChange) => {
-              // Inject directive default property key name: to let onMediaChange() calls
-              // know which property is being triggered...
-              change.property = this._options.baseKey;
-              return new MediaQueryChanges(null,  change);
-            };
-        subscriptions.push(
-          this.mediaMonitor.observe(bp.alias).map(buildChanges).subscribe(changes => {
-            this._onMonitorEvents(changes);
-          })
-        );
-      }
-    });
-
-    return subscriptions;
-  }
-
-  /**
-   * Build mediaQuery key-hashmap; only for the directive properties that are actually defined/used
-   * in the HTML markup
-   */
-  private _buildRegistryMap() {
-    return this.mediaMonitor.breakpoints
-        .map(bp => {
-          return <BreakPointX> extendObject({}, bp, {
-            baseKey : this._options.baseKey,              // e.g.  layout, hide, self-align, flex-wrap
-            key     : this._options.baseKey + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
-          });
-        })
-        .filter( bp => (this._directive[  bp.key ] !== undefined));
   }
 
 }

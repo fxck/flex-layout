@@ -43,8 +43,8 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
   @Input('fx-layout-wrap.gt-lg') wrapGtLg;
   @Input('fx-layout-wrap.xl') wrapXl;
 
-  constructor(public monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
-    super(elRef, renderer)
+  constructor(monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
+    super(monitor, elRef, renderer)
   }
 
   // *********************************************
@@ -52,10 +52,7 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
   // *********************************************
 
   ngOnChanges(changes: SimpleChanges) {
-    let activated = this._mqActivation;
-    let activationChange = activated && changes[activated.activatedInputKey] != null;
-
-    if (changes['wrap'] != null || activationChange) {
+    if (changes['wrap'] != null || this._mqActivation) {
       this._updateWithValue();
     }
   }
@@ -65,7 +62,7 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    let keyOptions = { baseKey:'wrap', defaultValue:'wrap' };
+    let keyOptions = new KeyOptions('wrap', 'wrap');
     this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });

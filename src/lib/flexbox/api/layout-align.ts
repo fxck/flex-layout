@@ -55,11 +55,11 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
   @Input('fx-layout-align.xl') alignXl;
 
   constructor(
-      public monitor : MediaMonitor,
+      monitor : MediaMonitor,
       elRef: ElementRef, renderer: Renderer,
       @Optional() container: LayoutDirective)
   {
-    super(elRef, renderer);
+    super(monitor, elRef, renderer);
 
     if (container) {  // Subscribe to layout direction changes
       this._layoutWatcher = container.layout$.subscribe(this._onLayoutChange.bind(this));
@@ -71,10 +71,7 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
   // *********************************************
 
   ngOnChanges(changes: SimpleChanges) {
-    let activated = this._mqActivation;
-    let activationChange = activated && changes[activated.activatedInputKey] != null;
-
-    if (changes['align'] != null || activationChange) {
+    if (changes['align'] != null || this._mqActivation) {
       this._updateWithValue();
     }
   }
@@ -84,7 +81,7 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    let keyOptions = { baseKey:'align', defaultValue:'start stretch' };
+    let keyOptions = new KeyOptions('align', 'start stretch');
     this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });

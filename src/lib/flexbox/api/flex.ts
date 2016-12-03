@@ -69,13 +69,13 @@ export class FlexDirective extends BaseFxDirective
   // Explicitly @SkipSelf on LayoutDirective and LayoutWrapDirective because we want the
   // parent flex container for this flex item.
   constructor(
-      public monitor : MediaMonitor,
+      monitor : MediaMonitor,
       elRef: ElementRef,
       renderer: Renderer,
       @Optional() @SkipSelf() private _container: LayoutDirective,
       @Optional() @SkipSelf() private _wrap: LayoutWrapDirective) {
 
-    super(elRef, renderer);
+    super(monitor, elRef, renderer);
     if (_container) {
       // If this flex item is inside of a flex container marked with
       // Subscribe to layout immediate parent direction changes
@@ -87,10 +87,7 @@ export class FlexDirective extends BaseFxDirective
    * For @Input changes on the current mq activation property, see onMediaQueryChanges()
    */
   ngOnChanges(changes: SimpleChanges) {
-    let activated = this._mqActivation;
-    let activationChange = activated && changes[activated.activatedInputKey] != null;
-
-    if (changes['flex'] != null || activationChange) {
+    if (changes['flex'] != null || this._mqActivation) {
       this._onLayoutChange(this._layout);
     }
   }
@@ -100,7 +97,7 @@ export class FlexDirective extends BaseFxDirective
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    let keyOptions = { baseKey:'flex', defaultValue:'' };
+    let keyOptions = new KeyOptions('flex', '');
     this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateStyle(changes.value);
     });

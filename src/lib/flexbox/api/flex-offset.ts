@@ -43,8 +43,8 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
   @Input('fx-flex-offset.gt-lg') offsetGtLg: string|number;
   @Input('fx-flex-offset.xl') offsetXl: string|number;
 
-  constructor(public monitor : MediaMonitor,  elRef: ElementRef, renderer: Renderer) {
-    super(elRef, renderer);
+  constructor(monitor : MediaMonitor,  elRef: ElementRef, renderer: Renderer) {
+    super(monitor, elRef, renderer);
   }
 
   // *********************************************
@@ -55,9 +55,7 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
    * For @Input changes on the current mq activation property, see onMediaQueryChanges()
    */
   ngOnChanges(changes: SimpleChanges) {
-    let activated = this._mqActivation;
-    let activationChange = activated && changes[activated.activatedInputKey] != null;
-    if (changes['offset'] != null || activationChange) {
+    if (changes['offset'] != null || this._mqActivation) {
       this._updateWithValue();
     }
   }
@@ -67,7 +65,7 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    let keyOptions = { baseKey:'offset', defaultValue:0 };
+    let keyOptions = new KeyOptions('offset', 0 );
     this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });
