@@ -12,6 +12,9 @@ export type StyleDefinition = string|{[property: string]: string|number};
 export abstract class BaseFxDirective {
   constructor(private _mediaMonitor : MediaMonitor, private _elementRef: ElementRef, private _renderer: Renderer) {}
 
+  /**
+   * Accessor used by the ResponsiveActivation to subscribe to mediaQuery change notifications
+   */
   get mediaMonitor() : MediaMonitor {
     return this._mediaMonitor;
   }

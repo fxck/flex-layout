@@ -25,7 +25,7 @@ import {LayoutDirective} from './layout';
  * 'show' Layout API directive
  *
  */
-@Directive({selector: '[fx-hide]'})
+@Directive({selector: '[fx-hide]' })
 export class HideDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * Original dom Elements CSS display style

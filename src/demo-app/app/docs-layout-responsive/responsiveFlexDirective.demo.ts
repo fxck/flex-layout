@@ -35,7 +35,6 @@ export class DemoResponsiveFlexDirectives implements OnInit, OnDestroy {
   constructor(@Inject(Media$)  private _media$) { }
 
   ngOnInit() {
-    debugger;
     this._watcher = this.watchMQChanges();
   }
 

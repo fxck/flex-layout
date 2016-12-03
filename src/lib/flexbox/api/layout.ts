@@ -27,7 +27,7 @@ export const LAYOUT_VALUES = ['row', 'column', 'row-reverse', 'column-reverse'];
  * @see https://css-tricks.com/almanac/properties/f/flex-direction/
  *
  */
-@Directive({selector: '[fx-layout], [fx-layout.md]'})
+@Directive({selector: '[fx-layout]'})
 export class LayoutDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
