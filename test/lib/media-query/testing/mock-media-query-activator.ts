@@ -1,6 +1,6 @@
 import {BreakPoint} from '../breakpoints/break-point';
 import {BreakPointRegistry} from "../breakpoints/break-point-registry";
-import {rawData} from "../providers/break-points-provider";
+import {RAW_DEFAULTS} from "../providers/break-points-provider";
 /**
  * MockMediaQueryActivator supports programmatic mediaQuery activation/deactivation to simulate viewport size changes
  * and intercepts the window API: `window.matchMedia()`.
@@ -17,7 +17,7 @@ export class MockMediaQueryActivator {
   /**
    *
    */
-  constructor(breakpoints:BreakPointRegistry = new BreakPointRegistry(rawData)) {
+  constructor(breakpoints:BreakPointRegistry = new BreakPointRegistry(RAW_DEFAULTS)) {
     this._registry = new Map();
     this._interceptAPI();
 
@@ -27,7 +27,7 @@ export class MockMediaQueryActivator {
   /**
    * Support post construction initialization of custom BreakPointRegistry
    */
-  init(breakpoints:BreakPointRegistry = new BreakPointRegistry(rawData)) {
+  init(breakpoints:BreakPointRegistry = new BreakPointRegistry(RAW_DEFAULTS)) {
     this._breakpoints = breakpoints ;
     this._breakpoints.items.forEach( (bp:BreakPoint) => {
       this.matchMedia(bp.mediaQuery);

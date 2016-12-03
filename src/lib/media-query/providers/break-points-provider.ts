@@ -1,7 +1,7 @@
 import {OpaqueToken} from '@angular/core';
 import {BreakPoint} from '../breakpoints/break-point';
 
-export const rawData: BreakPoint[ ] = [
+export const RAW_DEFAULTS: BreakPoint[ ] = [
   {
     alias: 'xs',
     suffix: 'Xs',
@@ -72,5 +72,5 @@ export const BREAKPOINTS: OpaqueToken = new OpaqueToken('fx-breakpoints-raw-data
  */
 export const BreakPointsProvider = {
   provide: BREAKPOINTS,
-  useValue: rawData
+  useValue: RAW_DEFAULTS
 };

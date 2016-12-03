@@ -1,9 +1,9 @@
 import { BreakPointRegistry } from './break-point-registry';
-import {rawData} from "../providers/break-points-provider";
+import {RAW_DEFAULTS} from "../providers/break-points-provider";
 
 describe('break-points', () => {
   let breakPoints : BreakPointRegistry;
-  beforeEach(() => { breakPoints = new BreakPointRegistry(rawData); });
+  beforeEach(() => { breakPoints = new BreakPointRegistry(RAW_DEFAULTS); });
 
   it('registry has all aliases defined', () =>{
     expect(breakPoints.items.length).toBeGreaterThan(0);

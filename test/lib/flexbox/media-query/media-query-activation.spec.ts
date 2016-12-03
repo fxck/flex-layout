@@ -22,7 +22,7 @@ export class TestDirective implements Directive, OnChanges, OnDestroy, OnMediaQu
   onMediaQueryChanges(changes: MediaQueryChanges) { ; };
 }
 
-describe('media-query-activation', () => {
+xdescribe('media-query-activation', () => {
   let mockMQ : MockMediaQueryActivator;
   let directive : TestDirective;
   let mqService : MediaMonitor;
