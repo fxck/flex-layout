@@ -80,21 +80,21 @@ export class MatchMedia {
   registerQuery(mediaQuery: string) {
     if ( mediaQuery ) {
       let mql = this._registry.get(mediaQuery);
-      if (!mql) {
-        let onMQLEvent = (mql: MediaQueryList) => {
-          this._zone.run(() => {
-            let change = new MediaChange(mql.matches, mediaQuery);
-            this._source.next(change);
-          });
-        };
+      let onMQLEvent = (mql: MediaQueryList) => {
+        this._zone.run(() => {
+          let change = new MediaChange(mql.matches, mediaQuery);
+          this._source.next(change);
+        });
+      };
 
+      if (!mql) {
         mql = this._buildMQL(mediaQuery);
         mql.addListener(onMQLEvent);
-
         this._registry.set(mediaQuery, mql);
-        if (mql.matches) {
-          onMQLEvent(mql);  // Announce activate range for initial subscribers
-        }
+      }
+
+      if (mql.matches) {
+        onMQLEvent(mql);  // Announce activate range for initial subscribers
       }
     }
 

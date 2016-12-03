@@ -12,6 +12,7 @@ import {
 } from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 import {extendObject} from '../../utils/object-extend';
+
 import {MediaQueryActivation} from '../media-query/media-query-activation';
 import {MediaQueryAdapter} from '../media-query/media-query-adapter';
 import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';

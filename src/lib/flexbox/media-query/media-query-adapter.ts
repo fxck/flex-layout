@@ -121,7 +121,9 @@ export class MediaQueryAdapter {
               change.property = property;
               return new MediaQueryChanges(null,  change);
             };
-        let subscription = this._mq.observe(bp.alias).map(buildChanges).subscribe(callback);
+        let subscription = this._mq.observe(bp.alias).map(buildChanges).subscribe(change => {
+          callback(change);
+        });
 
         subscriptions.push(subscription);
       }

@@ -3,11 +3,11 @@ import { Component } from '@angular/core';
 @Component({
     selector: 'demos-docs-layout',
     template: `
-      <demo-responsive-layout-direction  class="small-demo">  </demo-responsive-layout-direction>
+      <!--<demo-responsive-layout-direction  class="small-demo">  </demo-responsive-layout-direction>-->
       <!--<demo-responsive-row-column class="small-demo">  </demo-responsive-row-column>-->
       <!--<demo-responsive-flex-directive  class="small-demo">  </demo-responsive-flex-directive>-->
       <!--<demo-responsive-flex-order  class="small-demo">  </demo-responsive-flex-order>-->
-      <!--<demo-responsive-show-hide  class="small-demo">  </demo-responsive-show-hide>-->
+      <demo-responsive-show-hide  class="small-demo">  </demo-responsive-show-hide>
     `
 })
 export class DemosResponsiveLayout { }

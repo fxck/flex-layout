@@ -12,11 +12,14 @@ import {
   forwardRef
 } from '@angular/core';
 
+import {Subscription} from 'rxjs/Subscription';
+
 import {MediaQueryActivation} from '../media-query/media-query-activation';
 import {MediaQueryAdapter} from '../media-query/media-query-adapter';
 import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
 import {BaseFxDirective} from './base';
 import {HideDirective} from "./hide";
+import {LayoutDirective} from './layout';
 
 
 const FALSY = ['false', false, 0];
@@ -37,6 +40,12 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    * MediaQuery Activation Tracker
    */
   private _mqActivation: MediaQueryActivation;
+
+  /**
+    * Subscription to the parent flex container's layout changes.
+    * Stored so we can unsubscribe when this directive is destroyed.
+    */
+  private _layoutWatcher : Subscription;
 
   /**
    * Default layout property with default visible === true
@@ -62,9 +71,19 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    */
   constructor(
       private _mqa: MediaQueryAdapter,
+      @Optional() @Self() private _layout: LayoutDirective,
       @Inject(forwardRef(() => HideDirective)) @Optional() @Self() private _hideDirective,
-      protected elRef: ElementRef, protected renderer: Renderer) {
+      protected elRef: ElementRef,
+      protected renderer: Renderer) {
     super(elRef, renderer);
+
+    if (_layout) {
+      /**
+       * The Layout can set the display:flex (and incorrectly affect the Hide/Show directives.
+       * Whenever Layout [on the same element] resets its CSS, then update the Hide/Show CSS
+       */
+      this._layoutWatcher = _layout.layout$.subscribe(() => this._updateWithValue());
+    }
   }
 
   /**
@@ -105,7 +124,7 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
   onMediaQueryChanges(changes: MediaQueryChanges) {
-    setTimeout(() => this._updateWithValue(changes.current.value), 1);
+    this._updateWithValue(changes.current.value);
   }
 
   // *********************************************
