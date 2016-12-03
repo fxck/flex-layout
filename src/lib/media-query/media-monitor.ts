@@ -10,12 +10,12 @@ import {mergeAlias} from '../utils/add-alias';
 
 
 /**
- * MediaQueries uses the MatchMedia service to observe mediaQuery changes; which are published as
+ * MediaMonitor uses the MatchMedia service to observe mediaQuery changes; which are published as
  * MediaChange notifications. These notifications will be performed within the
  * ng Zone to trigger change detections and component updates.
  */
 @Injectable()
-export class MediaQueries {
+export class MediaMonitor {
   constructor(private _breakpoints: BreakPoints, private _matchMedia: MatchMedia) {
     this._registerBreakpoints();
   }

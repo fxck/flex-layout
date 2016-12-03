@@ -5,7 +5,7 @@ import {Subscription} from 'rxjs/Subscription';
 
 import {BreakPoint} from '../../media-query/breakpoints/break-point';
 import {MediaChange} from '../../media-query/media-change';
-import {MediaQueries} from '../../media-query/media-queries';
+import {MediaMonitor} from '../../media-query/media-monitor';
 
 import {MediaQueryActivation} from './media-query-activation';
 import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
@@ -21,7 +21,7 @@ export interface BreakPointX extends BreakPoint{
   baseKey : string;
 }
 /**
- *  Adapter between Layout API directives and the MediaQueries mdl service
+ *  Adapter between Layout API directives and the MediaMonitor mdl service
  *
  *  Using this adapter encapsulates most of the complexity of mql subscriptions
  *  and insures lean integration-code in the Layout directives
@@ -34,7 +34,7 @@ export class MediaQueryAdapter {
   /**
    *
    */
-  constructor(private _mq: MediaQueries) {
+  constructor(private _mq: MediaMonitor) {
     this._breakpoints = this._mq.breakpoints;
   }
 

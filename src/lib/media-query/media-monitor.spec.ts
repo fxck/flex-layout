@@ -5,25 +5,26 @@ import 'rxjs/add/operator/map';
 
 import { TestBed, inject, async } from '@angular/core/testing';
 
-import {BreakPoints} from './break-points';
-import {BreakPoint} from './break-point';
+import {BreakPoints} from './breakpoints/break-points';
+import {BreakPoint} from './breakpoints/break-point';
+import {MediaChange} from './media-change';
+import {MediaMonitor} from "./media-monitor";
 import {MockMediaQueryActivator} from "./testing/mock-media-query-activator";
-import {MediaQueries, MediaQueryChange} from "./media-queries";
 
 describe('media-queries', () => {
   let breakPoints : BreakPoints;
   let mockMQ : MockMediaQueryActivator;
-  let mqService : MediaQueries;
+  let mqService : MediaMonitor;
 
   beforeEach(()=> {
     mockMQ = new MockMediaQueryActivator();
 
     // Configure testbed to prepare services
     TestBed.configureTestingModule({
-      providers: [BreakPoints, MediaQueries]
+      providers: [BreakPoints, MediaMonitor]
     });
   });
-  beforeEach( async(inject([MediaQueries, BreakPoints], (_mqService_, _breakPoints_) => {
+  beforeEach( async(inject([MediaMonitor, BreakPoints], (_mqService_, _breakPoints_) => {
     // Single async inject to save references; which are used in all tests below
     mqService = _mqService_;
     breakPoints = _breakPoints_;
@@ -31,8 +32,8 @@ describe('media-queries', () => {
   afterEach(() => { mockMQ.destroy(); });
 
   it('can observe a media query change for each breakpoint', () => {
-    let current : MediaQueryChange;
-    mqService.observe().subscribe((change:MediaQueryChange) =>{
+    let current : MediaChange;
+    mqService.observe().subscribe((change:MediaChange) =>{
       current = change;
     });
 
@@ -44,12 +45,12 @@ describe('media-queries', () => {
   });
 
   it('can observe ALL media query changes', () =>{
-    let current : MediaQueryChange,
-        mqcGtSM : MediaQueryChange,
+    let current : MediaChange,
+        mqcGtSM : MediaChange,
         bpGtSM = breakPoints.findByAlias('gt-sm'),
         bpLg = breakPoints.findByAlias('lg');
 
-    mqService.observe().subscribe((change:MediaQueryChange) =>{
+    mqService.observe().subscribe((change:MediaChange) =>{
       current = change;
     });
 
@@ -66,11 +67,11 @@ describe('media-queries', () => {
   });
 
   it('can observe only a specific media query changes', () =>{
-    let current : MediaQueryChange,
+    let current : MediaChange,
         bpGtSM = breakPoints.findByAlias('gt-sm'),
         bpLg = breakPoints.findByAlias('lg');
 
-    mqService.observe('lg').subscribe((change:MediaQueryChange) =>{
+    mqService.observe('lg').subscribe((change:MediaChange) =>{
       current = change;
     });
 
@@ -88,7 +89,7 @@ describe('media-queries', () => {
     let bpGtSM = breakPoints.findByAlias('gt-sm'),
         bpLg = breakPoints.findByAlias('lg');
 
-    mqService.observe().subscribe((change:MediaQueryChange) =>{
+    mqService.observe().subscribe((change:MediaChange) =>{
       if ( change.matches ) ++activates;
       else                  ++deactivates;
     });
@@ -114,7 +115,7 @@ describe('media-queries', () => {
     let bpGtSM = breakPoints.findByAlias('gt-sm'),
         bpLg = breakPoints.findByAlias('lg');
 
-    mqService.observe('gt-sm').subscribe((change:MediaQueryChange) =>{
+    mqService.observe('gt-sm').subscribe((change:MediaChange) =>{
       if ( change.matches ) ++activates;
       else                  ++deactivates;
     });
@@ -140,7 +141,7 @@ describe('media-queries', () => {
       let bpGtSM = breakPoints.findByAlias('gt-sm'),
           bpLg = breakPoints.findByAlias('lg');
 
-      mqService.observe().subscribe((change:MediaQueryChange) =>{
+      mqService.observe().subscribe((change:MediaChange) =>{
         if ( change.matches ) ++activates;
       });
 

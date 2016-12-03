@@ -2,7 +2,7 @@ import {Directive, OnDestroy} from '@angular/core';
 
 import {MediaChange} from '../../media-query/media-change';
 import {BreakPoint} from '../../media-query/breakpoints/break-point';
-import {MediaQueries} from '../../media-query/media-queries';
+import {MediaMonitor} from '../../media-query/media-monitor';
 import {MediaQueryChanges, OnMediaQueryChanges} from './media-query-changes';
 
 const ON_DESTROY = 'ngOnDestroy';
@@ -47,7 +47,7 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
    *
    */
   constructor(
-      private _mq: MediaQueries,
+      private _mq: MediaMonitor,
       private _directive: Directive,
       private _baseKey: string,
       private _defaultValue: string|number|boolean)

@@ -7,8 +7,8 @@ import {BreakPointsDataset} from "./providers/break-points-dataset";
 
 
 import {MatchMedia} from './match-media';
-import {MediaQueries} from './media-queries';
-import {MediaQueryObservable} from './providers/media-queries-observable';
+import {MediaMonitor} from './media-monitor';
+import {MatchMediaObservableProvider} from './providers/match-media-provider';
 
 /**
  * *****************************************************************
@@ -21,9 +21,9 @@ import {MediaQueryObservable} from './providers/media-queries-observable';
   providers: [
     BreakPoints,               // Registry of known BreakPoint(s)
     MatchMedia,                // Low-level service to publish observables around window.matchMedia()
-    MediaQueries,              // MediaQuery service that easily observes all known breakpoints
+    MediaMonitor,              // MediaQuery service that easily observes all known breakpoints
     BreakPointsDataset,        // Supports developer overrides of list of known breakpoints
-    MediaQueryObservable       // Allows easy subscription to injectable `mediaQuery$` observable
+    MatchMediaObservableProvider       // Allows easy subscription to injectable `mediaQuery$` observable
   ]
 })
 export class MediaQueriesModule {

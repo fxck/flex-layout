@@ -72,7 +72,6 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
       protected renderer: Renderer) {
     super(elRef, renderer);
 
-    debugger;
     if (_layout) {
       /**
        * The Layout can set the display:flex (and incorrectly affect the Hide/Show directives.
