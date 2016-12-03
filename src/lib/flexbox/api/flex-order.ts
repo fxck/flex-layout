@@ -2,15 +2,17 @@ import {
   Directive,
   ElementRef,
   Input,
-  OnChanges,
   OnInit,
+  OnChanges,
+  OnDestroy,
   Renderer,
   SimpleChanges,
 } from '@angular/core';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
+
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
 
 /**
  * 'flex-order' flexbox styling directive
@@ -18,8 +20,7 @@ import {BaseFxDirective} from './base';
  * @see https://css-tricks.com/almanac/properties/o/order/
  */
 @Directive({selector: '[fx-flex-order]'})
-export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                      OnMediaQueryChanges {
+export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
    */
@@ -41,7 +42,7 @@ export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnCha
   @Input('fx-flex-order.gt-lg') orderGtLg;
   @Input('fx-flex-order.xl') orderXl;
 
-  constructor(private _mqa: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
+  constructor(private _monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
   }
 
@@ -66,15 +67,19 @@ export class FlexOrderDirective extends BaseFxDirective implements OnInit, OnCha
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'order', '1');
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'order', '1');
     this._updateWithValue();
+  }
+
+  ngOnDestroy() {
+    this._mqActivation.destroy();
   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithValue(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithValue(changes.value);
   }
 
   // *********************************************

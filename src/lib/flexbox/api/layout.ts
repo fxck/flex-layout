@@ -2,17 +2,19 @@ import {
   Directive,
   ElementRef,
   Input,
-  OnChanges,
   OnInit,
+  OnChanges,
+  OnDestroy,
   Renderer,
   SimpleChanges,
 } from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
+
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
 
 
 export const LAYOUT_VALUES = ['row', 'column', 'row-reverse', 'column-reverse'];
@@ -26,8 +28,7 @@ export const LAYOUT_VALUES = ['row', 'column', 'row-reverse', 'column-reverse'];
  *
  */
 @Directive({selector: '[fx-layout], [fx-layout.md]'})
-export class LayoutDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                   OnMediaQueryChanges {
+export class LayoutDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
    */
@@ -67,7 +68,7 @@ export class LayoutDirective extends BaseFxDirective implements OnInit, OnChange
   /**
    *
    */
-  constructor(private _mqa: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
+  constructor(private _monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
   }
 
@@ -94,15 +95,19 @@ export class LayoutDirective extends BaseFxDirective implements OnInit, OnChange
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'layout', 'row');
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'layout', 'row');
     this._updateWithDirection();
+  }
+
+  ngOnDestroy() {
+    this._mqActivation.destroy();
   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithDirection(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithDirection(changes.value);
   }
 
   // *********************************************

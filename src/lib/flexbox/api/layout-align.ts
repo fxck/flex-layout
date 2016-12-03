@@ -10,10 +10,12 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
+
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
+
 import {LAYOUT_VALUES, LayoutDirective} from './layout';
 
 
@@ -27,9 +29,7 @@ import {LAYOUT_VALUES, LayoutDirective} from './layout';
  *  @see https://css-tricks.com/almanac/properties/a/align-content/
  */
 @Directive({selector: '[fx-layout-align]'})
-export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                        OnMediaQueryChanges,
-                                                                        OnDestroy {
+export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
    */
@@ -55,8 +55,10 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
   @Input('fx-layout-align.xl') alignXl;
 
   constructor(
-      @Optional() public container: LayoutDirective, private _mqa: MediaQueryAdapter,
-      elRef: ElementRef, renderer: Renderer) {
+      private _monitor : MediaMonitor,
+      elRef: ElementRef, renderer: Renderer,
+      @Optional() container: LayoutDirective)
+  {
     super(elRef, renderer);
 
     if (container) {  // Subscribe to layout direction changes
@@ -82,19 +84,20 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'align', 'start stretch');
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'align', 'start stretch');
     this._updateWithValue();
   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithValue(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithValue(changes.value);
   }
 
 
   ngOnDestroy() {
+    this._mqActivation.destroy();
     if ( this._layoutWatcher ) {
       this._layoutWatcher.unsubscribe();
     }

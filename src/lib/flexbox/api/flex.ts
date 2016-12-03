@@ -13,10 +13,11 @@ import {
 import {Subscription} from 'rxjs/Subscription';
 import {extendObject} from '../../utils/object-extend';
 
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
+
 import {LayoutDirective} from './layout';
 import {LayoutWrapDirective} from './layout-wrap';
 
@@ -35,7 +36,7 @@ export type FlexBasisAlias = 'grow' | 'initial' | 'auto' | 'none' | 'nogrow' | '
   selector: '[fx-flex]',
 })
 export class FlexDirective extends BaseFxDirective
-    implements OnInit, OnChanges, OnMediaQueryChanges, OnDestroy {
+    implements OnInit, OnChanges, OnDestroy {
 
   /** MediaQuery Activation Tracker */
   private _mqActivation: MediaQueryActivation;
@@ -68,15 +69,15 @@ export class FlexDirective extends BaseFxDirective
   // Explicitly @SkipSelf on LayoutDirective and LayoutWrapDirective because we want the
   // parent flex container for this flex item.
   constructor(
+      private _monitor : MediaMonitor,
       elRef: ElementRef,
       renderer: Renderer,
-      private _mediaQueryAdapter: MediaQueryAdapter,
       @Optional() @SkipSelf() private _container: LayoutDirective,
       @Optional() @SkipSelf() private _wrap: LayoutWrapDirective) {
-    super(elRef, renderer);
 
-    // If this flex item is inside of a flex container marked with
+    super(elRef, renderer);
     if (_container) {
+      // If this flex item is inside of a flex container marked with
       // Subscribe to layout immediate parent direction changes
       this._layoutWatcher = _container.layout$.subscribe((direction) => this._onLayoutChange(direction));
     }
@@ -99,18 +100,19 @@ export class FlexDirective extends BaseFxDirective
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mediaQueryAdapter.attach(this, 'flex', '');
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'flex', '');
     this._onLayoutChange();
   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateStyle(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateStyle(changes.value);
   }
 
   ngOnDestroy() {
+    this._mqActivation.destroy();
     if (this._layoutWatcher) {
       this._layoutWatcher.unsubscribe();
     }

@@ -72,6 +72,10 @@ export class MediaMonitor {
       .filter( hasAlias );
   }
 
+  /**
+   * Immediate calls to matchMedia() to establish listeners
+   * and prepare for immediate subscription notifications
+   */
   private _registerBreakpoints() {
     this._breakpoints.items.forEach( bp => {
       this._matchMedia.registerQuery( bp.mediaQuery );

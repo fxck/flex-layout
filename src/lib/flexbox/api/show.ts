@@ -2,8 +2,9 @@ import {
   Directive,
   ElementRef,
   Input,
-  OnChanges,
   OnInit,
+  OnChanges,
+  OnDestroy,
   Renderer,
   SimpleChanges,
   Self,
@@ -14,12 +15,14 @@ import {
 
 import {Subscription} from 'rxjs/Subscription';
 
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
+
 import {HideDirective} from "./hide";
 import {LayoutDirective} from './layout';
+
 
 
 const FALSY = ['false', false, 0];
@@ -29,8 +32,7 @@ const FALSY = ['false', false, 0];
  *
  */
 @Directive({selector: '[fx-show]'})
-export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                 OnMediaQueryChanges {
+export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * Original dom Elements CSS display style
    */
@@ -70,7 +72,7 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    *
    */
   constructor(
-      private _mqa: MediaQueryAdapter,
+      private _monitor : MediaMonitor,
       @Optional() @Self() private _layout: LayoutDirective,
       @Inject(forwardRef(() => HideDirective)) @Optional() @Self() private _hideDirective,
       protected elRef: ElementRef,
@@ -116,15 +118,22 @@ export class ShowDirective extends BaseFxDirective implements OnInit, OnChanges,
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'show', true);
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'show', true);
     this._updateWithValue();
   }
+
+  ngOnDestroy() {
+     this._mqActivation.destroy();
+     if (this._layoutWatcher) {
+       this._layoutWatcher.unsubscribe();
+     }
+   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithValue(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithValue(changes.value);
   }
 
   // *********************************************

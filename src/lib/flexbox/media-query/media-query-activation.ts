@@ -1,17 +1,24 @@
-import {Directive, OnDestroy} from '@angular/core';
+import {Directive} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
+import 'rxjs/add/operator/map';
 
-import {MediaChange} from '../../media-query/media-change';
+import {extendObject} from '../../utils/object-extend';
+
 import {BreakPoint} from '../../media-query/breakpoints/break-point';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaQueryChanges, MediaQuerySubscriber} from './media-query-changes';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryChanges, OnMediaQueryChanges} from './media-query-changes';
 
-const ON_DESTROY = 'ngOnDestroy';
-const ON_MEDIA_CHANGES = 'onMediaQueryChanges';
+export declare type SubscriptionList = Subscription[];
+export interface BreakPointX extends BreakPoint{
+  key : string;
+  baseKey : string;
+}
 
 /**
- * MediaQueryActivation acts as a proxy between the MediaQuery service (which emits mediaQuery changes)
- * and the fx API directives. The MQA proxies (head-hooks) both the `onMediaQueryChanges()` and
- * `ngOnDestroy()` methods of the directive instance.
+ * MediaQueryActivation acts as a proxy between the MonitorMedia service (which emits mediaQuery changes)
+ * and the fx API directives. The MQA proxies mediaQuery change events and notifies the directive
+ * via the specified callback.
  *
  * - The MQA also determines which directive property should be used to determine the
  *   current change 'value'... BEFORE the original `onMediaQueryChanges()` method is called.
@@ -19,10 +26,24 @@ const ON_MEDIA_CHANGES = 'onMediaQueryChanges';
  *
  * NOTE: these interceptions enables the logic in the fx API directives to remain terse and clean.
  */
-export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
-  private _onDestroy: Function;
-  private _onMediaQueryChanges: Function;
+export class MediaQueryActivation {
+  private _onMediaChanges : MediaQuerySubscriber;
+  private _subscribers : SubscriptionList = [ ];
   private _activatedInputKey: string;
+
+  /**
+   * Constructor
+   */
+  constructor(
+      private _monitor: MediaMonitor,
+      private _directive: Directive,
+      private _baseKey: string,
+      private _defaultValue: string|number|boolean,
+      onMediaChanges ?: MediaQuerySubscriber )
+  {
+    this._onMediaChanges = onMediaChanges || _directive["onMediaQueryChanges"];
+    this._subscribers = this._configureChangeObservers();
+  }
 
   /**
    * Determine which directive @Input() property is currently active (for the viewport size):
@@ -44,73 +65,27 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
   }
 
   /**
-   *
-   */
-  constructor(
-      private _mq: MediaMonitor,
-      private _directive: Directive,
-      private _baseKey: string,
-      private _defaultValue: string|number|boolean)
-  {
-    this._interceptLifeCyclEvents();
-  }
-
-
-  /**
-   * MediaQueryChanges interceptor that tracks the current mq-activated @Input and calculates the
+   * Synchronizes change notifications with the current mq-activated @Input and calculates the
    * mq-activated input value or the default value
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
+  _onMonitorEvents(changes: MediaQueryChanges) {
     if ( changes.current.property == this._baseKey ) {
       changes = new MediaQueryChanges(null, changes.current);
       changes.current.value = this._calculateActivatedValue(changes.current);
 
-      // this._logMediaQueryChanges(changes);
-      this._onMediaQueryChanges(changes);
+      this._onMediaChanges.call(this._directive, changes.current);
     }
   }
 
   /**
    * Remove interceptors, restore original functions, and forward the onDestroy() call
    */
-  ngOnDestroy() {
-    this._directive[ON_DESTROY] = this._onDestroy || this._directive[ON_DESTROY];
-    this._directive[ON_MEDIA_CHANGES] = this._onMediaQueryChanges;
-    try {
-      this._onDestroy();
-
-    } finally {
-      this._directive = undefined;
-      this._onDestroy = undefined;
-      this._onMediaQueryChanges = undefined;
-    }
+  destroy() {
+    this._subscribers.forEach((link: Subscription) => {
+      link.unsubscribe();
+    });
   }
 
-  /**
-   * Head-hook onDestroy and onMediaQueryChanges methods on the directive instance
-   */
-  private _interceptLifeCyclEvents() {
-    if (this._directive[ON_DESTROY]) {
-      this._onDestroy = this._directive[ON_DESTROY].bind(this._directive);
-      this._directive[ON_DESTROY] = this.ngOnDestroy.bind(this);
-    }
-
-    this._onMediaQueryChanges = this._directive[ON_MEDIA_CHANGES].bind(this._directive);
-    this._directive[ON_MEDIA_CHANGES] = this.onMediaQueryChanges.bind(this);
-  }
-
-  /**
-   */
-  private _logMediaQueryChanges(changes: MediaQueryChanges) {
-    let current = changes.current, previous = changes.previous;
-
-    if (current && current.mqAlias == '')     current.mqAlias = 'all';
-    if (previous && previous.mqAlias == '')   previous.mqAlias = 'all';
-
-    if (current.matches) {
-      console.log(`mqChange: ${this._baseKey}.${current.mqAlias} = ${changes.current.value};`);
-    }
-  }
 
   /**
    *  Map input key associated with mediaQuery activation to closest defined input key
@@ -137,7 +112,7 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
    * NOTE: scans in the order defined by activeOverLaps (largest viewport ranges -> smallest ranges)
    */
   private _validateInputKey(inputKey) {
-    let items: BreakPoint[] = this._mq.activeOverlaps;
+    let items: BreakPoint[] = this._monitor.activeOverlaps;
     let isMissingKey = (key) => this._directive[key] === undefined;
 
     if ( isMissingKey( inputKey ) ) {
@@ -150,6 +125,48 @@ export class MediaQueryActivation implements OnMediaQueryChanges, OnDestroy {
       });
     }
     return inputKey;
+  }
+
+  /**
+   * For each *defined* API property, register a callback to `_onMonitorEvents( )`
+   * Cache 1..n subscriptions for internal auto-unsubscribes when the the directive destructs
+   */
+  private _configureChangeObservers(): SubscriptionList {
+    let subscriptions = [];
+
+    this._buildRegistryMap().forEach((bp:BreakPointX)=> {
+      // Only subscribe if the directive API is defined (in use)
+      if (this._directive[bp.key] != null) {
+        let buildChanges = (change: MediaChange) => {
+              // Inject directive default property key name: to let onMediaChange() calls
+              // know which property is being triggered...
+              change.property = this._baseKey;
+              return new MediaQueryChanges(null,  change);
+            };
+        subscriptions.push(
+          this._monitor.observe(bp.alias).map(buildChanges).subscribe(changes => {
+            this._onMonitorEvents(changes);
+          })
+        );
+      }
+    });
+
+    return subscriptions;
+  }
+
+  /**
+   * Build mediaQuery key-hashmap; only for the directive properties that are actually defined/used
+   * in the HTML markup
+   */
+  private _buildRegistryMap() {
+    return this._monitor.breakpoints
+        .map(bp => {
+          return <BreakPointX> extendObject({}, bp, {
+            baseKey : this._baseKey,              // e.g.  layout, hide, self-align, flex-wrap
+            key     : this._baseKey + bp.suffix   // e.g.  layoutGtSm, layoutMd, layoutGtLg
+          });
+        })
+        .filter( bp => (this._directive[  bp.key ] !== undefined));
   }
 
 }

@@ -8,11 +8,11 @@ import {
   Renderer,
   SimpleChanges,
 } from '@angular/core';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
-import {BaseFxDirective} from './base';
 
+import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
 
 /**
  * 'layout-wrap' flexbox styling directive
@@ -21,9 +21,7 @@ import {BaseFxDirective} from './base';
  * @see https://css-tricks.com/almanac/properties/f/flex-wrap/
  */
 @Directive({selector: '[fx-layout-wrap]'})
-export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                       OnMediaQueryChanges,
-                                                                       OnDestroy {
+export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
    */
@@ -45,7 +43,7 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
   @Input('fx-layout-wrap.gt-lg') wrapGtLg;
   @Input('fx-layout-wrap.xl') wrapXl;
 
-  constructor(private _mqa: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
+  constructor(private _monitor : MediaMonitor, elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer)
   }
 
@@ -67,18 +65,20 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'wrap', 'wrap');
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'wrap', 'wrap');
     this._updateWithValue();
   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithValue(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithValue(changes.value);
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this._mqActivation.destroy();
+  }
 
   // *********************************************
   // Protected methods

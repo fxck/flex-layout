@@ -2,15 +2,18 @@ import {
   Directive,
   ElementRef,
   Input,
-  OnChanges,
   OnInit,
+  OnChanges,
+  OnDestroy,
   Renderer,
   SimpleChanges,
 } from '@angular/core';
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
+
+
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
 
 
 /**
@@ -18,8 +21,7 @@ import {BaseFxDirective} from './base';
  * Configures the 'margin-left' of the element in a layout container
  */
 @Directive({selector: '[fx-flex-offset]'})
-export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                       OnMediaQueryChanges {
+export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * MediaQuery Activation Tracker
    */
@@ -41,7 +43,7 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
   @Input('fx-flex-offset.gt-lg') offsetGtLg: string|number;
   @Input('fx-flex-offset.xl') offsetXl: string|number;
 
-  constructor(private _mqa: MediaQueryAdapter, elRef: ElementRef, renderer: Renderer) {
+  constructor(private _monitor : MediaMonitor,  elRef: ElementRef, renderer: Renderer) {
     super(elRef, renderer);
   }
 
@@ -65,14 +67,18 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'offset', 0);
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'offset', 0);
+  }
+
+  ngOnDestroy() {
+    this._mqActivation.destroy();
   }
 
   /**
    *  Special mql callback used by MediaQueryActivation when a mql event occurs
    */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithValue(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithValue(changes.value);
   }
 
 

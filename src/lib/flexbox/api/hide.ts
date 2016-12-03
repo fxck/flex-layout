@@ -2,20 +2,22 @@ import {
   Directive,
   ElementRef,
   Input,
-  OnChanges,
   OnInit,
+  OnChanges,
+  OnDestroy,
   Renderer,
   SimpleChanges,
   Self,
-  Optional,
+  Optional
 } from '@angular/core';
 
 import {Subscription} from 'rxjs/Subscription';
 
-import {MediaQueryActivation} from '../media-query/media-query-activation';
-import {MediaQueryAdapter} from '../media-query/media-query-adapter';
-import {MediaQueryChanges, OnMediaQueryChanges} from '../media-query/media-query-changes';
 import {BaseFxDirective} from './base';
+import {MediaChange} from '../../media-query/media-change';
+import {MediaMonitor} from '../../media-query/media-monitor';
+import {MediaQueryActivation} from '../media-query/media-query-activation';
+
 import {ShowDirective} from "./show";
 import {LayoutDirective} from './layout';
 
@@ -24,8 +26,7 @@ import {LayoutDirective} from './layout';
  *
  */
 @Directive({selector: '[fx-hide]'})
-export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
-                                                                 OnMediaQueryChanges {
+export class HideDirective extends BaseFxDirective implements OnInit, OnChanges, OnDestroy {
   /**
    * Original dom Elements CSS display style
    */
@@ -65,7 +66,7 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    *
    */
   constructor(
-      private _mqa: MediaQueryAdapter,
+      private _monitor : MediaMonitor,
       @Optional() @Self() private _layout: LayoutDirective,
       @Optional() @Self() private _showDirective : ShowDirective,
       protected elRef: ElementRef,
@@ -111,20 +112,21 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    * mql change events to onMediaQueryChange handlers
    */
   ngOnInit() {
-    this._mqActivation = this._mqa.attach(this, 'hide', true );
+    this._mqActivation = new MediaQueryActivation(this._monitor, this,  'hide', true);
     this._updateWithValue();
   }
 
   /** Special mql callback used by MediaQueryActivation when a mql event occurs */
-  onMediaQueryChanges(changes: MediaQueryChanges) {
-    this._updateWithValue(changes.current.value);
+  onMediaQueryChanges(changes: MediaChange) {
+    this._updateWithValue(changes.value);
   }
 
   ngOnDestroy() {
-      if (this._layoutWatcher) {
-        this._layoutWatcher.unsubscribe();
-      }
+    this._mqActivation.destroy();
+    if (this._layoutWatcher) {
+      this._layoutWatcher.unsubscribe();
     }
+  }
 
   // *********************************************
   // Protected methods
