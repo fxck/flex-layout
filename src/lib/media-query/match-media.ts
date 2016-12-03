@@ -73,7 +73,7 @@ export class MatchMedia {
   }
 
   /**
-   * Based on the BreakPoints provider, register internal listeners for each unique mediaQuery
+   * Based on the BreakPointRegistry provider, register internal listeners for each unique mediaQuery
    * Each listener emits specific MediaChange data to observers
    */
   registerQuery(mediaQuery: string) {

@@ -13,7 +13,7 @@ import {MockMediaQueryActivator} from "../../media-query/testing/mock-media-quer
 import {OnMediaQueryChanges, MediaQueryChanges} from '../media-query/media-query-changes';
 import {MediaChange} from "../../media-query/media-change";
 import {MediaMonitor} from "../../media-query/media-monitor";
-import {BreakPoints} from '../../media-query/breakpoints/break-points';
+import {BreakPointRegistry} from '../../media-query/breakpoints/break-point-registry';
 
 export class TestDirective implements Directive, OnChanges, OnDestroy, OnMediaQueryChanges {
   @Input() responsive : boolean = false;
@@ -33,7 +33,7 @@ describe('media-query-activation', () => {
 
     // Configure testbed to prepare services
     TestBed.configureTestingModule({
-      providers: [BreakPoints, MediaMonitor]
+      providers: [BreakPointRegistry, MediaMonitor]
     });
   });
   afterEach(() => { mockMQ.destroy(); });

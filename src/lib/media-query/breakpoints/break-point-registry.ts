@@ -1,7 +1,7 @@
 import {Injectable, Inject} from '@angular/core';
 
 import {BreakPoint} from './break-point';
-import {BREAKPOINTS_DATASET} from "../providers/break-points-dataset";
+import {BREAKPOINTS} from "../providers/break-points-provider";
 
 /**
  * Registry of 1..n MediaQuery breakpoint ranges
@@ -9,19 +9,26 @@ import {BREAKPOINTS_DATASET} from "../providers/break-points-dataset";
  *
  */
 @Injectable()
-export class BreakPoints {
+export class BreakPointRegistry {
 
-  constructor(@Inject(BREAKPOINTS_DATASET) public registry : BreakPoint[ ]) { }
+  constructor(@Inject(BREAKPOINTS) private _registry : BreakPoint[ ]) { }
+
+  /**
+   * Accessor to raw list
+   */
+  get items() : BreakPoint[ ] {
+    return [...this._registry];
+  }
 
   /**
    * Search breakpoints by alias (e.g. gt-xs)
    */
   findByAlias(alias: string): BreakPoint {
-    return this.registry.find( bp => bp.alias == alias);
+    return this._registry.find( bp => bp.alias == alias);
   }
 
   findByQuery(query:string) : BreakPoint {
-    return this.registry.find( bp => bp.mediaQuery == query);
+    return this._registry.find( bp => bp.mediaQuery == query);
   }
 
   /**
@@ -29,14 +36,14 @@ export class BreakPoints {
    * e.g. gt-sm overlaps md, lg, and xl
    */
   get overlappings(): BreakPoint[] {
-    return this.registry.filter(it => it.overlapping == true);
+    return this._registry.filter(it => it.overlapping == true);
   }
 
   /**
    * Get list of all registered (non-empty) breakpoint aliases
    */
   get aliases(): string[] {
-    return this.registry.map(it => it.alias);
+    return this._registry.map(it => it.alias);
   }
 
   /**
@@ -45,6 +52,6 @@ export class BreakPoints {
    * for property layoutGtSM.
    */
   get suffixes(): string[] {
-    return this.registry.map(it => it.suffix);
+    return this._registry.map(it => it.suffix);
   }
 }

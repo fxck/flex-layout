@@ -1,12 +1,13 @@
-import {BreakPoints} from '../break-points';
+import {BreakPointRegistry} from '../breakpoints/break-point-registry';
 import {MockMediaQueryActivator, MockMediaQueryList} from "./mock-media-query-activator";
+import {rawData} from "../providers/break-points-provider";
 
 describe('mock-media-query-activator', () => {
-  let breakPoints : BreakPoints;
+  let breakPoints : BreakPointRegistry;
   let mockMQA : MockMediaQueryActivator;
 
   beforeEach(()=> {
-    breakPoints = new BreakPoints();
+    breakPoints = new BreakPointRegistry(rawData);
     mockMQA = new MockMediaQueryActivator();
   });
   afterEach(() => { mockMQA.destroy(); });
@@ -14,7 +15,7 @@ describe('mock-media-query-activator', () => {
 
   describe("matchMedia(<query>)",()=>{
     it('can match with known mediaQueries', () =>{
-      breakPoints.registry.forEach(bp => {
+      breakPoints.items.forEach(bp => {
         expect( mockMQA.matchMedia(bp.mediaQuery)).not.toBeNull();
       });
     });

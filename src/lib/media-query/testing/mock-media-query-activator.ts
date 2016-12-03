@@ -1,6 +1,6 @@
-import {BreakPoint} from '../break-point';
-import {BreakPoints} from "../break-points";
-
+import {BreakPoint} from '../breakpoints/break-point';
+import {BreakPointRegistry} from "../breakpoints/break-point-registry";
+import {rawData} from "../providers/break-points-provider";
 /**
  * MockMediaQueryActivator supports programmatic mediaQuery activation/deactivation to simulate viewport size changes
  * and intercepts the window API: `window.matchMedia()`.
@@ -9,7 +9,7 @@ import {BreakPoints} from "../break-points";
  * Use the references to Breakpoints and the MockMediaQueryActivator instance to manually activate a mediaQuery.
  */
 export class MockMediaQueryActivator {
-  private _breakpoints : BreakPoints;
+  private _breakpoints : BreakPointRegistry;
   private _registry : Map<string, MockMediaQueryList>;
   private _activeMQL : MockMediaQueryList;
   private _matchMediaFn : (mediaQuery: string) => MediaQueryList;
@@ -17,7 +17,7 @@ export class MockMediaQueryActivator {
   /**
    *
    */
-  constructor(breakpoints:BreakPoints = new BreakPoints()) {
+  constructor(breakpoints:BreakPointRegistry = new BreakPointRegistry(rawData)) {
     this._registry = new Map();
     this._interceptAPI();
 
@@ -25,11 +25,11 @@ export class MockMediaQueryActivator {
   }
 
   /**
-   * Support post construction initialization of custom BreakPoints
+   * Support post construction initialization of custom BreakPointRegistry
    */
-  init(breakpoints:BreakPoints = new BreakPoints()) {
+  init(breakpoints:BreakPointRegistry = new BreakPointRegistry(rawData)) {
     this._breakpoints = breakpoints ;
-    this._breakpoints.registry.forEach( (bp:BreakPoint) => {
+    this._breakpoints.items.forEach( (bp:BreakPoint) => {
       this.matchMedia(bp.mediaQuery);
     });
 
@@ -38,7 +38,7 @@ export class MockMediaQueryActivator {
 
   /**
    * Can activate using a mediaQuery OR a breakpoint alias (xs, gt-xs, sm, gt-sm, etc.)
-   * These are properties in the registered BreakPoints list
+   * These are properties in the registered BreakPointRegistry list
    */
   activate(query:string):MockMediaQueryList {
     let breakPoint = this._breakpoints.findByAlias(query);

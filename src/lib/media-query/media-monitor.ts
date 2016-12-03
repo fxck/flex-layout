@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 
 import {BreakPoint} from './breakpoints/break-point';
-import {BreakPoints} from './breakpoints/break-points';
+import {BreakPointRegistry} from './breakpoints/break-point-registry';
 import {MatchMedia} from './match-media';
 import {MediaChange} from './media-change';
 import {mergeAlias} from '../utils/add-alias';
@@ -16,15 +16,15 @@ import {mergeAlias} from '../utils/add-alias';
  */
 @Injectable()
 export class MediaMonitor {
-  constructor(private _breakpoints: BreakPoints, private _matchMedia: MatchMedia) {
+  constructor(private _breakpoints: BreakPointRegistry, private _matchMedia: MatchMedia) {
     this._registerBreakpoints();
   }
 
   /**
-   * Read-only accessor to the list of breakpoints configured in the BreakPoints provider
+   * Read-only accessor to the list of breakpoints configured in the BreakPointRegistry provider
    */
   get breakpoints(): BreakPoint[] {
-    return [...this._breakpoints.registry];
+    return [...this._breakpoints.items];
   }
 
   get activeOverlaps(): BreakPoint[] {
@@ -73,7 +73,7 @@ export class MediaMonitor {
   }
 
   private _registerBreakpoints() {
-    this._breakpoints.registry.forEach( bp => {
+    this._breakpoints.items.forEach( bp => {
       this._matchMedia.registerQuery( bp.mediaQuery );
     })
   }

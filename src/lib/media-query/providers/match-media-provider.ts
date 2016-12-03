@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/filter';
 
 import {BreakPoint} from '../breakpoints/break-point';
-import {BreakPoints} from '../breakpoints/break-points';
+import {BreakPointRegistry} from '../breakpoints/break-point-registry';
 
 import {MediaChange} from '../media-change';
 import {MatchMedia} from '../match-media';
@@ -24,8 +24,8 @@ export const Media$: OpaqueToken = new OpaqueToken('fx-observable-media-query');
  */
 export const MatchMediaObservableProvider = {
   provide: Media$,
-  deps: [MatchMedia, BreakPoints],
-  useFactory: (mediaWatcher: MatchMedia, breakpoints: BreakPoints) => {
+  deps: [MatchMedia, BreakPointRegistry],
+  useFactory: (mediaWatcher: MatchMedia, breakpoints: BreakPointRegistry) => {
     let onlyActivations = (change : MediaChange) => (change.matches === true);
     let findBreakpoint = (mediaQuery:string) => breakpoints.findByQuery(mediaQuery);
     let injectAlias = (change : MediaChange) => mergeAlias(change, findBreakpoint(change.mediaQuery));

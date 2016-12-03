@@ -1,11 +1,12 @@
-import { BreakPoints } from './break-points';
+import { BreakPointRegistry } from './break-point-registry';
+import {rawData} from "../providers/break-points-provider";
 
 describe('break-points', () => {
-  let breakPoints : BreakPoints;
-  beforeEach(() => { breakPoints = new BreakPoints(); });
+  let breakPoints : BreakPointRegistry;
+  beforeEach(() => { breakPoints = new BreakPointRegistry(rawData); });
 
   it('registry has all aliases defined', () =>{
-    expect(breakPoints.registry.length).toBeGreaterThan(0);
+    expect(breakPoints.items.length).toBeGreaterThan(0);
 
     expect(breakPoints.findByAlias('')).toBeDefined();
     expect(breakPoints.findByAlias('xs')).toBeDefined();

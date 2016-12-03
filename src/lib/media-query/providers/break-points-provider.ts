@@ -1,7 +1,7 @@
 import {OpaqueToken} from '@angular/core';
 import {BreakPoint} from '../breakpoints/break-point';
 
-const registry: BreakPoint[ ] = [
+export const rawData: BreakPoint[ ] = [
   {
     alias: 'xs',
     suffix: 'Xs',
@@ -62,15 +62,15 @@ const registry: BreakPoint[ ] = [
  *  Opaque Token unique to the flex-layout library.
  *  Use this token when build a custom provider (see below).
  */
-export const BREAKPOINTS_DATASET: OpaqueToken = new OpaqueToken('fx-breakpoints-registry');
+export const BREAKPOINTS: OpaqueToken = new OpaqueToken('fx-breakpoints-raw-data');
 
 /**
  *  Provider to return observable to ALL known BreakPoint(s)
- *  Developers should build custom providers to override this default BreakPoints dataset provider
+ *  Developers should build custom providers to override this default BreakPointRegistry dataset provider
  *  NOTE: !! custom breakpoints lists MUST contain the following aliases & suffixes:
  *        [xs, gt-xs, sm, gt-sm, md, gt-md, lg, gt-lg, xl]
  */
-export const BreakPointsDataset = {
-  provide: BREAKPOINTS_DATASET,
-  useValue: registry
+export const BreakPointsProvider = {
+  provide: BREAKPOINTS,
+  useValue: rawData
 };

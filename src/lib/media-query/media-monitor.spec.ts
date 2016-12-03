@@ -5,14 +5,16 @@ import 'rxjs/add/operator/map';
 
 import { TestBed, inject, async } from '@angular/core/testing';
 
-import {BreakPoints} from './breakpoints/break-points';
+import {BreakPointRegistry} from './breakpoints/break-point-registry';
 import {BreakPoint} from './breakpoints/break-point';
 import {MediaChange} from './media-change';
 import {MediaMonitor} from "./media-monitor";
 import {MockMediaQueryActivator} from "./testing/mock-media-query-activator";
+import {MatchMedia} from './match-media';
+import {BreakPointsProvider} from './providers/break-points-provider';
 
-describe('media-queries', () => {
-  let breakPoints : BreakPoints;
+fdescribe('media-queries', () => {
+  let breakPoints : BreakPointRegistry;
   let mockMQ : MockMediaQueryActivator;
   let mqService : MediaMonitor;
 
@@ -21,10 +23,10 @@ describe('media-queries', () => {
 
     // Configure testbed to prepare services
     TestBed.configureTestingModule({
-      providers: [BreakPoints, MediaMonitor]
+      providers: [BreakPointRegistry, MediaMonitor, MatchMedia, BreakPointsProvider ]
     });
   });
-  beforeEach( async(inject([MediaMonitor, BreakPoints], (_mqService_, _breakPoints_) => {
+  beforeEach( async(inject([MediaMonitor, BreakPointRegistry], (_mqService_, _breakPoints_) => {
     // Single async inject to save references; which are used in all tests below
     mqService = _mqService_;
     breakPoints = _breakPoints_;
@@ -37,7 +39,7 @@ describe('media-queries', () => {
       current = change;
     });
 
-    breakPoints.registry.forEach( (bp:BreakPoint) =>{
+    breakPoints.items.forEach( (bp:BreakPoint) =>{
       mockMQ.activate(bp.mediaQuery);
       expect( current ).not.toBeFalsy();
       expect( current.mediaQuery ).toEqual( bp.mediaQuery );
