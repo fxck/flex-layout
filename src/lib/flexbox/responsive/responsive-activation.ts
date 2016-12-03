@@ -4,11 +4,11 @@ import {Subscription} from 'rxjs/Subscription';
 import 'rxjs/add/operator/map';
 import {extendObject} from '../../utils/object-extend';
 
-import {BreakPoint} from '../../media-query/breakpoints/break-point';
 import {MediaChange, MediaQuerySubscriber} from '../../media-query/media-change';
+import {BreakPoint} from '../../media-query/breakpoints/break-point';
 import {MediaMonitor} from '../../media-query/media-monitor';
 
-export declare type SubscriptionList = Subscription[];
+export declare type SubscriptionList = Subscription[ ];
 export interface BreakPointX extends BreakPoint{
   key : string;
   baseKey : string;
@@ -18,7 +18,7 @@ export class KeyOptions {
 }
 
 /**
- * MediaQueryActivation acts as a proxy between the MonitorMedia service (which emits mediaQuery changes)
+ * ResponsiveActivation acts as a proxy between the MonitorMedia service (which emits mediaQuery changes)
  * and the fx API directives. The MQA proxies mediaQuery change events and notifies the directive
  * via the specified callback.
  *
@@ -28,7 +28,7 @@ export class KeyOptions {
  *
  * NOTE: these interceptions enables the logic in the fx API directives to remain terse and clean.
  */
-export class MediaQueryActivation {
+export class ResponsiveActivation {
   private _subscribers : SubscriptionList = [ ];
   private _activatedInputKey: string;
 
@@ -45,6 +45,8 @@ export class MediaQueryActivation {
 
   /**
    * Accessor to the DI'ed directive property
+   * Each directive instance has a reference to the MediaMonitor which is
+   * used HERE to subscribe to mediaQuery change notifications.
    */
   get mediaMonitor() : MediaMonitor {
     return this._directive["mediaMonitor"];

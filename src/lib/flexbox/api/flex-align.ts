@@ -12,7 +12,7 @@ import {
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 /**
  * 'flex-align' flexbox styling directive
@@ -24,7 +24,7 @@ export class FlexAlignDirective extends BaseFxDirective implements OnInit, OnCha
   /**
    * MediaQuery Activation Tracker
    */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   @Input('fx-flex-align') align: string = 'stretch';  // default
 
@@ -67,7 +67,7 @@ export class FlexAlignDirective extends BaseFxDirective implements OnInit, OnCha
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('align', 'stretch');
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });
     this._updateWithValue();

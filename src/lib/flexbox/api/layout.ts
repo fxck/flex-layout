@@ -14,7 +14,7 @@ import {Observable} from 'rxjs/Observable';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 
 export const LAYOUT_VALUES = ['row', 'column', 'row-reverse', 'column-reverse'];
@@ -32,7 +32,7 @@ export class LayoutDirective extends BaseFxDirective implements OnInit, OnChange
   /**
    * MediaQuery Activation Tracker
    */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   /**
    * Create Observable for nested/child 'flex' directives. This allows
@@ -93,7 +93,7 @@ export class LayoutDirective extends BaseFxDirective implements OnInit, OnChange
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('layout', 'row');
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithDirection(changes.value);
     });
     this._updateWithDirection();

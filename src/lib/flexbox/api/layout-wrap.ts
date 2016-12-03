@@ -12,7 +12,7 @@ import {
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 /**
  * 'layout-wrap' flexbox styling directive
@@ -25,7 +25,7 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
   /**
    * MediaQuery Activation Tracker
    */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   @Input('fx-layout-wrap') wrap: string = 'wrap';
 
@@ -63,7 +63,7 @@ export class LayoutWrapDirective extends BaseFxDirective implements OnInit, OnCh
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('wrap', 'wrap');
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });
     this._updateWithValue();

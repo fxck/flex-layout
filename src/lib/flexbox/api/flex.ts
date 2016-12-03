@@ -16,7 +16,7 @@ import {extendObject} from '../../utils/object-extend';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 import {LayoutDirective} from './layout';
 import {LayoutWrapDirective} from './layout-wrap';
@@ -39,7 +39,7 @@ export class FlexDirective extends BaseFxDirective
     implements OnInit, OnChanges, OnDestroy {
 
   /** MediaQuery Activation Tracker */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   /** The flex-direction of this element's flex container. Defaults to 'row'. */
   private _layout = 'row';
@@ -98,7 +98,7 @@ export class FlexDirective extends BaseFxDirective
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('flex', '');
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateStyle(changes.value);
     });
     this._onLayoutChange();

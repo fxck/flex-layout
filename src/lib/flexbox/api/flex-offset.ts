@@ -13,7 +13,7 @@ import {
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 
 /**
@@ -25,7 +25,7 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
   /**
    * MediaQuery Activation Tracker
    */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   @Input('fx-flex-offset') offset: string|number;
 
@@ -66,7 +66,7 @@ export class FlexOffsetDirective extends BaseFxDirective implements OnInit, OnCh
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('offset', 0 );
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });
   }

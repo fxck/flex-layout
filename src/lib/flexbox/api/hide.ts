@@ -16,7 +16,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 import {ShowDirective} from "./show";
 import {LayoutDirective} from './layout';
@@ -35,7 +35,7 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
   /**
    * MediaQuery Activation Tracker
    */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   /**
     * Subscription to the parent flex container's layout changes.
@@ -110,7 +110,7 @@ export class HideDirective extends BaseFxDirective implements OnInit, OnChanges,
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('hide', true);
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });
     this._updateWithValue();

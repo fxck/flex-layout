@@ -14,7 +14,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {BaseFxDirective} from './base';
 import {MediaChange} from '../../media-query/media-change';
 import {MediaMonitor} from '../../media-query/media-monitor';
-import {MediaQueryActivation, KeyOptions} from '../media-query/media-query-activation';
+import {ResponsiveActivation, KeyOptions} from '../responsive/responsive-activation';
 
 import {LAYOUT_VALUES, LayoutDirective} from './layout';
 
@@ -33,7 +33,7 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
   /**
    * MediaQuery Activation Tracker
    */
-  private _mqActivation: MediaQueryActivation;
+  private _mqActivation: ResponsiveActivation;
 
   private _layout = 'row';  // default flex-direction
   private _layoutWatcher: Subscription;
@@ -82,7 +82,7 @@ export class LayoutAlignDirective extends BaseFxDirective implements OnInit, OnC
    */
   ngOnInit() {
     let keyOptions = new KeyOptions('align', 'start stretch');
-    this._mqActivation = new MediaQueryActivation(this, keyOptions, (changes: MediaChange) =>{
+    this._mqActivation = new ResponsiveActivation(this, keyOptions, (changes: MediaChange) =>{
       this._updateWithValue(changes.value);
     });
     this._updateWithValue();
