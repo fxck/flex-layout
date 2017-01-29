@@ -7,6 +7,7 @@ import {Component} from '@angular/core';
     <demo-complex-column-ordering></demo-complex-column-ordering>
     <demo-grid-area-row-span></demo-grid-area-row-span>
     <demo-grid-column-span></demo-grid-column-span>
+    <demo-gutter></demo-gutter>
   `
 })
 export class DemosStackOverflow { }
@@ -20,6 +21,7 @@ import { DemoComplexColumnOrder } from "./columnOrder.demo";
 import {DemoGridAreaRowSpan} from './gridArea.demo';
 import {DemoGridColumnSpan} from './columnSpan.demo';
 import {DemoMozHolyGrail} from "./mozHolyGrail.demo";
+import {DemoGutter} from "./gutter.demo";
 
 @NgModule({
   declarations : [
@@ -27,7 +29,8 @@ import {DemoMozHolyGrail} from "./mozHolyGrail.demo";
     DemoComplexColumnOrder,
     DemoGridColumnSpan,
     DemoGridAreaRowSpan,
-    DemoMozHolyGrail
+    DemoMozHolyGrail,
+    DemoGutter
   ],
   imports : [
     CommonModule,

@@ -22,6 +22,7 @@ import {FlexOrderDirective} from './api/flex-order';
 import {LayoutAlignDirective} from './api/layout-align';
 import {LayoutWrapDirective} from './api/layout-wrap';
 import {LayoutGapDirective} from './api/layout-gap';
+import {LayoutGutterDirective} from './api/layout-gutter';
 
 /**
  * Since the equivalent results are easily achieved with a css class attached to each
@@ -35,6 +36,7 @@ const ALL_DIRECTIVES = [
   LayoutDirective,
   LayoutWrapDirective,
   LayoutGapDirective,
+  LayoutGutterDirective,
   LayoutAlignDirective,
   FlexDirective,
   FlexOrderDirective,

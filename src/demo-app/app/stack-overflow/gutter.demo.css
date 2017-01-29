@@ -1,0 +1,16 @@
+.container {
+  border: solid 1px #b6b6b6;
+}
+
+.content {
+  padding: 20px;
+  text-align: center;
+  color: #fff;
+}
+
+/*
+.flexitem {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+*/
